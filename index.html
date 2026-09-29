@@ -2,7 +2,15 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1d2340">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bình Minh">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Bình Minh Vương Quốc</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -78,17 +86,73 @@
   .btn.ghost { background: transparent; color: var(--mist); border: 2px solid rgba(232,236,247,.4); font-weight: 700; }
   .btn.small { font-size: 13px; padding: 4px 14px; }
   .btn:focus-visible, .stage:focus-visible, .card:focus-visible { outline: 3px solid var(--mist); outline-offset: 2px; }
-  .touch { display: none; width: min(960px, 100vw); justify-content: space-between; align-items: center; padding: 0 8px; gap: 6px; }
-  .touch div { display: flex; gap: 6px; align-items: center; }
-  .touch button {
-    width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--mist);
-    background: rgba(232,236,247,.1); color: var(--mist); font-size: 19px; font-weight: 700; font-family: inherit; padding: 0;
-  }
-  .touch button.sk { border-color: var(--accent, #ffb347); color: var(--accent, #ffb347); width: 42px; height: 42px; font-size: 16px; }
-  .touch button.small { width: 42px; height: 42px; font-size: 15px; }
-  .touch button.active { background: rgba(255,209,102,.35); }
   .help { font-size: 13px; opacity: .65; margin: 0; text-align: center; padding: 0 12px; }
-  @media (pointer: coarse) { .touch { display: flex; } .help { display: none; } }
+  #rotateHint { display: none; font-size: 14px; opacity: .75; margin: 8px 12px 0; text-align: center; }
+  .menuTools { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+  #iosHint { font-size: 13px; opacity: .85; margin-top: 6px; }
+
+  /* ---------- Điều khiển cảm ứng ---------- */
+  .touch { display: none; position: fixed; inset: 0; z-index: 5; pointer-events: none; }
+  .touch * { -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+  .padL { position: absolute; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: 190px; height: 150px; pointer-events: none; }
+  .padR { position: absolute; right: calc(14px + env(safe-area-inset-right, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: 236px; height: 176px; pointer-events: none; }
+  .dpad {
+    position: absolute; left: 0; bottom: 0; width: 176px; height: 80px; border-radius: 40px; pointer-events: auto; touch-action: none;
+    background: rgba(20,24,48,.18); border: 2px solid rgba(232,236,247,.35); display: flex; overflow: hidden;
+  }
+  .dpad .half { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 26px; color: rgba(232,236,247,.85); }
+  .dpad .half + .half { border-left: 2px solid rgba(232,236,247,.2); }
+  .dpad .half.on { background: rgba(255,209,102,.3); }
+  .tb {
+    position: absolute; pointer-events: auto; touch-action: none; border-radius: 50%; padding: 0;
+    border: 2px solid rgba(232,236,247,.5); background: rgba(20,24,48,.18); color: var(--mist);
+    font-family: inherit; font-weight: 800; display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .tb.active { background: rgba(255,209,102,.4); border-color: var(--lantern); }
+  .tb.down { left: 62px; bottom: 94px; width: 52px; height: 44px; border-radius: 22px; font-size: 16px; }
+  .tb.jump { right: 0; bottom: 0; width: 82px; height: 82px; font-size: 28px; }
+  .tb.atk { right: 94px; bottom: 4px; width: 70px; height: 70px; font-size: 26px; border-color: rgba(255,143,107,.8); }
+  .tb.sk { width: 56px; height: 56px; font-size: 21px; border-color: var(--accent, #ffb347); color: var(--accent, #ffb347); }
+  .tb.sk[data-k="s1"] { right: 172px; bottom: 12px; }
+  .tb.sk[data-k="s2"] { right: 158px; bottom: 84px; }
+  .tb.sk[data-k="s3"] { right: 94px; bottom: 112px; }
+  .tb.sk[data-k="s4"] { right: 20px; bottom: 116px; }
+  .tb.sk::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(rgba(5,6,20,.72) calc(var(--cd, 0) * 360deg), transparent 0); }
+  .tb.sk .ic, .tb.sk .num, .tb.sk .cdt { position: relative; }
+  .tb.sk .num { position: absolute; right: 9px; bottom: 5px; font-size: 10px; color: var(--mist); opacity: .8; }
+  .tb.sk .cdt { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 17px; color: #fff; }
+  .tb.sk .pips { position: absolute; left: 0; right: 0; bottom: 5px; display: flex; justify-content: center; gap: 3px; }
+  .tb.sk .pips i { width: 5px; height: 5px; border-radius: 50%; background: rgba(232,236,247,.3); }
+  .tb.sk .pips i.on { background: var(--accent); }
+  .tb.sk.ready { box-shadow: 0 0 10px var(--accent, #ffb347); }
+  .tb.sk.locked { border-color: rgba(232,236,247,.2); color: rgba(232,236,247,.35); box-shadow: none; }
+  .tb.sk.locked .ic { font-size: 11px; }
+  .tb.sk.glow { box-shadow: 0 0 14px var(--accent); background: rgba(255,179,71,.3); }
+
+  @media (pointer: coarse) {
+    body { justify-content: flex-start; gap: 0; height: 100vh; height: 100dvh; }
+    .wrap { width: min(100vw, calc(100dvh * 16 / 9)); max-height: 100dvh; }
+    canvas { border-radius: 0; }
+    .help { display: none; }
+    body.playing .touch { display: block; }
+  }
+  @media (pointer: coarse) and (orientation: landscape) {
+    body { justify-content: center; padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+    .wrap { width: min(100vw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px), calc(100dvh * 16 / 9)); }
+  }
+  @media (pointer: coarse) and (orientation: portrait) {
+    #rotateHint { display: block; }
+    .wrap { width: 100vw; }
+    .padL { width: 150px; }
+    .dpad { width: 150px; }
+    .tb.down { left: 0; bottom: 94px; }
+    .padR { width: 170px; }
+    .tb.sk[data-k="s4"] { right: 0; bottom: 104px; }
+    .tb.sk[data-k="s3"] { right: 68px; bottom: 104px; }
+    .tb.sk[data-k="s2"] { right: 136px; bottom: 104px; }
+    .tb.sk[data-k="s1"] { right: 204px; bottom: 104px; }
+  }
+  body.talking .touch { opacity: .3; }
 </style>
 </head>
 <body>
@@ -101,14 +165,19 @@
     </div>
   </div>
   <p class="help">← → / A D chạy · Space / W nhảy · J đánh thường · Kỹ năng K L I O (hoặc 1 2 3 4) · Enter / chạm màn hình: qua thoại · Esc / P: tạm dừng</p>
-  <div class="touch">
-    <div><button data-k="left" aria-label="Sang trái">◀</button><button data-k="right" aria-label="Sang phải">▶</button></div>
-    <div>
-      <button class="small" data-k="down" aria-label="Xuống">▼</button>
-      <button class="sk" data-k="s1" aria-label="Kỹ năng 1">1</button><button class="sk" data-k="s2" aria-label="Kỹ năng 2">2</button>
-      <button class="sk" data-k="s3" aria-label="Kỹ năng 3">3</button><button class="sk" data-k="s4" aria-label="Kỹ năng 4">4</button>
-      <button data-k="atk" aria-label="Đánh thường">⚔</button>
-      <button data-k="jump" aria-label="Nhảy">▲</button>
+  <p id="rotateHint">↻ Xoay ngang điện thoại để chơi rộng hơn</p>
+  <div class="touch" id="touch">
+    <div class="padL">
+      <button class="tb down" data-k="down" aria-label="Xuống">▼</button>
+      <div class="dpad" id="dpad" aria-label="Di chuyển"><div class="half" id="dpL">◀</div><div class="half" id="dpR">▶</div></div>
+    </div>
+    <div class="padR">
+      <button class="tb sk" data-k="s4" aria-label="Kỹ năng 4"></button>
+      <button class="tb sk" data-k="s3" aria-label="Kỹ năng 3"></button>
+      <button class="tb sk" data-k="s2" aria-label="Kỹ năng 2"></button>
+      <button class="tb sk" data-k="s1" aria-label="Kỹ năng 1"></button>
+      <button class="tb atk" data-k="atk" aria-label="Đánh thường">⚔</button>
+      <button class="tb jump" data-k="jump" aria-label="Nhảy">▲</button>
     </div>
   </div>
 
@@ -124,6 +193,11 @@
       <button class="btn" id="playBtn">Bắt đầu</button>
       <button class="btn ghost small" id="resetBtn">Xóa tiến trình</button>
     </div>
+    <div class="menuTools">
+      <button class="btn ghost small" id="installBtn" hidden>📲 Cài app lên màn hình chính</button>
+      <button class="btn ghost small fsBtn" hidden>⛶ Toàn màn hình</button>
+    </div>
+    <div id="iosHint" hidden>Trên iPhone/iPad: bấm nút Chia sẻ ⬆ ở Safari rồi chọn “Thêm vào Màn hình chính”.</div>
   </div>
   <div class="overlay" id="pausePanel" hidden>
     <h1>Tạm dừng</h1>
@@ -132,6 +206,7 @@
       <button class="btn ghost" id="retryBtn">Chơi lại màn</button>
       <button class="btn ghost" id="menuBtn">Về menu</button>
     </div>
+    <div class="menuTools"><button class="btn ghost small fsBtn" hidden>⛶ Toàn màn hình</button></div>
   </div>
   <div class="overlay" id="endPanel" hidden>
     <h1 id="endTitle"></h1>
@@ -151,6 +226,7 @@ const GROUND_Y = 10 * T;
 const SKILL_KEYS = ['K', 'L', 'I', 'O'];
 const XP_NEED = [0, 15, 50, 110];
 const MAX_HEARTS = 5;
+const IS_TOUCH = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window;
 
 // ======================= NHÂN VẬT =======================
 const CLASSES = {
@@ -165,10 +241,10 @@ const CLASSES = {
     { name: 'Tinh thể băng',   cd: 600,  icon: '✧', desc: 'Tự bắn băng đuổi theo quái' },
     { name: 'Đại cầu năng lượng', cd: 1500, icon: '✺', desc: 'Tụ lực ném cầu nổ, 2 sát thương vùng' } ] },
   samurai: { name: 'Kiếm sĩ', hero: 'Phong', color: '#9ff0d8', role: 'Cận chiến linh hoạt', basic: { name: 'Chém', cd: 20 }, skills: [
-    { name: 'Đâm kiếm',   cd: 30,   desc: 'Trúng 2 lần thì lần 3 bắn lốc xoáy' },
-    { name: 'Lướt',       cd: 60,   desc: 'Lướt ngắn tới trước, né mọi đòn' },
-    { name: 'Tường gió',  cd: 420,  desc: 'Chặn quái và đạn trong 3 giây' },
-    { name: 'Trảm thiên', cd: 1800, desc: 'Chém toàn màn hình, 2 sát thương' } ] },
+    { name: 'Đâm kiếm',   cd: 30,   icon: '➤', desc: 'Trúng 2 lần thì lần 3 bắn lốc xoáy' },
+    { name: 'Lướt',       cd: 60,   icon: '»', desc: 'Lướt ngắn tới trước, né mọi đòn' },
+    { name: 'Tường gió',  cd: 420,  icon: '≋', desc: 'Chặn quái và đạn trong 3 giây' },
+    { name: 'Trảm thiên', cd: 1800, icon: '✕', desc: 'Chém toàn màn hình, 2 sát thương' } ] },
   gunner: { name: 'Thiện xạ', hero: 'Ưng', color: '#ff8f6b', role: 'Tầm xa, đặt bẫy', basic: { name: 'Bắn', cd: 18 }, skills: [
     { name: 'Bom nảy',        cd: 150,  icon: '●', desc: 'Nảy qua tối đa 4 quái gần nhau, 1 sát thương mỗi lần nổ' },
     { name: 'Phát bắn xuyên', cd: 180,  icon: '⌖', desc: 'Bắn xuyên mục tiêu chỉ định (chạm vào quái để chọn)' },
@@ -401,7 +477,7 @@ function buildWorld(n) {
   else goal = null;
   world.arenaL = world.len * T; world.arenaR = world.cols * T;
   const lv = levelFromXp(save.xp);
-  const sx = 2 * T;
+  const sx = 4 * T;
   player = { cls, x: sx, y: 9 * T + 2, w: 26, h: 38, vx: 0, vy: 0, ground: false, face: 1, sx, sy: 9 * T + 2, run: 0,
     hearts: MAX_HEARTS, inv: 60, cds: [0, 0, 0, 0], atkCd: 0, atk: 0, atkId: 0, atkEmp: false, level: lv, xp: save.xp, toast: null, pulled: 0,
     dash: 0, thrust: 0, thrustId: 0, thrustHit: false, thrustTornado: false, stack: 0, stackTimer: 0,
@@ -1675,7 +1751,30 @@ function drawSkillIcon(i, x, y, color) {
   ctx.restore();
 }
 
+function drawTouchHud() {
+  const p = player, C = CLASSES[cls], accent = p.trans > 0 ? '#fff0a8' : C.color;
+  const px = 12, py = 64;
+  ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(20,24,48,.7)'; rr(px, py, 190, 30, 8);
+  ctx.fillStyle = accent; ctx.font = '800 13px "Baloo 2", sans-serif';
+  ctx.fillText(`${C.name} · Cấp ${p.level}`, px + 8, py + 13);
+  let ratio = 1;
+  if (p.level < 4) { const lo = XP_NEED[p.level - 1], hi = XP_NEED[p.level]; ratio = (p.xp - lo) / (hi - lo); }
+  ctx.fillStyle = 'rgba(232,236,247,.18)'; rr(px + 8, py + 19, 174, 6, 3);
+  ctx.fillStyle = accent; rr(px + 8, py + 19, Math.max(3, 174 * ratio), 6, 3);
+}
+function drawBossBar() {
+  if (!(boss && boss.alive && bossStarted)) return;
+  const D = BOSS_DEFS[boss.id], bw2 = IS_TOUCH ? 360 : 420, bx2 = W / 2 - bw2 / 2, by2 = IS_TOUCH ? 84 : 48;
+  ctx.fillStyle = 'rgba(20,24,48,.8)'; rr(bx2 - 10, by2 - 22, bw2 + 20, 40, 10);
+  ctx.font = '800 14px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = D.color;
+  ctx.fillText(`${D.name}${boss.phase === 2 ? ' · Chân thân' : ''} · ${D.title}`, W / 2, by2 - 6);
+  ctx.fillStyle = 'rgba(232,236,247,.18)'; rr(bx2, by2, bw2, 10, 5);
+  ctx.fillStyle = boss.phase === 2 ? '#ff3b3b' : D.color; rr(bx2, by2, Math.max(0, bw2 * boss.hp / boss.maxHp), 10, 5);
+  ctx.textAlign = 'left';
+}
 function drawHud() {
+  if (IS_TOUCH) { drawTouchHud(); drawBossBar(); updateTouchUI(); return; }
   const p = player, C = CLASSES[cls], accent = p.trans > 0 ? '#fff0a8' : C.color, sk = skillsOf(p);
   const px = 12, py = H - 108;
   ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
@@ -1706,15 +1805,7 @@ function drawHud() {
     if (cls === 'samurai' && i === 0 && !locked) for (let k = 0; k < 2; k++) { ctx.fillStyle = k < p.stack ? accent : 'rgba(232,236,247,.25)'; ctx.beginPath(); ctx.arc(sx + 8 + k * 9, sy + s - 8, 3, 0, 7); ctx.fill(); }
     if (cls === 'warrior' && i === 0 && p.empower) { ctx.strokeStyle = accent; ctx.lineWidth = 2; ctx.strokeRect(sx + 1, sy + 1, s - 2, s - 2); }
   }
-  if (boss && boss.alive && bossStarted) {
-    const D = BOSS_DEFS[boss.id], bw2 = 420, bx2 = W / 2 - bw2 / 2, by2 = 48;
-    ctx.fillStyle = 'rgba(20,24,48,.8)'; rr(bx2 - 10, by2 - 22, bw2 + 20, 40, 10);
-    ctx.font = '800 14px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = D.color;
-    ctx.fillText(`${D.name}${boss.phase === 2 ? ' · Chân thân' : ''} · ${D.title}`, W / 2, by2 - 6);
-    ctx.fillStyle = 'rgba(232,236,247,.18)'; rr(bx2, by2, bw2, 10, 5);
-    ctx.fillStyle = boss.phase === 2 ? '#ff3b3b' : D.color; rr(bx2, by2, Math.max(0, bw2 * boss.hp / boss.maxHp), 10, 5);
-    ctx.textAlign = 'left';
-  }
+  drawBossBar();
 }
 
 function drawUlt() {
@@ -1743,7 +1834,7 @@ function drawDialog() {
   const d = dialog, [who, text] = d.lines[d.i], [name, color] = SPEAKERS[who];
   d.t++;
   const shown = text.slice(0, Math.floor(d.t * 1.6));
-  const bx = 40, by = H - 162, bw = W - 80, bh = 128;
+  const bx = 40, by = IS_TOUCH ? 104 : H - 162, bw = W - 80, bh = 128;
   ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = 'rgba(16,19,40,.95)'; rr(bx, by, bw, bh, 14);
   ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 14) : ctx.rect(bx, by, bw, bh); ctx.stroke();
@@ -1815,7 +1906,9 @@ function draw() {
   if (dialog) drawDialog();
 }
 
+let wasTalking = false;
 function loop() {
+  if (!!dialog !== wasTalking) { wasTalking = !!dialog; document.body.classList.toggle('talking', wasTalking); }
   if (state === 'play' && !dialog) update();
   if (world && state !== 'menu') draw();
   requestAnimationFrame(loop);
@@ -1843,6 +1936,8 @@ function startStage(n, c) {
   document.documentElement.style.setProperty('--accent', CLASSES[c].color);
   buildWorld(n);
   hideAll(); state = 'play';
+  document.body.classList.add('playing');
+  if (IS_TOUCH && fsSupported && !isStandalone()) goFullscreen();
   showDialog(STORY[n] && STORY[n].intro);
 }
 function gameOver() {
@@ -1874,6 +1969,7 @@ function togglePause() {
 function toMenu() {
   if (player) { save.xp = player.xp; persist(); }
   state = 'menu'; hideAll(); renderMenu(); document.getElementById('menuPanel').hidden = false;
+  document.body.classList.remove('playing');
 }
 
 // ======================= MENU =======================
@@ -1936,13 +2032,93 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => { const k = KEYMAP[e.code]; if (k) keys[k] = false; });
 addEventListener('blur', () => { for (const k in keys) keys[k] = false; if (state === 'play') togglePause(); });
-document.querySelectorAll('.touch button[data-k]').forEach(b => {
+// ----- Nút cảm ứng: giữ nút bằng pointer capture để trượt ngón tay không bị mất lệnh -----
+document.querySelectorAll('.touch .tb').forEach(b => {
   const k = b.dataset.k;
-  const on = e => { e.preventDefault(); if (state !== 'play') return; if (dialog) { advanceDialog(); return; } press(k); b.classList.add('active'); };
+  const on = e => {
+    e.preventDefault();
+    if (state !== 'play') return;
+    if (dialog) { advanceDialog(); return; }
+    try { b.setPointerCapture(e.pointerId); } catch (_) {}
+    press(k); b.classList.add('active');
+  };
   const off = e => { e.preventDefault(); keys[k] = false; b.classList.remove('active'); };
-  b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off);
-  b.addEventListener('pointerleave', off); b.addEventListener('pointercancel', off);
+  b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off);
+  b.addEventListener('contextmenu', e => e.preventDefault());
 });
+// ----- D-pad: trượt ngón qua lại giữa trái/phải không cần nhấc tay -----
+const dpad = document.getElementById('dpad'), dpL = document.getElementById('dpL'), dpR = document.getElementById('dpR');
+const dpPointers = new Map();
+function dpadSync() {
+  const r = dpad.getBoundingClientRect(); let l = false, rt = false;
+  for (const x of dpPointers.values()) { if (x < r.left + r.width / 2) l = true; else rt = true; }
+  keys.left = l; keys.right = rt;
+  dpL.classList.toggle('on', l); dpR.classList.toggle('on', rt);
+}
+dpad.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  if (state !== 'play') return;
+  if (dialog) { advanceDialog(); return; }
+  try { dpad.setPointerCapture(e.pointerId); } catch (_) {}
+  dpPointers.set(e.pointerId, e.clientX); dpadSync();
+});
+dpad.addEventListener('pointermove', e => { if (dpPointers.has(e.pointerId)) { dpPointers.set(e.pointerId, e.clientX); dpadSync(); } });
+['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => dpad.addEventListener(ev, e => { dpPointers.delete(e.pointerId); dpadSync(); }));
+dpad.addEventListener('contextmenu', e => e.preventDefault());
+
+// ----- Cập nhật nút kỹ năng: icon, khóa, hồi chiêu -----
+const skBtns = [1, 2, 3, 4].map(i => document.querySelector(`.tb.sk[data-k="s${i}"]`));
+const skCache = ['', '', '', ''];
+function updateTouchUI() {
+  const p = player; if (!p) return;
+  const sk = skillsOf(p);
+  for (let i = 0; i < 4; i++) {
+    const b = skBtns[i]; if (!b) continue;
+    const locked = p.level < i + 1, cd = p.cds[i], base = sk[i].cd || CLASSES[cls].skills[i].cd || 1;
+    const ratio = locked ? 0 : Math.min(1, cd / base);
+    const secs = !locked && cd > 60 ? Math.ceil(cd / 60) : '';
+    const pips = cls === 'samurai' && i === 0 ? p.stack : -1;
+    const glowOn = (cls === 'warrior' && i === 0 && p.empower) || (cls === 'samurai' && i === 0 && p.stack >= 2) || (cls === 'king' && p.trans > 0);
+    const key = [locked, sk[i].icon, Math.round(ratio * 40), secs, pips, glowOn].join('|');
+    if (key === skCache[i]) continue;
+    skCache[i] = key;
+    b.classList.toggle('locked', locked);
+    b.classList.toggle('ready', !locked && cd <= 0);
+    b.classList.toggle('glow', !locked && glowOn);
+    b.style.setProperty('--cd', ratio.toFixed(3));
+    b.innerHTML = locked ? `<span class="ic">Cấp ${i + 1}</span>`
+      : `<span class="ic">${sk[i].icon}</span>${secs ? `<span class="cdt">${secs}</span>` : ''}<span class="num">${i + 1}</span>` +
+        (pips >= 0 ? `<span class="pips"><i class="${pips > 0 ? 'on' : ''}"></i><i class="${pips > 1 ? 'on' : ''}"></i></span>` : '');
+  }
+}
+
+// ----- Toàn màn hình & cài đặt như app -----
+const isStandalone = () => (window.matchMedia && (matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches)) || navigator.standalone === true;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const fsSupported = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
+function goFullscreen() {
+  const el = document.documentElement;
+  if (document.fullscreenElement || document.webkitFullscreenElement) return;
+  try {
+    const r = (el.requestFullscreen || el.webkitRequestFullscreen).call(el, { navigationUI: 'hide' });
+    const lock = () => { try { screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape').catch(() => {}); } catch (_) {} };
+    if (r && r.then) r.then(lock).catch(() => {}); else lock();
+  } catch (_) {}
+}
+document.querySelectorAll('.fsBtn').forEach(b => { b.hidden = !(IS_TOUCH && fsSupported && !isStandalone()); b.addEventListener('click', goFullscreen); });
+let deferredInstall = null;
+const installBtn = document.getElementById('installBtn');
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; if (!isStandalone()) installBtn.hidden = false; });
+if (isIOS && !isStandalone()) installBtn.hidden = false;
+installBtn.addEventListener('click', async () => {
+  if (deferredInstall) { deferredInstall.prompt(); try { await deferredInstall.userChoice; } catch (_) {} deferredInstall = null; installBtn.hidden = true; }
+  else document.getElementById('iosHint').hidden = false;
+});
+addEventListener('appinstalled', () => { installBtn.hidden = true; });
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost') && !/claude\.ai|claudeusercontent/.test(location.hostname)) {
+  addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+
 cv.addEventListener('pointerdown', ev => {
   if (state !== 'play') return;
   if (dialog) { advanceDialog(); return; }
