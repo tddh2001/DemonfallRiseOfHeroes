@@ -332,6 +332,14 @@
     .foot-info { font-size: 11px; } .foot-info b { font-size: 14px; }
   }
 
+  .gift-form { display: flex; gap: 8px; width: min(460px, 100%); margin-top: 6px; }
+  .gift-form input { flex: 1; min-width: 0; font: 600 17px 'Be Vietnam Pro', sans-serif; letter-spacing: .06em; color: #f0e6d2; padding: 10px 14px;
+    background: #010a13; border: 1px solid #785a28; border-radius: 2px; outline: none; }
+  .gift-form input:focus { border-color: #c8aa6e; box-shadow: 0 0 0 1px #c8aa6e, 0 0 14px rgba(200,170,110,.3); }
+  .gift-msg { min-height: 48px; margin-top: 14px; font-size: 15px; line-height: 1.5; max-width: 460px; }
+  .gift-msg.ok { color: #7fdc9a; } .gift-msg.err { color: #ff8a8a; }
+  .gift-msg b { color: #f0e6d2; }
+
   /* ---------- Điều khiển cảm ứng ---------- */
   .touch { display: none; position: fixed; inset: 0; z-index: 5; pointer-events: none; }
   .touch * { -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
@@ -430,6 +438,7 @@
         <button class="nav-btn" id="shopBtn"><i>🛒</i><span>Cửa hàng</span></button>
         <button class="nav-btn hot" id="summonBtn"><i>✨</i><span>Chiêu mộ</span><b class="dot" id="summonDot"></b></button>
         <button class="nav-btn" id="achBtn"><i>🏆</i><span>Thành tựu</span><b class="dot" id="achDot"></b></button>
+        <button class="nav-btn" id="giftBtn"><i>🎁</i><span>Quà tặng</span></button>
       </nav>
     </header>
     <div class="lb-body">
@@ -502,6 +511,16 @@
     <h3>Đội hình · Nâng bậc tướng</h3>
     <div class="roster" id="roster"></div>
     <div class="btns"><button class="btn ghost" id="summonClose">Xong</button></div>
+  </div>
+  <div class="overlay" id="giftPanel" hidden>
+    <h1>Mã quà tặng</h1>
+    <p>Nhập mã quà tặng để nhận đom đóm, vé chiêu mộ và mảnh tướng. Mỗi mã thường chỉ dùng được một lần.</p>
+    <form class="gift-form" id="giftForm" autocomplete="off">
+      <input id="giftInput" type="text" maxlength="40" placeholder="Nhập mã tại đây" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Mã quà tặng">
+      <button class="btn" type="submit">Đổi mã</button>
+    </form>
+    <div class="gift-msg" id="giftMsg" role="status"></div>
+    <div class="btns"><button class="btn ghost" id="giftClose">Đóng</button></div>
   </div>
   <div class="overlay" id="achPanel" hidden>
     <h1>Thành tựu</h1>
@@ -798,7 +817,7 @@ const BOSS_DEFS = {
 // ======================= LƯU TIẾN TRÌNH =======================
 const SAVE_KEY = 'bmvq-save-v1';
 const DEFAULT_SAVE = { cleared: 0, unlocked: ['warrior'], frags: [false, false, false, false], orb: false, xp: 0, cls: 'warrior',
-  coins: 0, stars: {}, upg: {}, sk: {}, ach: {}, stats: { kills: 0, parries: 0, minis: {}, heroes: {} }, tutDone: false,
+  coins: 0, stars: {}, upg: {}, sk: {}, ach: {}, stats: { kills: 0, parries: 0, minis: {}, heroes: {} }, tutDone: false, giftUsed: {},
   gacha: { tickets: 3, pity: 0, legPity: 0, pulls: 0, shards: {}, rank: {} } };
 const clone = o => JSON.parse(JSON.stringify(o));
 function loadSave() {
@@ -2938,7 +2957,7 @@ function advanceDialog() {
     if (f) f();
   }
 }
-function hideAll() { ['menuPanel', 'pausePanel', 'endPanel', 'shopPanel', 'achPanel', 'summonPanel'].forEach(id => document.getElementById(id).hidden = true); }
+function hideAll() { ['menuPanel', 'pausePanel', 'endPanel', 'shopPanel', 'achPanel', 'summonPanel', 'giftPanel'].forEach(id => document.getElementById(id).hidden = true); }
 function startStage(n, c) {
   stageNum = n; cls = c; save.cls = c; persist();
   document.documentElement.style.setProperty('--accent', CLASSES[c].color);
@@ -3306,6 +3325,43 @@ document.getElementById('summonBtn').addEventListener('click', () => { hideAll()
 document.getElementById('pull1').addEventListener('click', () => doPull(1));
 document.getElementById('pull10').addEventListener('click', () => doPull(10));
 document.getElementById('summonClose').addEventListener('click', toMenu);
+
+// ======================= MÃ QUÀ TẶNG =======================
+// Mã được lưu dưới dạng băm để không đọc thẳng được trong mã nguồn.
+// Lưu ý: đây chỉ là che giấu, không phải bảo mật thật (xem giải thích về máy chủ).
+function codeHash(str, seed = 7) {
+  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0; i < str.length; i++) { const ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+}
+const GIFT_CODES = {
+  '10f6yfbfgyi': { coins: 99999, tickets: 99999, reusable: true },   // mã thử nghiệm của nhà phát triển
+  'vvfs1tca12':  { coins: 300, tickets: 5 },                          // DEMONFALL
+  '1uduyxaqyn2': { tickets: 10 },                                     // TANTHU2026
+  'lsqwxcp8st':  { coins: 500 },                                      // RISEOFHEROES
+  '26j6kzmkah':  { shardsAll: 10 },                                   // TUONGMOI
+};
+function redeemCode(raw) {
+  const msg = $('giftMsg'), code = raw.trim().toLowerCase().replace(/\s+/g, '');
+  const show = (html, ok) => { msg.className = 'gift-msg ' + (ok ? 'ok' : 'err'); msg.innerHTML = html; };
+  if (!code) return show('Bạn chưa nhập mã.', false);
+  const h = codeHash(code), g = GIFT_CODES[h];
+  if (!g) return show('Mã không hợp lệ. Hãy kiểm tra lại chính tả.', false);
+  if (!g.reusable && save.giftUsed[h]) return show('Mã này đã được sử dụng rồi.', false);
+  const got = [];
+  if (g.coins) { save.coins += g.coins; got.push(`<b>+${g.coins.toLocaleString('vi-VN')} ✦</b> đom đóm`); }
+  if (g.tickets) { save.gacha.tickets += g.tickets; got.push(`<b>+${g.tickets.toLocaleString('vi-VN')} 🎟</b> vé chiêu mộ`); }
+  if (g.shardsAll) { CLASS_ORDER.forEach(c => addShards(c, g.shardsAll)); got.push(`<b>+${g.shardsAll} 🧩</b> mảnh cho mọi tướng`); }
+  if (!g.reusable) save.giftUsed[h] = true;
+  persist();
+  show(`Đổi mã thành công! Bạn nhận được ${got.join(', ')}.`, true);
+  $('giftInput').value = '';
+}
+$('giftBtn').addEventListener('click', () => { hideAll(); $('giftMsg').textContent = ''; $('giftMsg').className = 'gift-msg'; $('giftPanel').hidden = false; setTimeout(() => $('giftInput').focus(), 50); });
+$('giftForm').addEventListener('submit', e => { e.preventDefault(); redeemCode($('giftInput').value); });
+$('giftClose').addEventListener('click', toMenu);
 
 // ======================= THÀNH TỰU =======================
 function renderAch() {
