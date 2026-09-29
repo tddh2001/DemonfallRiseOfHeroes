@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Demonfall: Rise of Heroes</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Oswald:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --night: #1d2340; --lantern: #ffd166; --ember: #ef6f6c; --mist: #e8ecf7; --gold: #ffd84d;
@@ -29,7 +29,7 @@
     gap: 8px; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none;
   }
   .wrap { position: relative; width: min(960px, 100vw); aspect-ratio: 16 / 9; max-height: 74vh; }
-  canvas { width: 100%; height: 100%; display: block; border-radius: 14px; background: #2a2f55; }
+  #game { width: 100%; height: 100%; display: block; border-radius: 14px; background: #2a2f55; }
   .hud {
     position: absolute; top: 8px; left: 12px; right: 12px;
     display: flex; justify-content: space-between; align-items: center; gap: 8px;
@@ -45,14 +45,16 @@
   }
   .overlay {
     position: fixed; inset: 0; z-index: 10; overflow-y: auto;
-    background: rgba(16,19,40,.95);
+    background: radial-gradient(ellipse at 50% 0%, rgba(20,48,80,.55), transparent 60%), linear-gradient(180deg, #06101d, #010a13);
     display: flex; flex-direction: column; align-items: center; justify-content: safe center;
     padding: calc(18px + env(safe-area-inset-top, 0px)) 14px calc(18px + env(safe-area-inset-bottom, 0px)); text-align: center;
   }
   .overlay[hidden] { display: none; }
+  .overlay > * { flex-shrink: 0; }
   .overlay h1 .sub { display: block; font-size: .42em; letter-spacing: .3em; text-transform: uppercase; color: var(--mist); opacity: .8; margin-top: 4px; }
-  .overlay h1 { margin: 0; font-size: clamp(30px, 6vw, 54px); font-weight: 800; color: var(--gold); line-height: 1.05; }
-  .overlay h3 { margin: 16px 0 8px; font-size: 18px; opacity: .85; }
+  .overlay h1 { margin: 0; font-family: 'Oswald', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; font-size: clamp(30px, 6vw, 52px); line-height: 1.05;
+    background: linear-gradient(180deg, #f0e6d2, #c8aa6e 60%, #785a28); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .overlay h3 { margin: 18px 0 10px; font-family: 'Oswald', sans-serif; font-weight: 500; text-transform: uppercase; letter-spacing: .14em; font-size: 16px; color: #c8aa6e; }
   .overlay p { margin: 6px 0 12px; max-width: 56ch; font-size: clamp(14px, 2vw, 17px); opacity: .9; line-height: 1.45; }
   .progress { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; font-size: 15px; opacity: .9; }
   .progress b { color: var(--gold); }
@@ -83,8 +85,11 @@
   .card .lock { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center; font-weight: 700; font-size: 14px; }
   .card .lock span { font-size: 26px; }
   .btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 14px; }
-  .btn { font: inherit; font-weight: 800; font-size: 17px; border: 0; cursor: pointer; padding: 8px 26px; border-radius: 999px; background: var(--gold); color: var(--night); }
-  .btn.ghost { background: transparent; color: var(--mist); border: 2px solid rgba(232,236,247,.4); font-weight: 700; }
+  .btn { font-family: 'Oswald', sans-serif; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; font-size: 16px; cursor: pointer; padding: 9px 28px; border-radius: 2px;
+    color: #1e2328; border: 1px solid #f0e6d2; background: linear-gradient(180deg, #f0e6d2, #c8aa6e 55%, #a0823f); box-shadow: 0 0 0 1px #785a28, 0 4px 14px rgba(200,170,110,.25); }
+  .btn:hover:not(:disabled) { filter: brightness(1.08); }
+  .btn.ghost { color: #cdbe91; background: linear-gradient(180deg, #1e2328, #0f1419); border: 1px solid #785a28; box-shadow: none; }
+  .btn.ghost:hover { color: #f0e6d2; border-color: #c8aa6e; }
   .btn.small { font-size: 13px; padding: 4px 14px; }
   .btn:focus-visible, .stage:focus-visible, .card:focus-visible { outline: 3px solid var(--mist); outline-offset: 2px; }
   .help { font-size: 13px; opacity: .65; margin: 0; text-align: center; padding: 0 12px; }
@@ -94,7 +99,7 @@
 
   .wallet { font-size: 20px; font-weight: 800; color: var(--lantern); }
   .shopList { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; width: min(980px, 100%); text-align: left; }
-  .item { background: rgba(232,236,247,.06); border: 2px solid rgba(232,236,247,.14); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .item { background: linear-gradient(180deg, rgba(30,40,60,.7), rgba(10,20,40,.8)); border: 1px solid #463714; border-radius: 4px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
   .item h4 { margin: 0; font-size: 16px; color: var(--c, var(--gold)); display: flex; justify-content: space-between; gap: 8px; }
   .item .pips { letter-spacing: 2px; color: var(--c, var(--gold)); font-size: 13px; }
   .item .d { font-size: 13px; opacity: .85; line-height: 1.35; }
@@ -105,7 +110,7 @@
   .tab { font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; padding: 4px 14px; border-radius: 999px; border: 2px solid rgba(232,236,247,.25); background: transparent; color: var(--mist); }
   .tab.sel { background: var(--c); color: var(--night); border-color: var(--c); }
   .achList { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; width: min(980px, 100%); text-align: left; }
-  .ach { display: flex; gap: 10px; align-items: center; background: rgba(232,236,247,.05); border: 2px solid rgba(232,236,247,.1); border-radius: 12px; padding: 8px 10px; }
+  .ach { display: flex; gap: 10px; align-items: center; background: linear-gradient(180deg, rgba(30,40,60,.6), rgba(10,20,40,.8)); border: 1px solid #3c3c41; border-radius: 4px; padding: 8px 10px; }
   .ach .ico { font-size: 24px; width: 32px; text-align: center; filter: grayscale(1); opacity: .4; }
   .ach.got { border-color: rgba(255,216,77,.5); background: rgba(255,216,77,.08); }
   .ach.got .ico { filter: none; opacity: 1; }
@@ -131,12 +136,12 @@
 
   .rates { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; font-size: 13px; margin-bottom: 10px; max-width: 760px; }
   .rates span { padding: 2px 10px; border-radius: 999px; background: rgba(232,236,247,.06); }
-  .r-leg { color: #ffd84d; } .r-rare { color: #c9a8ff; } .r-com { color: #9fc4e8; } .r-item { color: rgba(232,236,247,.7); }
+  .r-leg { color: #ffcf5a; } .r-epic { color: #d19bff; } .r-rare { color: #6fb6ff; } .r-com { color: #9fc4e8; } .r-item { color: rgba(232,236,247,.7); }
   .pity { font-size: 13px; opacity: .75; margin-top: 6px; }
   .pullRes { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 14px 0 4px; width: min(980px, 100%); min-height: 10px; }
   .pull {
     width: 92px; border-radius: 12px; padding: 6px 4px 8px; text-align: center; position: relative;
-    background: rgba(232,236,247,.06); border: 2px solid rgba(232,236,247,.2);
+    background: linear-gradient(180deg, #16223a, #0a1428); border: 2px solid #3c3c41;
     opacity: 0; transform: translateY(10px) scale(.9); animation: reveal .35s ease-out forwards;
   }
   .pull canvas, .hero canvas { width: 72px; height: 72px; display: block; margin: 0 auto; }
@@ -146,11 +151,12 @@
   .pull small { display: block; font-size: 11px; opacity: .8; line-height: 1.2; }
   .pull .badge { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 800; padding: 1px 8px; border-radius: 999px; background: #ef6f6c; color: #fff; white-space: nowrap; }
   .pull.leg { border-color: #ffd84d; background: rgba(255,216,77,.14); box-shadow: 0 0 18px rgba(255,216,77,.45); }
-  .pull.rare { border-color: #b69cff; background: rgba(182,156,255,.12); box-shadow: 0 0 12px rgba(182,156,255,.35); }
+  .pull.rare { border-color: #2f8fff; background: rgba(47,143,255,.12); box-shadow: 0 0 10px rgba(47,143,255,.35); }
+  .pull.epic { border-color: #a855f7; background: rgba(168,85,247,.14); box-shadow: 0 0 14px rgba(168,85,247,.45); }
   .pull.com { border-color: #8fb8e0; }
   @keyframes reveal { to { opacity: 1; transform: none; } }
   .roster { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; width: min(980px, 100%); text-align: center; }
-  .hero { background: rgba(232,236,247,.06); border: 2px solid rgba(232,236,247,.14); border-radius: 14px; padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 3px; align-items: center; }
+  .hero { background: linear-gradient(180deg, rgba(30,40,60,.7), rgba(10,20,40,.85)); border: 1px solid #463714; border-radius: 4px; padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 3px; align-items: center; }
   .hero.locked { opacity: .5; }
   .hero h4 { margin: 0; font-size: 16px; color: var(--c); }
   .hero .rk { color: var(--gold); letter-spacing: 2px; font-size: 14px; }
@@ -159,6 +165,172 @@
   .hero small { font-size: 12px; opacity: .85; line-height: 1.3; }
   .hero button:disabled { opacity: .4; cursor: not-allowed; }
   .card .rank { color: var(--gold); font-size: 13px; letter-spacing: 1px; margin-left: 6px; }
+
+  /* ================= SẢNH CHỌN TƯỚNG (phong cách Hextech) ================= */
+  :root { --hx-gold: #c8aa6e; --hx-gold-l: #f0e6d2; --hx-gold-d: #785a28; --hx-teal: #0ac8b9; --hx-navy: #010a13; --hx-blue: #0a1428; }
+  .lobby[hidden] { display: none !important; }
+  .lobby { display: grid !important; grid-template-rows: auto minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr); align-items: stretch; justify-content: stretch; align-content: stretch; padding: 0 !important; text-align: left; overflow: hidden; font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+    --hc: #c8aa6e;
+    background:
+      radial-gradient(ellipse 60% 70% at 50% 55%, color-mix(in srgb, var(--hc) 22%, transparent), transparent 70%),
+      repeating-linear-gradient(60deg, rgba(200,170,110,.035) 0 1px, transparent 1px 38px),
+      repeating-linear-gradient(-60deg, rgba(200,170,110,.035) 0 1px, transparent 1px 38px),
+      linear-gradient(180deg, #071526 0%, #010a13 100%); }
+  .lb-top { display: flex; align-items: center; gap: 14px; padding: calc(10px + env(safe-area-inset-top, 0px)) 18px 10px; border-bottom: 1px solid var(--hx-gold-d);
+    background: linear-gradient(180deg, rgba(1,10,19,.95), rgba(1,10,19,.6)); }
+  .lb-logo { display: flex; flex-direction: column; line-height: 1; }
+  .lb-logo span { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: .12em;
+    background: linear-gradient(180deg, #f0e6d2, #c8aa6e 60%, #785a28); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lb-logo small { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: .42em; text-transform: uppercase; color: #a09b8c; margin-top: 3px; }
+  .lb-res { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+  .chip { display: flex; align-items: center; gap: 6px; padding: 4px 12px 4px 8px; font-size: 13px; font-weight: 600; color: var(--hx-gold-l);
+    background: linear-gradient(180deg, #1e2328, #0a0e13); border: 1px solid #463714; border-radius: 2px; white-space: nowrap; }
+  .chip i { font-style: normal; color: var(--hx-gold); }
+  .lb-nav { display: flex; gap: 6px; }
+  .nav-btn { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 70px; padding: 6px 8px; cursor: pointer;
+    font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #cdbe91;
+    background: linear-gradient(180deg, #1e2328, #0a0e13); border: 1px solid #463714; border-radius: 2px; }
+  .nav-btn i { font-style: normal; font-size: 18px; }
+  .nav-btn:hover, .nav-btn:focus-visible { border-color: var(--hx-gold); color: var(--hx-gold-l); outline: none; }
+  .nav-btn.hot { border-color: var(--hx-teal); color: #cdfaf7; box-shadow: inset 0 0 12px rgba(10,200,185,.25); }
+  .nav-btn .dot { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; font: 700 11px/18px 'Be Vietnam Pro', sans-serif;
+    background: #e84057; color: #fff; text-align: center; }
+  .nav-btn .dot:empty { display: none; }
+
+  .lb-body { display: grid; grid-template-columns: minmax(220px, 270px) 1fr minmax(260px, 340px); gap: 14px; padding: 14px 18px; min-height: 0; }
+  .lb-panel { display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: linear-gradient(180deg, rgba(10,20,40,.78), rgba(1,10,19,.88));
+    border: 1px solid #463714; box-shadow: inset 0 0 0 1px rgba(1,10,19,.9), inset 0 1px 0 rgba(200,170,110,.2); }
+  .lb-h { font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 14px; letter-spacing: .18em; text-transform: uppercase; color: var(--hx-gold);
+    padding: 10px 14px 8px; border-bottom: 1px solid rgba(120,90,40,.5); display: flex; justify-content: space-between; align-items: center; }
+  .lb-h span { font-family: 'Be Vietnam Pro', sans-serif; letter-spacing: 0; font-size: 12px; color: #a09b8c; }
+
+  .stage-list { overflow-y: auto; flex: 1; padding: 6px 8px; scrollbar-width: thin; scrollbar-color: #785a28 transparent; }
+  .chap { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #5b5a56; margin: 10px 6px 4px; }
+  .stg { width: 100%; display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 8px; padding: 6px 8px; margin-bottom: 3px; cursor: pointer; text-align: left;
+    font: inherit; color: #a09b8c; background: transparent; border: 1px solid transparent; border-left: 2px solid transparent; }
+  .stg .num { font-family: 'Oswald', sans-serif; font-size: 18px; color: #5b5a56; text-align: center; }
+  .stg .nm { font-size: 13px; font-weight: 600; color: #cdbe91; line-height: 1.2; }
+  .stg .nm small { display: block; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #e84057; margin-top: 2px; }
+  .stg .nm small.rescue { color: #0ac8b9; } .stg .nm small.orb { color: #f0e6d2; } .stg .nm small.tut { color: #7fdc9a; }
+  .stg .st { font-size: 11px; color: var(--hx-gold); letter-spacing: 1px; }
+  .stg .st .off { color: #3c3c41; }
+  .stg:hover:not(:disabled) { background: rgba(200,170,110,.06); border-color: rgba(120,90,40,.5); }
+  .stg.sel { background: linear-gradient(90deg, rgba(200,170,110,.18), rgba(200,170,110,.02)); border-color: var(--hx-gold-d); border-left-color: var(--hx-gold); }
+  .stg.sel .num { color: var(--hx-gold); }
+  .stg:disabled { opacity: .35; cursor: not-allowed; }
+  .lb-tools { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border-top: 1px solid rgba(120,90,40,.4); }
+  .mini-btn { font: 600 11px 'Be Vietnam Pro', sans-serif; color: #a09b8c; background: #0a0e13; border: 1px solid #3c3c41; padding: 4px 8px; cursor: pointer; border-radius: 2px; }
+  .mini-btn:hover { color: var(--hx-gold-l); border-color: var(--hx-gold-d); }
+  .mini-btn.danger:hover { color: #ff8a8a; border-color: #7a2a2a; }
+  #iosHint { font-size: 12px; color: #a09b8c; padding: 0 10px 10px; }
+
+  .lb-show { position: relative; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+  #showCanvas { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); height: min(88%, 520px); width: auto; aspect-ratio: 1; pointer-events: none; }
+  .show-head { position: relative; text-align: center; padding-top: 4px; }
+  .show-tags { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+  .tag2 { font: 700 11px 'Be Vietnam Pro', sans-serif; letter-spacing: .06em; text-transform: uppercase; padding: 2px 10px; border: 1px solid; border-radius: 2px; background: rgba(1,10,19,.7); }
+  .tier-C { color: #b8c0cc; border-color: #5b6470; } .tier-B { color: #6fb6ff; border-color: #2f6aa8; }
+  .tier-A { color: #d19bff; border-color: #7a3fb0; } .tier-S { color: #ffcf5a; border-color: #b8860b; box-shadow: 0 0 10px rgba(255,190,60,.35); }
+  .tag2.role { color: #a09b8c; border-color: #3c3c41; }
+  .tag2.rank { color: var(--hx-gold); border-color: var(--hx-gold-d); letter-spacing: .15em; }
+  #showName { margin: 6px 0 0; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: clamp(30px, 5vw, 54px); letter-spacing: .06em; text-transform: uppercase; line-height: 1;
+    color: var(--hx-gold-l); text-shadow: 0 2px 20px color-mix(in srgb, var(--hc) 60%, transparent); }
+  .show-title { font-size: 14px; color: #a09b8c; letter-spacing: .1em; text-transform: uppercase; margin-top: 4px; }
+  .show-side { position: absolute; right: 8px; top: 96px; width: 160px; z-index: 2; }
+  .show-stats { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; background: rgba(1,10,19,.65); border: 1px solid #463714; }
+  .stat { font-size: 11px; color: #a09b8c; text-transform: uppercase; letter-spacing: .08em; }
+  .stat .seg { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-top: 3px; }
+  .stat .seg i { height: 5px; background: #1e2328; transform: skewX(-20deg); }
+  .stat .seg i.on { background: linear-gradient(90deg, var(--hx-teal), #0397ab); box-shadow: 0 0 6px rgba(10,200,185,.5); }
+  .show-bottom { position: relative; grid-row: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-bottom: 4px; }
+  .skillbar { display: flex; gap: 10px; justify-content: center; }
+  .sk-ico { position: relative; width: 56px; height: 56px; cursor: pointer; padding: 0; border: 0; background: linear-gradient(135deg, #c8aa6e, #463714);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+  .sk-ico span { position: absolute; inset: 2px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--hc);
+    background: radial-gradient(circle at 50% 35%, #1e2d44, #06101d); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+  .sk-ico em { position: absolute; bottom: 7px; right: 50%; transform: translateX(50%); font: 700 9px 'Oswald', sans-serif; color: #a09b8c; letter-spacing: .1em; font-style: normal; }
+  .sk-ico.passive { width: 46px; height: 46px; align-self: center; }
+  .sk-ico.sel { background: linear-gradient(135deg, #0ac8b9, #f0e6d2, #0ac8b9); filter: drop-shadow(0 0 8px rgba(10,200,185,.7)); }
+  .skilldesc { width: min(560px, 100%); min-height: 76px; padding: 10px 14px; background: rgba(1,10,19,.8); border: 1px solid #463714; border-top: 2px solid var(--hx-gold-d); }
+  .skilldesc h4 { margin: 0 0 4px; font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 16px; letter-spacing: .06em; color: var(--hx-gold-l); display: flex; justify-content: space-between; gap: 10px; }
+  .skilldesc h4 small { font-family: 'Be Vietnam Pro', sans-serif; font-size: 11px; color: var(--hx-teal); letter-spacing: 0; font-weight: 600; }
+  .skilldesc p { margin: 0; font-size: 13px; color: #cdbe91; line-height: 1.45; opacity: 1; max-width: none; text-align: left; }
+  .skilldesc p.t3 { color: #a09b8c; font-size: 12px; margin-top: 3px; }
+
+  .roles { display: flex; gap: 4px; flex-wrap: wrap; padding: 8px 10px 4px; }
+  .role-tab { font: 600 11px 'Be Vietnam Pro', sans-serif; color: #a09b8c; background: transparent; border: 1px solid #3c3c41; padding: 3px 9px; cursor: pointer; border-radius: 2px; }
+  .role-tab.sel { color: #010a13; background: var(--hx-gold); border-color: var(--hx-gold); }
+  .champ-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(74px, 1fr)); gap: 8px; padding: 8px 10px 12px; overflow-y: auto; align-content: start; flex: 1;
+    scrollbar-width: thin; scrollbar-color: #785a28 transparent; }
+  .champ { position: relative; padding: 0; cursor: pointer; background: #06101d; border: 2px solid #3c3c41; aspect-ratio: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .champ canvas { width: 100%; height: 100%; display: block; }
+  .champ .cn { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 2px 3px; font: 600 10px 'Be Vietnam Pro', sans-serif; color: #f0e6d2; text-align: center;
+    background: linear-gradient(0deg, rgba(1,10,19,.95), transparent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .champ .rb { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; }
+  .champ .rb.C { background: #5b6470; } .champ .rb.B { background: #2f8fff; } .champ .rb.A { background: #a855f7; } .champ .rb.S { background: linear-gradient(90deg, #b8860b, #ffd76a, #b8860b); }
+  .champ .lk { position: absolute; top: 4px; right: 4px; font-size: 12px; }
+  .champ.locked canvas { filter: grayscale(1) brightness(.45); }
+  .champ:hover { border-color: #785a28; }
+  .champ.sel { border-color: var(--hx-gold); box-shadow: 0 0 0 1px #010a13, 0 0 14px rgba(200,170,110,.55); }
+  .champ.sel::after { content: ""; position: absolute; top: -1px; left: 50%; width: 10px; height: 10px; background: var(--hx-gold); transform: translate(-50%, -50%) rotate(45deg); }
+
+  .lb-foot { display: flex; align-items: center; justify-content: center; gap: 18px; padding: 10px 18px calc(12px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--hx-gold-d); background: linear-gradient(0deg, rgba(1,10,19,.98), rgba(1,10,19,.7)); }
+  .foot-info { font-size: 13px; color: #a09b8c; text-align: right; line-height: 1.35; }
+  .foot-info b { display: block; font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 17px; letter-spacing: .05em; color: var(--hx-gold-l); }
+  .foot-info .st { color: var(--hx-gold); letter-spacing: 2px; }
+  .lockin { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; min-width: 240px; padding: 12px 34px;
+    color: #1e2328; border: 0; background: linear-gradient(180deg, #f0e6d2, #c8aa6e 50%, #8a6a2f);
+    clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%); filter: drop-shadow(0 0 10px rgba(200,170,110,.35)); }
+  .lockin:hover:not(:disabled) { filter: brightness(1.1) drop-shadow(0 0 16px rgba(240,230,210,.5)); }
+  .lockin:disabled { background: linear-gradient(180deg, #3c3c41, #1e2328); color: #5b5a56; cursor: not-allowed; filter: none; }
+  .lockin.buy { background: linear-gradient(180deg, #8ff5ec, #0ac8b9 50%, #03707a); }
+
+  /* ----- Màn hình nhỏ: xếp dọc, cuộn được ----- */
+  @media (max-width: 1000px), (max-height: 560px) {
+    .lobby { display: block !important; overflow-y: auto; }
+    .lb-body, .lb-panel, .lb-show { min-height: auto; }
+    .lb-body { align-items: start; }
+    .lb-top { padding: calc(6px + env(safe-area-inset-top, 0px)) 12px 6px; gap: 10px; }
+    .lb-logo span { font-size: 20px; } .lb-logo small { font-size: 9px; letter-spacing: .3em; }
+    .chip { font-size: 12px; padding: 3px 8px 3px 6px; }
+    .nav-btn { min-width: 56px; padding: 4px 6px; font-size: 10px; } .nav-btn i { font-size: 15px; }
+    .lb-body { grid-template-columns: 1fr; padding: 10px 12px; gap: 10px; }
+    .lb-show { display: flex; flex-direction: column; align-items: stretch; min-height: 0; overflow: visible; }
+    .show-head { order: 0; }
+    #showCanvas { order: 1; position: relative; left: auto; top: auto; transform: none; display: block; height: 290px; width: 290px; margin: -14px auto -26px; }
+    .show-side { order: 2; position: relative; top: auto; right: auto; width: auto; margin: 0 0 8px; }
+    .show-stats { flex-direction: row; flex-wrap: wrap; gap: 6px 12px; } .stat { flex: 1 1 40%; }
+    .show-bottom { order: 3; }
+    .lb-panel { overflow: visible; }
+    .champ-grid, .stage-list { flex: none; overflow: visible; max-height: none; }
+    .champ-grid { grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); }
+    .lb-champs { order: 2; } .lb-stages { order: 3; }
+    .lb-foot { position: sticky; bottom: 0; z-index: 3; padding-top: 8px; }
+  }
+  /* Điện thoại xoay ngang: trưng bày bên trái, danh sách tướng bên phải */
+  @media (max-height: 560px) and (orientation: landscape) {
+    .lb-body { grid-template-columns: minmax(0, 1fr) minmax(250px, 38%); align-items: start; }
+    .lb-show { grid-column: 1; grid-row: 1 / span 2; }
+    .lb-champs { grid-column: 2; grid-row: 1; }
+    .lb-stages { grid-column: 2; grid-row: 2; }
+    .show-side { display: none; }
+    #showCanvas { height: 230px; width: 230px; margin: -18px auto -24px; }
+    #showName { font-size: 30px; }
+    .show-title { font-size: 11px; }
+    .skilldesc { min-height: 0; padding: 8px 10px; } .skilldesc p { font-size: 12px; }
+    .sk-ico { width: 46px; height: 46px; } .sk-ico.passive { width: 38px; height: 38px; }
+    .lockin { font-size: 17px; min-width: 200px; padding: 10px 26px; }
+  }
+  @media (max-width: 560px) {
+    .lb-top { flex-wrap: wrap; }
+    .lb-res { order: 3; width: 100%; margin-left: 0; }
+    .lb-nav { margin-left: auto; }
+    .sk-ico { width: 48px; height: 48px; } .sk-ico.passive { width: 40px; height: 40px; }
+    .skillbar { gap: 6px; }
+    .lockin { min-width: 0; flex: 1; font-size: 17px; padding: 12px 18px; }
+    .foot-info { font-size: 11px; } .foot-info b { font-size: 14px; }
+  }
 
   /* ---------- Điều khiển cảm ứng ---------- */
   .touch { display: none; position: fixed; inset: 0; z-index: 5; pointer-events: none; }
@@ -250,28 +422,52 @@
     </div>
   </div>
 
-  <div class="overlay" id="menuPanel">
-    <h1>Demonfall<small class="sub">Rise of Heroes</small></h1>
-    <p>Quỷ Vương đã phong ấn Vua Thái Dương. Giải cứu đồng đội, đánh bại Tứ Đại Thiên Vương, giải phong ấn nhà vua và tiến vào lâu đài quỷ.</p>
-    <div class="progress" id="progress"></div>
-    <h3>Chọn màn</h3>
-    <div class="stages" id="stageGrid"></div>
-    <h3>Chọn nhân vật</h3>
-    <div class="cards" id="cards"></div>
-    <div class="btns">
-      <button class="btn" id="playBtn">Bắt đầu</button>
+  <div class="overlay lobby" id="menuPanel">
+    <header class="lb-top">
+      <div class="lb-logo"><span>DEMONFALL</span><small>Rise of Heroes</small></div>
+      <div class="lb-res" id="lbRes"></div>
+      <nav class="lb-nav">
+        <button class="nav-btn" id="shopBtn"><i>🛒</i><span>Cửa hàng</span></button>
+        <button class="nav-btn hot" id="summonBtn"><i>✨</i><span>Chiêu mộ</span><b class="dot" id="summonDot"></b></button>
+        <button class="nav-btn" id="achBtn"><i>🏆</i><span>Thành tựu</span><b class="dot" id="achDot"></b></button>
+      </nav>
+    </header>
+    <div class="lb-body">
+      <aside class="lb-panel lb-stages">
+        <div class="lb-h">Chọn màn</div>
+        <div class="stage-list" id="stageGrid"></div>
+        <div class="lb-tools">
+          <button class="mini-btn" id="installBtn" hidden>📲 Cài app</button>
+          <button class="mini-btn fsBtn" hidden>⛶ Toàn màn hình</button>
+          <button class="mini-btn danger" id="resetBtn">Xóa tiến trình</button>
+        </div>
+        <div id="iosHint" hidden>Trên iPhone/iPad: bấm Chia sẻ ⬆ trong Safari rồi chọn “Thêm vào Màn hình chính”.</div>
+      </aside>
+      <section class="lb-show" id="lbShow">
+        <canvas id="showCanvas" width="640" height="640" aria-hidden="true"></canvas>
+        <div class="show-head">
+          <div class="show-tags" id="showTags"></div>
+          <h2 id="showName"></h2>
+          <div class="show-title" id="showTitle"></div>
+        </div>
+        <div class="show-side">
+          <div class="show-stats" id="showStats"></div>
+        </div>
+        <div class="show-bottom">
+          <div class="skillbar" id="skillBar"></div>
+          <div class="skilldesc" id="skillDesc"></div>
+        </div>
+      </section>
+      <aside class="lb-panel lb-champs">
+        <div class="lb-h">Tướng <span id="champCount"></span></div>
+        <div class="roles" id="roleTabs"></div>
+        <div class="champ-grid" id="cards"></div>
+      </aside>
     </div>
-    <div class="btns">
-      <button class="btn ghost" id="shopBtn">🛒 Cửa hàng</button>
-      <button class="btn ghost" id="achBtn">🏆 Thành tựu</button>
-      <button class="btn" id="summonBtn">✨ Chiêu mộ</button>
-      <button class="btn ghost small" id="resetBtn">Xóa tiến trình</button>
-    </div>
-    <div class="menuTools">
-      <button class="btn ghost small" id="installBtn" hidden>📲 Cài app lên màn hình chính</button>
-      <button class="btn ghost small fsBtn" hidden>⛶ Toàn màn hình</button>
-    </div>
-    <div id="iosHint" hidden>Trên iPhone/iPad: bấm nút Chia sẻ ⬆ ở Safari rồi chọn “Thêm vào Màn hình chính”.</div>
+    <footer class="lb-foot">
+      <div class="foot-info" id="footInfo"></div>
+      <button class="lockin" id="playBtn">Khóa chọn</button>
+    </footer>
   </div>
   <div class="overlay" id="shopPanel" hidden>
     <h1>Cửa hàng</h1>
@@ -290,9 +486,10 @@
     <h1>Chiêu mộ</h1>
     <p>Chiêu mộ để nhận tướng mới. Nếu ra tướng đã có, bạn nhận <b>mảnh tướng</b> để nâng bậc cho tướng đó.</p>
     <div class="rates">
-      <span class="r-leg">Huyền thoại · Nhà vua, Đấu sĩ <b>4%</b></span>
-      <span class="r-rare">Hiếm · Pháp sư, Kiếm sĩ, Thiện xạ <b>12%</b></span>
-      <span class="r-com">Thường · Chiến binh <b>15%</b></span>
+      <span class="r-leg">S · Huyền thoại · Nhà vua, Wukong, Hải tặc <b>3%</b></span>
+      <span class="r-epic">A · Sử thi · Đấu sĩ, Ninja <b>6%</b></span>
+      <span class="r-rare">B · Hiếm · Pháp sư, Kiếm sĩ, Thiện xạ <b>9%</b></span>
+      <span class="r-com">C · Thường · Chiến binh <b>13%</b></span>
       <span class="r-item">Vật phẩm (đom đóm, mảnh, kinh nghiệm) <b>69%</b></span>
     </div>
     <div class="wallet" id="gWallet"></div>
@@ -375,6 +572,21 @@ const CLASSES = {
     { name: 'Hóa cuồng', cd: 720,  icon: '♨', desc: 'Tăng tốc chạy và tốc độ đánh trong 5 giây' },
     { name: 'Lướt vuốt', cd: 240,  icon: '➶', desc: 'Lướt một đoạn, cào mọi kẻ địch trên đường' },
     { name: 'Săn mồi',   cd: 1500, icon: '☠', desc: 'Lao vào một mục tiêu và cắn xé liên tục' } ] },
+  ninja: { name: 'Ninja', hero: 'Ảnh', color: '#9aa8ff', role: 'Sát thủ bóng tối', basic: { name: 'Chém kunai', cd: 14 }, skills: [
+    { name: 'Phi tiêu',   cd: 40,   icon: '✦', desc: 'Phóng phi tiêu về phía trước' },
+    { name: 'Bom khói',   cd: 720,  icon: '☁', desc: 'Đứng trong làn khói thì quái không thể thấy và tấn công bạn' },
+    { name: 'Phân thân',  cd: 900,  icon: '⧉', desc: 'Tạo bản sao đi theo, cùng đánh và cùng dùng kỹ năng' },
+    { name: 'Tất sát',    cd: 1500, icon: '⚡', desc: 'Lao tới rồi phân thân thành 5, chém liên tiếp' } ] },
+  wukong: { name: 'Wukong', hero: 'Tôn Ngộ Không', color: '#ffc53d', role: 'Tề Thiên Đại Thánh', basic: { name: 'Gậy như ý', cd: 22 }, skills: [
+    { name: 'Thiết bổng',   cd: 150,  icon: '⚒', desc: 'Đập gậy tới trước gây sát thương và choáng. Trên mây: gậy giáng thẳng xuống đất' },
+    { name: 'Cân đẩu vân',  cd: 900,  icon: '☁', desc: 'Cưỡi mây bay tự do 10 giây, đổi kỹ năng 1 và 3' },
+    { name: 'Phân thân',    cd: 600,  icon: '⧉', desc: '3 phân thân lao vào quái gần nhất trong 3 giây. Trên mây: nhảy xuống từ mây' },
+    { name: 'Như ý kim cô', cd: 1800, icon: '↻', desc: 'Hóa to gậy và xoay ngang 5 giây, mỗi lần trúng 3 sát thương' } ] },
+  pirate: { name: 'Hải tặc', hero: 'Hắc Hải', color: '#e04848', role: 'Thuyền trưởng biển đen', basic: { name: 'Kiếm hải tặc', cd: 22 }, skills: [
+    { name: 'Đạn nổ',        cd: 90,   icon: '✹', desc: 'Bắn đạn nổ. Khi nâng cấp: bắn 3 viên' },
+    { name: 'Hồng kiếm',     cd: 150,  icon: '〰', desc: 'Chém sóng kiếm đỏ. Khi nâng cấp: sóng đen kèm sét, xuyên qua quái' },
+    { name: 'Nâng cấp vũ khí', cd: 900, icon: '⚙', desc: 'Cường hóa súng và kiếm trong 8 giây' },
+    { name: 'Bá khí',        cd: 1800, icon: '♛', desc: 'Giải phóng bá khí kèm sét: quái nhỏ yếu máu gục ngay, quái lớn và boss bất động 3 giây' } ] },
   king: { name: 'Nhà vua', hero: 'Thái Dương', color: '#ffd84d', role: 'Biến hình hào quang vàng', basic: { name: 'Vương kiếm', cd: 22 }, skills: [
     { name: 'Kim quang trảm', cd: 45,   icon: '☼', desc: 'Vung kiếm tạo sóng kiếm vàng' },
     { name: 'Vương thuẫn',    cd: 480,  icon: '◈', desc: 'Tạo khiên bảo vệ 2 giây' },
@@ -386,7 +598,7 @@ const CLASSES = {
     { name: 'Tam thánh kiếm', cd: 360, icon: '†', desc: '3 thanh thánh kiếm giáng xuống' },
     { name: 'Thánh quang đột', cd: 0,  icon: '✦', desc: 'Đâm tới: 5 sát thương toàn màn hình, kết thúc biến hình' } ] },
 };
-const CLASS_ORDER = ['warrior', 'mage', 'samurai', 'gunner', 'king', 'brawler', 'beast'];
+const CLASS_ORDER = ['warrior', 'mage', 'samurai', 'gunner', 'beast', 'brawler', 'ninja', 'king', 'wukong', 'pirate'];
 const BEAST_PRICE = 400;
 const PASSIVES = {
   warrior: { name: 'Thân Thép', desc: '25% cơ hội chặn hoàn toàn một đòn đánh' },
@@ -396,7 +608,19 @@ const PASSIVES = {
   king:    { name: 'Vương Uy', desc: 'Cứ 20 giây tự hồi 1 tim' },
   brawler: { name: 'Liên Kích', desc: 'Đòn đấm thứ 3 liên tiếp gây gấp đôi sát thương' },
   beast:   { name: 'Huyết Khát', desc: 'Cứ hạ 8 quái thì hồi 1 tim' },
+  ninja:   { name: 'Ám Kích', desc: 'Đánh thường vào sau lưng quái gây gấp đôi sát thương' },
+  wukong:  { name: 'Thạch Hầu Bất Diệt', desc: 'Mỗi màn một lần, khi gục ngã sẽ đứng dậy với 2 tim' },
+  pirate:  { name: 'Ý Chí Thép', desc: 'Khi còn 2 tim trở xuống, đánh thường +1 sát thương' },
 };
+const TIER = { com: 'C', rare: 'B', epic: 'A', leg: 'S' };
+const ROLES = { warrior: ['Đỡ đòn'], mage: ['Pháp sư'], samurai: ['Sát thủ'], gunner: ['Xạ thủ'], beast: ['Đấu sĩ', 'Sát thủ'], brawler: ['Đấu sĩ'],
+  ninja: ['Sát thủ'], king: ['Đấu sĩ', 'Đỡ đòn'], wukong: ['Đấu sĩ'], pirate: ['Xạ thủ', 'Đấu sĩ'] };
+const ROLE_LIST = ['Đỡ đòn', 'Đấu sĩ', 'Sát thủ', 'Pháp sư', 'Xạ thủ'];
+// [Sát thương, Sống sót, Kỹ năng, Độ khó] thang 5
+const STATS = { warrior: [3, 5, 2, 1], mage: [4, 2, 5, 3], samurai: [4, 2, 4, 4], gunner: [4, 2, 3, 3], beast: [3, 4, 3, 2], brawler: [5, 4, 3, 2],
+  ninja: [4, 2, 4, 5], king: [5, 4, 5, 4], wukong: [5, 3, 4, 4], pirate: [5, 3, 4, 3] };
+const TITLES = { warrior: 'Tấm khiên cuối cùng', mage: 'Pháp sư thủy nguyệt', samurai: 'Lưỡi gió phương Đông', gunner: 'Mắt ưng thung lũng', beast: 'Sói hoang huyết nguyệt',
+  brawler: 'Nắm đấm thép', ninja: 'Bóng tối vô hình', king: 'Ánh sáng vương quốc', wukong: 'Tề Thiên Đại Thánh', pirate: 'Thuyền trưởng biển đen' };
 // Hiệu ứng khi nâng kỹ năng lên bậc 3 (bậc 2 luôn là giảm 20% hồi chiêu)
 const T3_DESC = {
   warrior: ['Cuồng nộ kéo dài 6 giây, cường hóa 2 đòn', 'Giáp kéo dài 3.5 giây', 'Vòng xoay kiếm rộng hơn nhiều', 'Vùng nổ thánh kiếm rộng hơn'],
@@ -404,6 +628,9 @@ const T3_DESC = {
   samurai: ['Lốc xoáy to hơn, gây 3 sát thương', 'Lướt xa hơn và chém xuyên qua địch', 'Tường gió đứng vững 5 giây', 'Trảm thiên kèm choáng toàn màn hình'],
   gunner:  ['Bom nảy tối đa 6 lần', 'Phát bắn xuyên gây 5 sát thương', 'Đặt tối đa 5 bẫy, nổ rộng hơn', 'Loạt đạn bắn 6 viên'],
   brawler: ['Cường hóa 2 cú đấm', 'Đấm liên hoàn lâu hơn', 'Kim cương thân kéo dài 7 giây', 'Cú đấm từ trời còn làm choáng toàn màn hình'],
+  ninja:   ['Phóng 3 phi tiêu', 'Khói dày và lâu hơn (8 giây)', 'Bản sao tồn tại 12 giây', 'Chém liên tiếp 7 lần'],
+  wukong:  ['Choáng lâu hơn (2 giây)', 'Cưỡi mây 15 giây', 'Tạo 5 phân thân', 'Gậy xoay rộng hơn'],
+  pirate:  ['Vụ nổ rộng hơn', 'Sóng kiếm +1 sát thương', 'Nâng cấp vũ khí 12 giây', 'Bá khí phủ toàn màn hình, hạ quái đến 5 máu'],
   beast:   ['Hồi 2 tim khi trúng', 'Hóa cuồng kéo dài 8 giây', 'Lướt xa hơn, gây 3 sát thương', 'Cắn xé lâu hơn'],
   king:    ['Sóng kiếm mạnh thêm 1 sát thương', 'Khiên kéo dài thêm 1 giây', 'Kiếm vũ rơi 9 thanh', 'Thánh hóa kéo dài 14 giây'],
 };
@@ -435,16 +662,16 @@ const ACHS = [
   { id: 'stars45',   ico: '🌠', name: 'Dải ngân hà',          desc: 'Đạt đủ 45 sao' },
   { id: 'shop1',     ico: '🛒', name: 'Khách quen',           desc: 'Mua nâng cấp đầu tiên' },
   { id: 'skillMax',  ico: '📈', name: 'Tinh thông',           desc: 'Nâng một kỹ năng lên bậc 3' },
-  { id: 'allHeroes', ico: '🎭', name: 'Đa tài',               desc: 'Qua màn bằng cả 7 nhân vật' },
+  { id: 'allHeroes', ico: '🎭', name: 'Đa tài',               desc: 'Qua màn bằng tất cả nhân vật' },
   { id: 'gacha1',    ico: '🎴', name: 'Lá bài định mệnh',     desc: 'Chiêu mộ lần đầu tiên' },
   { id: 'gachaLeg',  ico: '🌞', name: 'Ánh sáng huyền thoại', desc: 'Chiêu mộ ra tướng Huyền thoại' },
   { id: 'rank5',     ico: '💠', name: 'Thức tỉnh',            desc: 'Nâng một tướng lên bậc 5' },
 ];
-const UNLOCK_HINT = { brawler: 'Chỉ có trong Chiêu mộ (Huyền thoại)', beast: `Mua trong Cửa hàng (${400} ✦)`, mage: 'Giải cứu ở Màn 1 hoặc chiêu mộ', samurai: 'Giải cứu ở Màn 2 hoặc chiêu mộ', gunner: 'Giải cứu ở Màn 3 hoặc chiêu mộ', king: 'Giải phong ấn (Quả cầu + 4 mảnh ở Màn 4 đến 8) hoặc chiêu mộ' };
+const UNLOCK_HINT = { ninja: 'Chiêu mộ (Sử thi)', wukong: 'Chiêu mộ (Huyền thoại)', pirate: 'Chiêu mộ (Huyền thoại)', brawler: 'Chiêu mộ (Sử thi)', beast: `Mua trong Cửa hàng (${400} ✦)`, mage: 'Giải cứu ở Màn 1 hoặc chiêu mộ', samurai: 'Giải cứu ở Màn 2 hoặc chiêu mộ', gunner: 'Giải cứu ở Màn 3 hoặc chiêu mộ', king: 'Giải phong ấn (Quả cầu + 4 mảnh ở Màn 4 đến 8) hoặc chiêu mộ' };
 // ---------- Chiêu mộ ----------
-const RARITY = { warrior: 'com', mage: 'rare', samurai: 'rare', gunner: 'rare', king: 'leg', brawler: 'leg', beast: 'rare' };
-const RARITY_NAME = { com: 'Thường', rare: 'Hiếm', leg: 'Huyền thoại' };
-const DUP_SHARDS = { com: 6, rare: 10, leg: 25 };
+const RARITY = { warrior: 'com', mage: 'rare', samurai: 'rare', gunner: 'rare', beast: 'epic', brawler: 'epic', ninja: 'epic', king: 'leg', wukong: 'leg', pirate: 'leg' };
+const RARITY_NAME = { com: 'Thường', rare: 'Hiếm', epic: 'Sử thi', leg: 'Huyền thoại' };
+const DUP_SHARDS = { com: 6, rare: 10, epic: 15, leg: 25 };
 const PULL_COST = 30, PULL10_COST = 270;
 const RANK_COST = [0, 0, 10, 20, 35, 50];   // mảnh cần để lên bậc 2, 3, 4, 5
 const RANK_BONUS = ['', '', '+1 tim tối đa', '+1 sát thương đánh thường', 'Giảm 10% hồi chiêu', 'Thức tỉnh nội tại'];
@@ -452,6 +679,7 @@ const PASSIVE5 = {
   warrior: 'Thân Thép: chặn 40% đòn đánh', mage: 'Phiêu Vũ: nhảy thêm 2 lần trên không', samurai: 'Phong Bộ: chạy nhanh hơn 25%',
   gunner: 'Mắt Ưng: 35% chí mạng', king: 'Vương Uy: hồi 1 tim mỗi 12 giây',
   brawler: 'Liên Kích: cứ đòn thứ 2 là gấp đôi', beast: 'Huyết Khát: hạ 5 quái hồi 1 tim',
+  ninja: 'Ám Kích: đánh sau lưng gây gấp 3', wukong: 'Thạch Hầu Bất Diệt: đứng dậy với 3 tim', pirate: 'Ý Chí Thép: +2 sát thương khi yếu máu',
 };
 
 // ======================= MÀN CHƠI & CỐT TRUYỆN =======================
@@ -739,7 +967,8 @@ function buildWorld(n) {
     dash: 0, thrust: 0, thrustId: 0, thrustHit: false, thrustTornado: false, stack: 0, stackTimer: 0,
     buff: 0, empower: false, shield: 0, spin: 0, spinAng: 0, plant: 0,
     target: null, volley: null, phase: 0, crystal: null, charge: 0, trans: 0, reflect: 0,
-    fistEmp: 0, barrage: 0, iron: 0, skyfall: null, combo: 0, comboT: 0, atkMul: 1, claw: 0, frenzy: 0, maul: null, killHeal: 0 };
+    fistEmp: 0, barrage: 0, iron: 0, skyfall: null, combo: 0, comboT: 0, atkMul: 1, claw: 0, frenzy: 0, maul: null, killHeal: 0,
+    smoke: null, hidden: false, clone: null, killSeq: null, cloud: 0, smash: null, wkc: [], bigSpin: 0, spinAngle: 0, revived: false, armed: 0 };
   camX = 0; collected = 0;
   document.getElementById('stageName').textContent = n === 0 ? `Hướng dẫn · ${S.name}` : `Màn ${n} · ${S.name}`;
   if (world.mini) world.mini = { ...world.mini, l: world.mini.c0 * T, r: world.mini.c1 * T, started: false, done: false };
@@ -753,7 +982,7 @@ const center = o => ({ x: o.x + o.w / 2, y: o.y + o.h / 2 });
 const onScreen = e => e.x + e.w > camX && e.x < camX + W;
 const wallHit = o => solids.some(s => !s.top && hit(o, s));
 const skillsOf = p => (p.cls === 'king' && p.trans > 0) ? CLASSES.king.tskills : CLASSES[p.cls].skills;
-const invulnerable = () => { const p = player; return p.inv > 0 || p.dash > 0 || p.shield > 0 || p.phase > 0 || p.iron > 0 || !!p.skyfall || !!p.maul || !!ult; };
+const invulnerable = () => { const p = player; return p.inv > 0 || p.dash > 0 || p.shield > 0 || p.phase > 0 || p.iron > 0 || !!p.skyfall || !!p.maul || !!p.killSeq || !!ult; };
 
 function updateHud() {
   if (!player) return;
@@ -786,6 +1015,7 @@ function gainXp(n, x, y) {
 function hurt(src) {
   const p = player;
   if (state !== 'play') return;
+  if (src && p.hidden) return 'blocked';
   if (src && p.parryWin > 0 && p.inv <= 0) { doParry(src); return 'blocked'; }
   if (invulnerable()) { if (p.reflect > 0 && src) reflectHit(src); return; }
   if (cls === 'warrior' && src && Math.random() < (rank() >= 5 ? 0.4 : 0.25)) {
@@ -797,15 +1027,25 @@ function hurt(src) {
   if (src) { const dir = Math.sign(center(p).x - center(src).x) || -p.face; p.vx = dir * 6; p.vy = -6; p.pulled = 8; }
   p.charge = 0; p.thrust = 0; shake = Math.max(shake, 5);
   updateHud();
+  if (p.hearts <= 0 && wukongRevive()) return;
   if (p.hearts <= 0) gameOver();
 }
 function fallDown() {
   const p = player;
   p.hearts--; p.hurtCount++; updateHud();
-  if (p.hearts <= 0) { gameOver(); return; }
-  p.x = p.sx; p.y = p.sy; p.vx = p.vy = 0; p.inv = 80; p.dash = p.phase = p.charge = p.barrage = 0; p.skyfall = null; p.maul = null;
+  if (p.hearts <= 0 && !wukongRevive()) { gameOver(); return; }
+  p.x = p.sx; p.y = p.sy; p.vx = p.vy = 0; p.inv = 80; p.dash = p.phase = p.charge = p.barrage = 0; p.skyfall = null; p.maul = null; p.killSeq = null; p.cloud = 0;
 }
-let hitStop = 0, flashT = 0;
+let hitStop = 0, flashT = 0, fxList = [];
+function wukongRevive() {
+  const p = player;
+  if (cls !== 'wukong' || p.revived) return false;
+  p.revived = true; p.hearts = rank() >= 5 ? 3 : 2; p.inv = 120; updateHud();
+  const c = center(p); burst(c.x, c.y, '#ffc53d', 50, 12); rings.push({ x: c.x, y: c.y, r: 8, max: 120, t: 26, color: '#ffc53d' });
+  p.toast = { text: 'Thạch Hầu Bất Diệt! Đứng dậy chiến đấu', color: '#ffc53d', t: 110 }; flashT = 8;
+  return true;
+}
+const faceOf = e => e.boss ? e.face : (e.dir || e.face || 0);
 function doParry(src) {
   const p = player, pc = center(p);
   p.parryWin = 0; p.inv = 30; hitStop = 8;
@@ -905,7 +1145,7 @@ function startUlt(color, dmg, name, king) {
 function endTrans() { const p = player; p.trans = 0; p.reflect = 0; p.cds[3] = CLASSES.king.skills[3].cd; }
 
 // ======================= ĐÁNH THƯỜNG =======================
-const MELEE = { samurai: { reach: 46, dmg: 1 }, warrior: { reach: 56, dmg: 2 }, king: { reach: 56, dmg: 2 }, brawler: { reach: 42, dmg: 2 }, beast: { reach: 48, dmg: 1 } };
+const MELEE = { ninja: { reach: 42, dmg: 1 }, wukong: { reach: 64, dmg: 2 }, pirate: { reach: 52, dmg: 2 }, samurai: { reach: 46, dmg: 1 }, warrior: { reach: 56, dmg: 2 }, king: { reach: 56, dmg: 2 }, brawler: { reach: 42, dmg: 2 }, beast: { reach: 48, dmg: 1 } };
 function basicAttack() {
   const p = player, C = CLASSES[cls];
   if (p.parryCd <= 0) { p.parryWin = 10; p.parryCd = 34; }
@@ -927,8 +1167,9 @@ function basicAttack() {
     return;
   }
   if (cls === 'beast') { p.atk = 10; p.atkId = newId(); p.atkEmp = false; p.atkMul = 1; return; }
-  if (cls === 'samurai' || cls === 'warrior' || cls === 'king') {
+  if (['samurai', 'warrior', 'king', 'ninja', 'wukong', 'pirate'].includes(cls)) {
     p.atk = 14; p.atkId = newId(); p.atkEmp = false; p.atkMul = 1;
+    if (cls === 'ninja' && p.clone) { p.clone.atk = 14; p.clone.atkId = newId(); }
     if (cls === 'warrior' && p.empower > 0) {
       p.empower--; p.atkEmp = true;
       shots.push({ type: 'wave', x: pc.x + p.face * 20 - 14, y: p.y - 12, w: 28, h: 58, vx: p.face * 9, face: p.face, life: 40, dmg: 2, pierce: true, hits: new Set(), color: '#ffb347' });
@@ -1002,6 +1243,52 @@ const SKILL_FN = {
     () => { const p = player, t3 = tier(2) >= 3; p.dash = t3 ? 16 : 12; p.dashHits = new Set(); p.dashDmg = t3 ? 3 : 2; p.dashColor = '#e0a060'; p.inv = Math.max(p.inv, 14); },
     () => { const p = player, t = getTarget(); if (!t) return false;
       p.maul = { target: t, t: tier(3) >= 3 ? 150 : 100, stage: 0, lunge: 0 }; p.vx = 0; p.vy = 0; },
+  ],
+  ninja: [
+    () => { const p = player, vys = tier(0) >= 3 ? [-1.4, 0, 1.4] : [0];
+      const throwFrom = (x, y, f) => vys.forEach(vy => shots.push({ type: 'shuri', x: x + f * 14 - 7, y: y + 12, w: 14, h: 14, vx: f * 12, vy, life: 60, dmg: 2, pierce: false, hits: new Set() }));
+      throwFrom(center(p).x, p.y, p.face);
+      if (p.clone) throwFrom(p.clone.x + 13, p.clone.y, p.clone.face); },
+    () => { const p = player, pc = center(p), t3 = tier(1) >= 3; p.smoke = { x: pc.x, y: pc.y, r: t3 ? 130 : 95, t: t3 ? 480 : 300, max: t3 ? 480 : 300 };
+      burst(pc.x, pc.y, '#8a8fa8', 40, 8); },
+    () => { const p = player; p.clone = { x: p.x - p.face * 36, y: p.y, face: p.face, t: tier(2) >= 3 ? 720 : 480, atk: 0, atkId: 0 };
+      burst(p.x + 13, p.y + 19, '#9aa8ff', 24, 7); },
+    () => { const p = player; if (p.killSeq) return false;
+      p.killSeq = { t: 0, dash: 8, n: (tier(3) >= 3 ? 7 : 5) + (p.clone ? 3 : 0), done: 0 }; },
+  ],
+  wukong: [
+    () => { const p = player; p.smash = { t: 16, down: p.cloud > 0, id: newId() }; },
+    () => { const p = player; p.cloud = tier(1) >= 3 ? 900 : 600; p.cloudMax = p.cloud; p.vy = -4; burst(center(p).x, p.y + p.h, '#ffffff', 30, 8);
+      p.toast = { text: 'Cân đẩu vân!', color: '#ffc53d', t: 60 }; },
+    () => { const p = player, n = tier(2) >= 3 ? 5 : 3, pc = center(p);
+      for (let i = 0; i < n; i++) p.wkc.push({ x: pc.x - 13 + (i - (n - 1) / 2) * 18, y: p.y + (p.cloud > 0 ? 10 : -10), t: 180, target: null, cd: 10 + i * 4, face: p.face, fromCloud: p.cloud > 0, vy: p.cloud > 0 ? 2 : -5 });
+      burst(pc.x, pc.y, '#ffc53d', 24, 7); },
+    () => { const p = player; p.bigSpin = 300; p.bigR = tier(3) >= 3 ? 200 : 150; p.spinAngle = 0; shake = 6; },
+  ],
+  pirate: [
+    () => { const p = player, pc = center(p), vys = p.armed > 0 ? [-1.5, 0, 1.5] : [0];
+      vys.forEach(vy => shots.push({ type: 'boom', x: pc.x + p.face * 16 - 6, y: p.y + 12, w: 12, h: 8, vx: p.face * 11, vy, life: 70, radius: tier(0) >= 3 ? 85 : 62, dark: p.armed > 0 }));
+      burst(pc.x + p.face * 22, p.y + 14, '#ffd166', 8, 5); },
+    () => { const p = player, pc = center(p), arm = p.armed > 0, bonus = tier(1) >= 3 ? 1 : 0;
+      p.atk = 14; p.atkId = newId();
+      shots.push({ type: 'wave', dark: arm, color: arm ? '#2a1030' : '#ff3b3b', inner: arm ? '#ff3b3b' : '#ffe0e0', x: pc.x + p.face * 20 - (arm ? 22 : 15), y: arm ? p.y - 34 : p.y - 14, w: arm ? 44 : 30, h: arm ? 84 : 60,
+        vx: p.face * (arm ? 10 : 9), face: p.face, life: arm ? 60 : 45, dmg: 3 + bonus, pierce: arm, hits: new Set() }); },
+    () => { const p = player; p.armed = tier(2) >= 3 ? 720 : 480; p.armedMax = p.armed; burst(center(p).x, center(p).y, '#ff3b3b', 30, 9);
+      p.toast = { text: 'Vũ khí đã nâng cấp!', color: '#ff3b3b', t: 70 }; },
+    () => { const p = player, pc = center(p), t3 = tier(3) >= 3, R = t3 ? 2000 : 380, killHp = t3 ? 5 : 3;
+      let kills = 0, frozen = 0;
+      for (const e of enemies) if (e.alive) {
+        const c = center(e); if (Math.hypot(c.x - pc.x, c.y - pc.y) > R || !onScreen(e)) continue;
+        const big = e.boss || e.kind === 'E' || e.kind === 'c';
+        if (!big && e.hp <= killHp) { damage(e, e.hp, '#ff3b3b'); kills++; }
+        else if (e.boss) { if (!e.float && !e.transforming) { e.stunT = 180; e.state = 'stun'; e.vx = 0; e.warn = false; hazards = hazards.filter(h => h.follow !== e); } frozen++; }
+        else { e.stun = 180; frozen++; }
+      }
+      hazards = hazards.filter(h => h.follow && h.follow.alive && h.follow.stunT <= 0);
+      fxList.push({ type: 'haki', x: pc.x, y: pc.y, t: 50, max: 50, r: Math.min(R, 700), bolts: Array.from({ length: 10 }, () => Math.random() * Math.PI * 2) });
+      for (let k = 0; k < 3; k++) rings.push({ x: pc.x, y: pc.y, r: 10, max: Math.min(R, 520) - k * 90, t: 26 + k * 4, color: k === 1 ? '#ff3b3b' : '#1a0a14' });
+      shake = 16; hitStop = 12; flashT = 6;
+      popups.push({ text: 'BÁ KHÍ!', x: pc.x, y: p.y - 30, t: 60, color: '#ff3b3b' }); },
   ],
   king: [
     () => { const p = player, pc = center(p), big = p.trans > 0, bonus = tier(0) >= 3 ? 1 : 0;
@@ -1263,6 +1550,31 @@ function update() {
         popups.push({ text: 'THIÊN CHẤN QUYỀN!', x: pc2.x, y: p.y - 30, t: 60, color: '#ff7a59' });
       }
     }
+  } else if (p.killSeq) {
+    // Tất sát: lao tới rồi 5 phân thân chém liên tiếp
+    const k = p.killSeq; k.t++;
+    if (k.dash > 0) { k.dash--; p.vx = p.face * 14; moveX(p); trail.push({ x: p.x, y: p.y, face: p.face, life: 10 }); }
+    else if (k.t % 7 === 0) {
+      const pc2 = center(p);
+      let tgt = null, bd = Infinity;
+      for (const e of enemies) if (e.alive && onScreen(e) && e.y > -60) { const c = center(e), d = Math.hypot(c.x - pc2.x, c.y - pc2.y) + (e === k.last ? 200 : 0); if (d < bd) { bd = d; tgt = e; } }
+      const side = k.done % 2 ? 1 : -1;
+      if (tgt) { const c = center(tgt); k.last = tgt; damage(tgt, 2, '#9aa8ff'); fxList.push({ type: 'nslash', x: c.x, y: c.y, sx: c.x + side * 34, t: 14, max: 14, ang: (Math.random() - .5) * 1.6 }); }
+      else fxList.push({ type: 'nslash', x: pc2.x + p.face * 60, y: pc2.y, sx: pc2.x + p.face * 60 + side * 34, t: 14, max: 14, ang: (Math.random() - .5) * 1.6 });
+      shake = Math.max(shake, 4);
+      if (++k.done >= k.n) { p.killSeq = null; p.inv = 20; }
+    }
+  } else if (p.cloud > 0) {
+    // Cân đẩu vân: bay tự do
+    p.cloud--;
+    const ax = (keys.right ? 1 : 0) - (keys.left ? 1 : 0), ay = (keys.down ? 1 : 0) - (keys.jump ? 1 : 0);
+    if (ax) p.face = ax;
+    p.vx += (ax * 5.5 - p.vx) * .2; p.vy += (ay * 4.5 - p.vy) * .2;
+    moveX(p); p.y += p.vy;
+    for (const s of solids) if (!s.top && hit(p, s)) { if (p.vy > 0) p.y = s.y - p.h; else p.y = s.y + s.h; p.vy = 0; }
+    p.y = Math.max(20, Math.min(p.y, GROUND_Y - p.h - 30)); p.ground = false;
+    if (Math.random() < .6) particles.push({ x: p.x + Math.random() * p.w, y: p.y + p.h + 8, vx: -p.vx * .2, vy: .3, life: 20, color: '#ffffff' });
+    if (p.cloud === 0) { p.vy = 0; jumpHeld = true; }
   } else if (p.maul) {
     // Săn mồi: lao vào mục tiêu rồi bám lấy cắn xé
     const m = p.maul, e = m.target;
@@ -1329,6 +1641,51 @@ function update() {
   const pc = center(p);
 
   if (p.comboT > 0) p.comboT--;
+  if (p.armed > 0) { p.armed--; if (Math.random() < .35) particles.push({ x: pc.x + p.face * 14, y: p.y + 10 + Math.random() * 14, vx: (Math.random() - .5) * 2, vy: -1, life: 12, color: Math.random() < .5 ? '#ff3b3b' : '#1a0a14' }); }
+  // Bom khói
+  if (p.smoke) { if (--p.smoke.t <= 0) p.smoke = null; }
+  p.hidden = !!p.smoke && Math.hypot(pc.x - p.smoke.x, pc.y - p.smoke.y) < p.smoke.r;
+  // Phân thân ninja
+  if (p.clone) {
+    const c = p.clone; c.t--;
+    c.x += (p.x - p.face * 36 - c.x) * .22; c.y += (p.y - c.y) * .22; c.face = p.face;
+    if (c.atk > 0) { c.atk--; if (c.atk <= 11 && c.atk >= 3) { const box = { x: c.face > 0 ? c.x + 22 : c.x - 38, y: c.y - 8, w: 42, h: 52 };
+      for (const e of enemies) if (e.alive && !e.hitIds.has(c.atkId) && hit(box, e)) { e.hitIds.add(c.atkId); damage(e, 1 + bonusDmg(), '#9aa8ff'); } } }
+    if (c.t <= 0) { burst(c.x + 13, c.y + 19, '#9aa8ff', 16, 6); p.clone = null; }
+  }
+  // Thiết bổng (Wukong)
+  if (p.smash) {
+    const sm = p.smash; sm.t--;
+    if (sm.t === 9) {
+      const stunE = tier(0) >= 3 ? 120 : 60, stunB = tier(0) >= 3 ? 70 : 40;
+      const box = sm.down ? { x: pc.x + p.face * 14 - 32, y: p.y + p.h - 10, w: 64, h: GROUND_Y + 30 - (p.y + p.h) } : { x: p.face > 0 ? p.x + p.w - 6 : p.x - 100, y: p.y - 10, w: 106, h: p.h + 20 };
+      for (const e of enemies) if (e.alive && hit(box, e)) { damage(e, 2 + bonusDmg(), '#ffc53d'); if (e.alive) { if (e.boss) { if (!e.float) { e.stunT = Math.max(e.stunT || 0, stunB); e.state = 'stun'; } } else e.stun = Math.max(e.stun, stunE); } }
+      const ix = sm.down ? pc.x + p.face * 14 : pc.x + p.face * 104, iy = sm.down ? groundY(pc.x + p.face * 14, p.y + p.h) : p.y + p.h - 4;
+      burst(ix, iy, '#ffc53d', 22, 9); rings.push({ x: ix, y: iy, r: 6, max: 60, t: 14, color: '#ffc53d' }); shake = Math.max(shake, 6);
+    }
+    if (sm.t <= 0) p.smash = null;
+  }
+  // Phân thân Wukong
+  for (const c of p.wkc) {
+    c.t--; if (c.cd > 0) c.cd--;
+    if (!c.target || !c.target.alive) { let bd = Infinity; c.target = null;
+      for (const e of enemies) if (e.alive && onScreen(e) && e.y > -60) { const ec = center(e), d = Math.hypot(ec.x - c.x - 13, ec.y - c.y - 19); if (d < bd) { bd = d; c.target = e; } } }
+    if (c.target) {
+      const ec = center(c.target), dx = ec.x - (c.x + 13), dy = ec.y - (c.y + 19), d = Math.hypot(dx, dy) || 1;
+      c.face = dx < 0 ? -1 : 1;
+      if (d > 26) { const sp = c.fromCloud && c.t > 150 ? 10 : 8; c.x += dx / d * sp; c.y += dy / d * sp; }
+      else if (c.cd <= 0) { c.cd = 15; c.swing = 8; damage(c.target, 1, '#ffc53d'); }
+    }
+    if (c.swing > 0) c.swing--;
+    if (c.t <= 0) burst(c.x + 13, c.y + 19, '#ffc53d', 10, 5);
+  }
+  p.wkc = p.wkc.filter(c => c.t > 0);
+  // Như ý kim cô bổng xoay
+  if (p.bigSpin > 0) {
+    p.bigSpin--; p.spinAngle += .32;
+    for (const e of enemies) if (e.alive) { if (e.spinCd > 0) { e.spinCd--; continue; }
+      const c = center(e); if (Math.hypot(c.x - pc.x, (c.y - pc.y) * 1.6) < p.bigR + Math.max(e.w, e.h) / 2) { damage(e, 3, '#ffc53d'); e.spinCd = 30; } }
+  }
   if (p.iron > 0) { p.iron--; if (Math.random() < .5) particles.push({ x: p.x + Math.random() * p.w, y: p.y + Math.random() * p.h, vx: 0, vy: -1, life: 16, color: '#ffd166' }); }
   if (p.frenzy > 0) { p.frenzy--; if (Math.random() < .4) particles.push({ x: p.x + Math.random() * p.w, y: p.y + p.h, vx: 0, vy: -2, life: 18, color: '#ff5a3d' }); }
   if (p.barrage > 0) {
@@ -1384,7 +1741,13 @@ function update() {
     if (MELEE[cls] && p.atk <= 11 && p.atk >= 3) {
       const M = MELEE[cls], reach = M.reach, dmg = (cls === 'warrior' && p.atkEmp ? 3 : M.dmg) * (p.atkMul || 1);
       const box = { x: p.face > 0 ? p.x + p.w - 4 : p.x - reach + 4, y: p.y - 8, w: reach, h: p.h + 14 };
-      for (const e of enemies) if (e.alive && !e.hitIds.has(p.atkId) && hit(box, e)) { e.hitIds.add(p.atkId); damage(e, dmg + bonusDmg(), CLASSES[cls].color); if (cls === 'samurai') p.cds[1] = Math.max(0, p.cds[1] - 20); }
+      const pb = cls === 'pirate' && p.hearts <= 2 ? (rank() >= 5 ? 2 : 1) : 0;
+      for (const e of enemies) if (e.alive && !e.hitIds.has(p.atkId) && hit(box, e)) {
+        e.hitIds.add(p.atkId);
+        let d = dmg + bonusDmg() + pb;
+        if (cls === 'ninja' && Math.sign(center(e).x - center(p).x) === faceOf(e)) { d *= rank() >= 5 ? 3 : 2; popups.push({ text: 'ÁM KÍCH!', x: center(e).x, y: e.y - 16, t: 34, color: '#9aa8ff' }); }
+        damage(e, d, CLASSES[cls].color); if (cls === 'samurai') p.cds[1] = Math.max(0, p.cds[1] - 20);
+      }
     }
   }
   if (p.thrust > 0) {
@@ -1431,7 +1794,7 @@ function update() {
     if (e.boss) updateBoss(e); else updateEnemy(e, pc);
     if (!e.alive) continue;
     if (e.boss && (e.alpha < .5 || e.float || e.transforming)) continue;
-    if (hit(p, e) && p.dash <= 0 && p.phase <= 0 && !p.maul && !p.skyfall) {
+    if (hit(p, e) && p.dash <= 0 && p.phase <= 0 && !p.maul && !p.skyfall && !p.killSeq && !p.hidden) {
       if (p.vy > 0 && prevBottom <= e.y + 12) { damage(e, 1); p.vy = -9; }
       else if (p.shield > 0) { if (p.reflect > 0) reflectHit(e); }
       else hurt(e);
@@ -1474,7 +1837,7 @@ function updateEnemy(e, pc) {
   switch (e.kind) {
     case 'a':
       e.face = dx < 0 ? -1 : 1;
-      if (Math.abs(dx) < 440 && Math.abs(dy) < 220 && --e.fire <= 0) {
+      if (!player.hidden && Math.abs(dx) < 440 && Math.abs(dy) < 220 && --e.fire <= 0) {
         e.fire = e.rate; const len = Math.hypot(dx, dy) || 1;
         haz({ type: 'dart', x: c.x - 6, y: e.y + 12, w: 12, h: 12, vx: dx / len * 4.5 * sp, vy: dy / len * 4.5 * sp, life: 200, blockable: true, solidStop: true, rot: 0 });
       }
@@ -1482,7 +1845,7 @@ function updateEnemy(e, pc) {
     case 'm':
       e.face = dx < 0 ? -1 : 1;
       if (e.cast > 0) e.cast--;
-      if (Math.abs(dx) < 480 && Math.abs(dy) < 260 && --e.fire <= 0) {
+      if (!player.hidden && Math.abs(dx) < 480 && Math.abs(dy) < 260 && --e.fire <= 0) {
         e.fire = e.rate + 30; e.cast = 20; const tf = 60;
         haz({ type: 'fireball', x: c.x - 8, y: e.y, w: 16, h: 16, vx: dx / tf, vy: (dy - 10) / tf - .5 * .25 * tf, g: .25, life: 180, blockable: true, solidStop: true, groundKill: true });
       }
@@ -1491,14 +1854,14 @@ function updateEnemy(e, pc) {
       e.t += 0.05;
       if (e.mode === 'home') {
         e.x += (e.hx + Math.sin(e.t) * 40 - e.x) * .08; e.y += (e.hy + Math.cos(e.t * 1.3) * 14 - e.y) * .08;
-        if (--e.cd <= 0 && Math.hypot(dx, dy) < 260) { e.mode = 'swoop'; e.mt = 50; const d = Math.hypot(dx, dy) || 1; e.svx = dx / d * 4.5 * sp; e.svy = dy / d * 4.5 * sp; }
+        if (--e.cd <= 0 && !player.hidden && Math.hypot(dx, dy) < 260) { e.mode = 'swoop'; e.mt = 50; const d = Math.hypot(dx, dy) || 1; e.svx = dx / d * 4.5 * sp; e.svy = dy / d * 4.5 * sp; }
         e.face = dx < 0 ? -1 : 1;
       } else if (e.mode === 'swoop') { e.x += e.svx; e.y += e.svy; e.face = e.svx < 0 ? -1 : 1; if (--e.mt <= 0) e.mode = 'back'; }
       else { const hx = e.hx - e.x, hy = e.hy - e.y, d = Math.hypot(hx, hy); if (d < 6) { e.mode = 'home'; e.cd = 90; } else { e.x += hx / d * 2.5; e.y += hy / d * 2.5; } }
       break;
     case 'g': {
       e.t += 0.04; const d = Math.hypot(dx, dy) || 1;
-      if (d < 520) { e.x += dx / d * 0.9 * sp; e.y += dy / d * 0.9 * sp + Math.sin(e.t * 3) * .3; }
+      if (d < 520 && !player.hidden) { e.x += dx / d * 0.9 * sp; e.y += dy / d * 0.9 * sp + Math.sin(e.t * 3) * .3; }
       e.face = dx < 0 ? -1 : 1;
       break;
     }
@@ -1507,7 +1870,7 @@ function updateEnemy(e, pc) {
       if (e.kind === 'c') {
         if (e.ccd > 0) e.ccd--;
         if (e.charge > 0) { e.charge--; spd *= 5.5; if (Math.random() < .5) particles.push({ x: c.x - e.dir * 20, y: e.y + e.h, vx: -e.dir, vy: -1, life: 16, color: '#a89080' }); }
-        else if (e.ccd <= 0 && Math.abs(dy) < 50 && Math.abs(dx) < 320 && Math.sign(dx) === e.dir) { e.charge = 55; e.ccd = 160; }
+        else if (e.ccd <= 0 && !player.hidden && Math.abs(dy) < 50 && Math.abs(dx) < 320 && Math.sign(dx) === e.dir) { e.charge = 55; e.ccd = 160; }
       }
       e.vx = e.dir * spd;
       const oldX = e.x;
@@ -1573,8 +1936,8 @@ function updateShots(p, pc) {
         q.x += q.vx;
         // chỉ kiểm tra va tường ở dải giữa, để phần đáy chạm mặt đất không làm sóng kiếm biến mất
         if (wallHit({ x: q.x + q.w * .3, y: q.y + q.h * .2, w: q.w * .4, h: q.h * .5 })) { q.life = 0; burst(q.x + q.w / 2, q.y + q.h / 2, q.color, 12); break; }
-        hitEnemies(q, q.color);
-        particles.push({ x: q.x + q.w / 2, y: q.y + Math.random() * q.h, vx: -q.vx * .1, vy: 0, life: 12, color: '#fff1d6' });
+        hitEnemies(q, q.dark ? '#ff3b3b' : q.color);
+        particles.push({ x: q.x + q.w / 2, y: q.y + Math.random() * q.h, vx: -q.vx * .1, vy: 0, life: 12, color: q.dark ? (Math.random() < .5 ? '#ff3b3b' : '#b06bff') : '#fff1d6' });
         break;
       case 'holy':
         if (!q.landed) {
@@ -1594,6 +1957,19 @@ function updateShots(p, pc) {
         hitEnemies(q, '#ff7a59');
         particles.push({ x: q.x + q.w / 2 - q.vx, y: q.y + 6 + Math.random() * (q.h - 12), vx: -q.vx * .2, vy: 0, life: 10, color: '#ffc0a8' });
         break;
+      case 'shuri':
+        q.x += q.vx; q.y += q.vy;
+        if (wallHit(q)) { q.life = 0; burst(q.x + 7, q.y + 7, '#c9cfe6', 5); break; }
+        hitEnemies(q, '#9aa8ff');
+        break;
+      case 'boom': {
+        q.x += q.vx; q.y += q.vy;
+        let hitSomething = wallHit(q);
+        if (!hitSomething) for (const e of enemies) if (e.alive && hit(q, e)) { hitSomething = true; break; }
+        if (hitSomething || q.life <= 0) { q.life = 0; explode(q.x + 6, q.y + 4, q.radius, 2, q.dark ? '#ff3b3b' : '#ff9a3d'); break; }
+        particles.push({ x: q.x + 6, y: q.y + 4, vx: -q.vx * .1, vy: 0, life: 10, color: q.dark ? '#ff3b3b' : '#ffd166' });
+        break;
+      }
       case 'fistlet':
         q.x += q.vx;
         if (wallHit(q)) { q.life = 0; break; }
@@ -1680,6 +2056,7 @@ function tickFx() {
   for (const u of popups) { u.y -= 0.7; u.t--; }
   popups = popups.filter(u => u.t > 0);
   for (const r of rings) { r.t--; r.r += (r.max - r.r) * .25; }
+  for (const f of fxList) f.t--; fxList = fxList.filter(f => f.t > 0);
   rings = rings.filter(r => r.t > 0);
 }
 
@@ -1816,6 +2193,52 @@ function drawHero(p, alpha) {
     const sw = p.atk > 0 || p.claw > 0 ? 8 : 0;
     ctx.strokeStyle = '#f0e8d8'; ctx.lineWidth = 2;
     for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(8 + sw, 13 + i * 3); ctx.lineTo(14 + sw, 11 + i * 3); ctx.stroke(); }
+  } else if (p.cls === 'ninja') {
+    ctx.fillStyle = '#23263e'; ctx.beginPath(); ctx.moveTo(-8, 21); ctx.lineTo(8, 21); ctx.lineTo(9 - step, 33); ctx.lineTo(-9 + step, 33); ctx.fill();
+    ctx.fillStyle = '#2a2e4a'; rr(-9, 9, 18, 14, 4);
+    ctx.fillStyle = '#6a5acd'; ctx.fillRect(-9, 19, 18, 3);
+    ctx.fillStyle = '#2a2e4a'; ctx.beginPath(); ctx.arc(0, 5, 7.5, 0, 7); ctx.fill();
+    ctx.fillStyle = skin; ctx.fillRect(-2, 3, 9, 4);
+    ctx.fillStyle = ink; ctx.fillRect(3, 4, 3, 2);
+    ctx.fillStyle = '#9aa8ff'; ctx.fillRect(-7, 0, 14, 2);
+    const flap = Math.sin(Date.now() / 70) * 3;
+    ctx.beginPath(); ctx.moveTo(-7, 0); ctx.lineTo(-20, -2 + flap); ctx.lineTo(-19, 2 + flap); ctx.lineTo(-7, 2); ctx.fill();
+    ctx.fillStyle = '#3a3f60'; ctx.beginPath(); ctx.moveTo(-9, 10); ctx.lineTo(-15 - step * .4, 16); ctx.lineTo(-8, 14); ctx.fill();
+    line(-9, 24, 6, 6, '#3a3a48', 3); line(-11, 26, -8, 22, '#6a5acd', 3);
+    if (p.atk <= 0) { line(6, 17, 11, 17, '#3a2a22', 3); line(11, 17, 21, 14, '#dcefff', 2); }
+  } else if (p.cls === 'wukong') {
+    const tail = Math.sin(Date.now() / 110) * 4;
+    ctx.strokeStyle = '#b8742a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-8, 26); ctx.quadraticCurveTo(-22, 26 + tail, -18, 10 + tail); ctx.stroke();
+    ctx.fillStyle = '#8a2a1a'; ctx.beginPath(); ctx.moveTo(-9, 21); ctx.lineTo(9, 21); ctx.lineTo(11 - step, 33); ctx.lineTo(-11 + step, 33); ctx.fill();
+    ctx.fillStyle = '#e0a030'; rr(-10, 9, 20, 14, 4);
+    ctx.fillStyle = '#c8423b'; ctx.fillRect(-10, 19, 20, 3);
+    ctx.fillStyle = '#b8742a'; ctx.beginPath(); ctx.arc(0, 5, 8, 0, 7); ctx.fill();
+    ctx.fillStyle = '#f2c9a0'; ctx.beginPath(); ctx.ellipse(2, 7, 5.5, 5, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = '#b8742a'; ctx.beginPath(); ctx.arc(-8, 5, 3, 0, 7); ctx.fill();
+    ctx.fillStyle = ink; ctx.fillRect(3, 5, 2, 2); ctx.fillRect(1, 9, 4, 1);
+    ctx.strokeStyle = '#ffd84d'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 4, 8.5, Math.PI * 1.05, Math.PI * 1.95); ctx.stroke();
+    ctx.fillStyle = '#ffd84d'; ctx.fillRect(-1, -5, 3, 3);
+    if (p.smash) {
+      const k = 1 - p.smash.t / 16;
+      if (p.smash.down) { line(10, 4, 10 + 4, 4 + Math.min(1, k * 1.6) * 90, '#c8423b', 5); }
+      else { const a = -1.6 + Math.min(1, k * 1.5) * 1.7; line(4, 16, 4 + Math.cos(a) * 96, 16 + Math.sin(a) * 96, '#c8423b', 5); ctx.fillStyle = '#ffd84d'; ctx.beginPath(); ctx.arc(4 + Math.cos(a) * 96, 16 + Math.sin(a) * 96, 4, 0, 7); ctx.fill(); }
+    } else if (p.atk <= 0 && !(p.bigSpin > 0)) { line(-6, 30, 20, -10, '#c8423b', 4); ctx.fillStyle = '#ffd84d'; ctx.fillRect(-8, 28, 4, 5); ctx.fillRect(18, -13, 4, 5); }
+  } else if (p.cls === 'pirate') {
+    ctx.fillStyle = '#9a1f2a'; ctx.beginPath(); ctx.moveTo(-10, 10); ctx.lineTo(-15 - step * .5, 36); ctx.lineTo(-2, 33); ctx.fill();
+    ctx.fillStyle = '#2a2230'; ctx.beginPath(); ctx.moveTo(-9, 22); ctx.lineTo(9, 22); ctx.lineTo(10 - step, 33); ctx.lineTo(-10 + step, 33); ctx.fill();
+    ctx.fillStyle = '#b8232f'; rr(-11, 9, 22, 16, 3);
+    ctx.fillStyle = '#f0e8d8'; ctx.beginPath(); ctx.moveTo(-3, 9); ctx.lineTo(4, 9); ctx.lineTo(1, 19); ctx.fill();
+    ctx.fillStyle = '#ffd166'; ctx.fillRect(-11, 9, 2, 16); ctx.fillRect(9, 9, 2, 16);
+    ctx.fillStyle = '#3a2a22'; ctx.fillRect(-11, 21, 22, 3); ctx.fillStyle = '#ffd166'; ctx.fillRect(-2, 21, 4, 3);
+    head(); ctx.fillStyle = '#1a1a2a'; ctx.beginPath(); ctx.moveTo(-5, 7); ctx.quadraticCurveTo(1, 16, 7, 7); ctx.lineTo(7, 9); ctx.quadraticCurveTo(1, 18, -5, 9); ctx.fill();
+    ctx.fillRect(-1, 8, 8, 2);
+    eye();
+    ctx.fillStyle = '#1a1a24'; ctx.beginPath(); ctx.moveTo(-13, 1); ctx.quadraticCurveTo(0, -4, 13, 1); ctx.lineTo(9, -3); ctx.lineTo(4, -11); ctx.lineTo(-5, -11); ctx.lineTo(-9, -3); ctx.fill();
+    ctx.fillStyle = '#ffd166'; ctx.fillRect(-12, -1, 24, 2);
+    ctx.fillStyle = '#f0e8d8'; ctx.beginPath(); ctx.arc(0, -6, 2.2, 0, 7); ctx.fill(); ctx.fillRect(-3, -3, 6, 1);
+    if (p.armed > 0) { ctx.shadowColor = '#ff3b3b'; ctx.shadowBlur = 12; }
+    ctx.fillStyle = '#3a3a48'; ctx.fillRect(-12, 16, 7, 4);
+    if (p.atk <= 0) { line(4, 18, 9, 15, '#3a2a22', 4); ctx.strokeStyle = p.armed > 0 ? '#ff9a9a' : '#e0e4ee'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(9, 15); ctx.quadraticCurveTo(22, 10, 28, -2); ctx.stroke(); }
   } else if (p.cls === 'king') {
     const gold = p.trans > 0 ? '#fff0a8' : '#e0b84a';
     ctx.fillStyle = '#8a1f2b'; ctx.beginPath(); ctx.moveTo(-6, 10); ctx.lineTo(-17 - step * .6, 36); ctx.lineTo(2, 34); ctx.fill();
@@ -1854,9 +2277,9 @@ function drawSlash(p) {
     for (let i = -1; i <= 1; i++) line(x0, y + i * 6, x0 + p.face * (22 + (i ? 0 : 12)), y + i * 7, p.atkMul > 1 ? '#ffd166' : '#ffc0a8', i ? 2 : 4);
     ctx.restore(); return;
   }
-  if (p.atk <= 0 || !['samurai', 'warrior', 'king'].includes(cls)) return;
-  const reach = cls === 'samurai' ? 46 : 56;
-  const color = cls === 'warrior' ? (p.atkEmp ? '#ffd166' : '#ffb347') : cls === 'king' ? '#ffd84d' : '#dcefff';
+  if (p.atk <= 0 || !['samurai', 'warrior', 'king', 'ninja', 'wukong', 'pirate'].includes(cls)) return;
+  const reach = MELEE[cls].reach;
+  const color = cls === 'warrior' ? (p.atkEmp ? '#ffd166' : '#ffb347') : cls === 'king' ? '#ffd84d' : cls === 'ninja' ? '#b8c4ff' : cls === 'wukong' ? '#ffc53d' : cls === 'pirate' ? (p.armed > 0 ? '#ff3b3b' : '#e8e0d0') : '#dcefff';
   const prog = 1 - p.atk / 14;
   ctx.save(); ctx.translate(p.x + p.w / 2, p.y + 18); ctx.scale(p.face, 1);
   const a0 = -1.6, a1 = -1.6 + prog * 2.8;
@@ -1877,6 +2300,24 @@ function drawPlayerFx(p) {
     ctx.closePath(); ctx.stroke(); ctx.restore();
   }
   if (p.frenzy > 0) glow(pc.x, pc.y, 34, '255,90,61', .28);
+  if (p.armed > 0) glow(pc.x + p.face * 16, pc.y - 4, 20, '255,59,59', .35);
+  if (p.cloud > 0) {
+    const cy = p.y + p.h + 6;
+    ctx.save(); ctx.globalAlpha = p.cloud < 90 && Math.floor(p.cloud / 6) % 2 ? .5 : .95;
+    glow(pc.x, cy, 40, '255,236,170', .35);
+    ctx.fillStyle = '#ffffff'; [[-22, 2, 10], [-9, -3, 13], [7, -2, 12], [21, 3, 9], [0, 5, 11]].forEach(([dx, dy, r]) => { ctx.beginPath(); ctx.arc(pc.x + dx, cy + dy, r, 0, 7); ctx.fill(); });
+    ctx.fillStyle = '#ffe9a8'; ctx.beginPath(); ctx.moveTo(pc.x - 26, cy + 8); ctx.quadraticCurveTo(pc.x - 44 - p.face * 10, cy + 4, pc.x - 50 * p.face, cy - 4); ctx.lineTo(pc.x - 24, cy + 2); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = 'rgba(232,236,247,.25)'; rr(p.x - 4, p.y - 14, 34, 4, 2); ctx.fillStyle = '#ffc53d'; rr(p.x - 4, p.y - 14, 34 * p.cloud / (p.cloudMax || 600), 4, 2);
+  }
+  if (p.bigSpin > 0) {
+    const R = p.bigR, a = p.spinAngle;
+    ctx.save(); ctx.globalAlpha = .22; ctx.strokeStyle = '#ffc53d'; ctx.lineWidth = 14;
+    ctx.beginPath(); ctx.ellipse(pc.x, pc.y, R, R / 1.6, 0, 0, 7); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.translate(pc.x, pc.y); ctx.scale(1, 1 / 1.6); ctx.rotate(a); ctx.lineCap = 'round'; ctx.shadowColor = '#ffc53d'; ctx.shadowBlur = 18;
+    line(-R, 0, R, 0, '#c8423b', 12); ctx.fillStyle = '#ffd84d'; ctx.fillRect(-R - 4, -8, 18, 16); ctx.fillRect(R - 14, -8, 18, 16);
+    ctx.globalAlpha = .3; line(-R, 0, R, 0, '#ffd84d', 26); ctx.restore();
+  }
   if (p.skyfall && p.skyfall.stage === 1) glow(pc.x, pc.y + 10, 30 + p.skyfall.t * 2, '255,122,89', .5);
   if (p.trans > 0) {
     const a = Date.now() / 400;
@@ -1922,6 +2363,42 @@ function drawPlayerFx(p) {
   }
 }
 
+function drawNinjaExtras(p) {
+  if (p.smoke) {
+    const sm = p.smoke, a = Math.min(1, sm.t / 40);
+    ctx.save(); ctx.globalAlpha = .55 * a;
+    for (let i = 0; i < 14; i++) { const ang = i * 2.4 + Date.now() / 2400, r = sm.r * (.35 + (i % 4) * .18);
+      ctx.fillStyle = i % 2 ? '#7a7f96' : '#9aa0b8'; ctx.beginPath(); ctx.arc(sm.x + Math.cos(ang) * r * .8, sm.y + Math.sin(ang) * r * .45, sm.r * .38, 0, 7); ctx.fill(); }
+    ctx.restore();
+  }
+  if (p.clone) {
+    const c = p.clone;
+    ctx.save(); ctx.globalAlpha = .5; glow(c.x + 13, c.y + 19, 26, '154,168,255', .5); ctx.restore();
+    drawHero({ ...heroStub('ninja', c.x, c.y, c.face), atk: c.atk, ground: p.ground, vx: p.vx, run: p.run }, .55);
+    if (c.atk > 0) { const save_ = { x: c.x, y: c.y, w: 26, h: 38, face: c.face, atk: c.atk }; drawSlash(save_); }
+  }
+  for (const c of p.wkc) {
+    ctx.save(); ctx.globalAlpha = .75; glow(c.x + 13, c.y + 19, 22, '255,197,61', .45); ctx.restore();
+    drawHero({ ...heroStub('wukong', c.x, c.y, c.face), atk: c.swing > 0 ? 8 : 0 }, .75);
+    if (c.swing > 0) { ctx.save(); ctx.globalAlpha = c.swing / 8; ctx.strokeStyle = '#ffc53d'; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(c.x + 13, c.y + 18, 30, c.face > 0 ? -1.4 : Math.PI - 1.4 + 2.8 - 2.8, c.face > 0 ? 1.2 : Math.PI + 1.4); ctx.stroke(); ctx.restore(); }
+  }
+}
+function drawFxList() {
+  for (const f of fxList) {
+    const k = f.t / f.max;
+    if (f.type === 'nslash') {
+      drawHero({ ...heroStub('ninja', f.sx - 13, f.y - 19, f.sx < f.x ? 1 : -1) }, .35 + .4 * k);
+      ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.ang); ctx.globalAlpha = k; ctx.shadowColor = '#9aa8ff'; ctx.shadowBlur = 14; ctx.lineCap = 'round';
+      line(-50, 0, 50, 0, '#dfe4ff', 4); line(-40, 3, 40, 3, '#6a5acd', 2); ctx.restore();
+    } else if (f.type === 'haki') {
+      ctx.save(); ctx.globalAlpha = k * .5; ctx.fillStyle = '#1a0a14'; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (1 - k * .6), 0, 7); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.globalAlpha = k; ctx.lineWidth = 3;
+      f.bolts.forEach((b, i) => { ctx.strokeStyle = i % 2 ? '#ff3b3b' : '#b06bff'; ctx.beginPath(); let r = 20; ctx.moveTo(f.x + Math.cos(b) * r, f.y + Math.sin(b) * r);
+        while (r < f.r * (1 - k * .5)) { r += 26; const j = (Math.random() - .5) * .35; ctx.lineTo(f.x + Math.cos(b + j) * r, f.y + Math.sin(b + j) * r); } ctx.stroke(); });
+      ctx.restore();
+    }
+  }
+}
 function drawShot(q) {
   const c = center(q);
   if (q.delay > 0) return;
@@ -1939,7 +2416,9 @@ function drawShot(q) {
       glow(0, 0, 40, rgb, .45);
       ctx.fillStyle = q.color; ctx.shadowColor = q.color; ctx.shadowBlur = 16;
       ctx.beginPath(); ctx.arc(-8, 0, 30, -1.2, 1.2); ctx.arc(-20, 0, 26, 1.05, -1.05, true); ctx.fill();
-      ctx.fillStyle = '#fffbe8'; ctx.beginPath(); ctx.arc(-8, 0, 28, -.9, .9); ctx.arc(-14, 0, 25, .85, -.85, true); ctx.fill();
+      ctx.fillStyle = q.inner || '#fffbe8'; ctx.beginPath(); ctx.arc(-8, 0, 28, -.9, .9); ctx.arc(-14, 0, 25, .85, -.85, true); ctx.fill();
+      if (q.dark) { ctx.shadowBlur = 0; for (let i = 0; i < 3; i++) { ctx.strokeStyle = i ? '#b06bff' : '#ff5a5a'; ctx.lineWidth = 2; ctx.beginPath(); let yy = -30; ctx.moveTo(-6 + Math.random() * 10, yy);
+        while (yy < 30) { yy += 8; ctx.lineTo(-10 + Math.random() * 22, yy); } ctx.stroke(); } }
       ctx.restore(); break;
     }
     case 'holy': case 'ksword': {
@@ -1953,6 +2432,14 @@ function drawShot(q) {
       ctx.fillStyle = '#ffd166'; ctx.fillRect(c.x - bw * 2.8, top - 8, bw * 5.6, big ? 9 : 4); ctx.fillRect(c.x - bw / 2, q.y, bw, top - q.y - 6);
       ctx.restore(); break;
     }
+    case 'shuri': {
+      ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(Date.now() / 40); ctx.fillStyle = '#d8dcea';
+      for (let i = 0; i < 4; i++) { ctx.rotate(Math.PI / 2); ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(3, 0); ctx.lineTo(-3, 0); ctx.fill(); }
+      ctx.fillStyle = '#2a2e4a'; ctx.beginPath(); ctx.arc(0, 0, 2.5, 0, 7); ctx.fill(); ctx.restore(); break;
+    }
+    case 'boom':
+      glow(c.x, c.y, 14, q.dark ? '255,59,59' : '255,154,61', .9);
+      ctx.fillStyle = q.dark ? '#2a1030' : '#3a3a48'; ctx.beginPath(); ctx.arc(c.x, c.y, 5, 0, 7); ctx.fill(); break;
     case 'fistwave': case 'fistlet': {
       const big = q.type === 'fistwave', r = big ? 16 : 7;
       ctx.save(); ctx.translate(c.x, c.y); ctx.scale(q.face || 1, 1); ctx.globalAlpha = Math.min(1, q.life / 8);
@@ -2269,7 +2756,7 @@ function drawTouchHud() {
   const p = player, C = CLASSES[cls], accent = p.trans > 0 ? '#fff0a8' : C.color;
   const px = 12, py = 64;
   ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
-  ctx.fillStyle = 'rgba(20,24,48,.7)'; rr(px, py, 190, 30, 8);
+  ctx.fillStyle = 'rgba(1,10,19,.78)'; rr(px, py, 190, 30, 4); ctx.strokeStyle = '#785a28'; ctx.lineWidth = 1; ctx.strokeRect(px + .5, py + .5, 189, 29);
   ctx.fillStyle = accent; ctx.font = '800 13px "Baloo 2", sans-serif';
   ctx.fillText(`${C.name} · Cấp ${p.level}`, px + 8, py + 13);
   let ratio = 1;
@@ -2292,7 +2779,7 @@ function drawHud() {
   const p = player, C = CLASSES[cls], accent = p.trans > 0 ? '#fff0a8' : C.color, sk = skillsOf(p);
   const px = 12, py = H - 108;
   ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
-  ctx.fillStyle = 'rgba(20,24,48,.8)'; rr(px, py, 262, 96, 12);
+  ctx.fillStyle = 'rgba(1,10,19,.82)'; rr(px, py, 262, 96, 6); ctx.strokeStyle = '#785a28'; ctx.lineWidth = 1.5; ctx.strokeRect(px + .5, py + .5, 261, 95);
   if (p.trans > 0) { ctx.strokeStyle = '#ffd84d'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(px, py, 262, 96, 12) : ctx.rect(px, py, 262, 96); ctx.stroke(); }
   ctx.fillStyle = accent; ctx.font = '800 15px "Baloo 2", sans-serif';
   ctx.fillText(`${C.name} · Cấp ${p.level}`, px + 12, py + 21);
@@ -2388,12 +2875,14 @@ function draw() {
   const p = player;
   if (cls === 'gunner' && p.level >= 2 && state === 'play') { const t = getTarget(); if (t) drawReticle(t); }
   for (const t of trail) if (!t.boss) drawHero({ ...p, x: t.x, y: t.y, face: t.face, thrust: 0, atk: 0 }, t.life / 12 * .35);
+  drawNinjaExtras(p);
   const blink = p.inv > 0 && p.dash <= 0 && p.phase <= 0 && Math.floor(p.inv / 5) % 2;
-  if (!blink && p.phase <= 0) drawHero(p, 1);
+  if (!blink && p.phase <= 0 && !(p.killSeq && p.killSeq.dash <= 0)) drawHero(p, p.hidden ? .4 : 1);
   drawSlash(p);
   if (p.parryWin > 0) { ctx.save(); ctx.globalAlpha = p.parryWin / 10 * .7; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(p.x + 13, p.y + 19, 26, 0, 7); ctx.stroke(); ctx.restore(); }
   shots.forEach(drawShot);
   hazards.forEach(drawHazard);
+  drawFxList();
   for (const r of rings) { ctx.globalAlpha = r.t / 20; ctx.strokeStyle = r.color; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, 7); ctx.stroke(); }
   for (const q of particles) { ctx.globalAlpha = Math.max(0, q.life / 30); ctx.fillStyle = q.color; ctx.fillRect(q.x, q.y, 4, 4); }
   ctx.globalAlpha = 1;
@@ -2417,6 +2906,7 @@ function draw() {
   }
   ctx.textAlign = 'left';
   ctx.restore();
+  if (p.killSeq) { ctx.fillStyle = 'rgba(20,16,50,.35)'; ctx.fillRect(0, 0, W, H); }
   if (ult) drawUlt();
   if (flashT > 0) { ctx.fillStyle = `rgba(255,236,220,${flashT / 14})`; ctx.fillRect(0, 0, W, H); flashT--; }
   drawHud();
@@ -2428,6 +2918,7 @@ function loop() {
   if (!!dialog !== wasTalking) { wasTalking = !!dialog; document.body.classList.toggle('talking', wasTalking); }
   if (state === 'play' && !dialog) { if (hitStop > 0) hitStop--; else update(); }
   if (world && state !== 'menu') draw();
+  if (state === 'menu' && !$('menuPanel').hidden) drawShowcase();
   requestAnimationFrame(loop);
 }
 
@@ -2531,44 +3022,134 @@ function toMenu() {
 
 // ======================= MENU =======================
 let selStage = save.tutDone || save.cleared > 0 ? Math.min(15, save.cleared + 1) : 0, selCls = save.unlocked.includes(save.cls) ? save.cls : 'warrior', resetArmed = false;
+let roleFilter = 'all', selSkill = 0;
+const $ = id => document.getElementById(id);
+function tierBadge(c) { const r = RARITY[c], t = TIER[r]; return `<span class="tag2 tier-${t}">${t} · ${RARITY_NAME[r]}</span>`; }
 function renderMenu() {
   selStage = Math.min(selStage, save.cleared + 1);
-  if (!save.unlocked.includes(selCls)) selCls = 'warrior';
+  if (!CLASSES[selCls]) selCls = 'warrior';
+  const C = CLASSES[selCls], own = save.unlocked.includes(selCls);
+  $('menuPanel').style.setProperty('--hc', C.color);
+  // ----- tài nguyên -----
+  $('lbRes').innerHTML = `<span class="chip"><i>✦</i>${save.coins}</span><span class="chip"><i>🎟</i>${save.gacha.tickets}</span>` +
+    `<span class="chip"><i>★</i>${totalStars()}/45</span><span class="chip"><i>🧩</i>${save.frags.filter(Boolean).length}/4 phong ấn</span>` +
+    `<span class="chip"><i>Lv</i>${levelFromXp(save.xp)} · ${save.xp} KN</span>`;
+  $('summonDot').textContent = save.gacha.tickets > 0 ? save.gacha.tickets : '';
   const achN = ACHS.filter(a => save.ach[a.id]).length;
-  document.getElementById('progress').innerHTML =
-    `<span>Đội cấp <b>${levelFromXp(save.xp)}</b> (${save.xp} KN)</span><span>Đom đóm: <b>${save.coins} ✦</b></span><span>Sao: <b>${totalStars()}/45</b></span><span>Mảnh phong ấn: <b>${save.frags.filter(Boolean).length}/4</b></span><span>Đã qua: <b>${save.cleared}/15</b> màn</span>`;
-  document.getElementById('shopBtn').textContent = `🛒 Cửa hàng (${save.coins} ✦)`;
-  document.getElementById('achBtn').textContent = `🏆 Thành tựu (${achN}/${ACHS.length})`;
-  document.getElementById('summonBtn').textContent = `✨ Chiêu mộ (🎟 ${save.gacha.tickets})`;
-  const sg = document.getElementById('stageGrid'); sg.innerHTML = '';
-  for (let n = 0; n <= 15; n++) {
-    const S = STAGES[n], b = document.createElement('button');
-    b.className = 'stage' + (n === selStage ? ' sel' : '') + ((n === 0 ? save.tutDone : n <= save.cleared) ? ' done' : '');
-    b.disabled = n > save.cleared + 1;
-    const tag = S.type === 'boss' ? `<span class="tag">BOSS</span>` : S.type === 'rescue' ? `<span class="tag rescue">GIẢI CỨU</span>` : S.type === 'orb' ? `<span class="tag orb">QUẢ CẦU</span>`
-      : S.type === 'tutorial' ? `<span class="tag tut">HƯỚNG DẪN</span>` : (n >= 9 && n <= 14) ? `<span class="tag">TƯỚNG QUỶ</span>` : '';
-    const m = save.stars[n] || 0;
-    const stars = n === 0 ? '' : `<span class="stars">${[0, 1, 2].map(i => `<span class="${m & (1 << i) ? '' : 'off'}">★</span>`).join('')}</span>`;
-    b.innerHTML = `${n === 0 ? 'Màn 0' : `Màn ${n}`} ${tag}<small>${S.name}</small>${stars}`;
-    b.addEventListener('click', () => { selStage = n; renderMenu(); });
-    sg.appendChild(b);
+  $('achDot').textContent = ''; $('achBtn').title = `${achN}/${ACHS.length} thành tựu`;
+  // ----- danh sách màn -----
+  const sg = $('stageGrid'); sg.innerHTML = '';
+  [[0, 4, 'Chương 1 · Giải cứu'], [5, 8, 'Chương 2 · Tứ Đại Thiên Vương'], [9, 14, 'Chương 3 · Đường tới lâu đài'], [15, 15, 'Chương cuối']].forEach(([a0, a1, title]) => {
+    sg.insertAdjacentHTML('beforeend', `<div class="chap">${title}</div>`);
+    for (let n = a0; n <= a1; n++) {
+      const S = STAGES[n], b = document.createElement('button');
+      b.className = 'stg' + (n === selStage ? ' sel' : '');
+      b.disabled = n > save.cleared + 1;
+      const tag = S.type === 'boss' ? `<small>Boss · ${BOSS_DEFS[S.boss].name}</small>` : S.type === 'rescue' ? `<small class="rescue">Giải cứu ${CLASSES[S.rescue].name}</small>`
+        : S.type === 'orb' ? `<small class="orb">Quả cầu phong ấn</small>` : S.type === 'tutorial' ? `<small class="tut">Hướng dẫn</small>` : (n >= 9 && n <= 14) ? `<small>Tướng quỷ · ${BOSS_DEFS['m' + n].name}</small>` : '';
+      const m = save.stars[n] || 0;
+      const st = n === 0 ? (save.tutDone ? '✓' : '') : [0, 1, 2].map(i => `<span class="${m & (1 << i) ? '' : 'off'}">★</span>`).join('');
+      b.innerHTML = `<span class="num">${n}</span><span class="nm">${S.name}${tag}</span><span class="st">${b.disabled ? '🔒' : st}</span>`;
+      b.addEventListener('click', () => { selStage = n; renderMenu(); });
+      sg.appendChild(b);
+    }
+  });
+  // ----- lọc vai trò -----
+  const rt = $('roleTabs'); rt.innerHTML = '';
+  ['all', ...ROLE_LIST].forEach(r => {
+    const t = document.createElement('button'); t.className = 'role-tab' + (r === roleFilter ? ' sel' : ''); t.textContent = r === 'all' ? 'Tất cả' : r;
+    t.addEventListener('click', () => { roleFilter = r; renderMenu(); }); rt.appendChild(t);
+  });
+  // ----- lưới tướng -----
+  const grid = $('cards'); grid.innerHTML = '';
+  const list = CLASS_ORDER.filter(c => roleFilter === 'all' || ROLES[c].includes(roleFilter));
+  $('champCount').textContent = `${save.unlocked.length}/${CLASS_ORDER.length}`;
+  for (const c of list) {
+    const b = document.createElement('button'), mine = save.unlocked.includes(c);
+    b.className = 'champ' + (mine ? '' : ' locked') + (c === selCls ? ' sel' : '');
+    b.title = `${CLASSES[c].name} · ${RARITY_NAME[RARITY[c]]}`;
+    b.appendChild(heroPortrait(c, 60));
+    b.insertAdjacentHTML('beforeend', `${mine ? '' : '<span class="lk">🔒</span>'}<span class="cn">${CLASSES[c].name}</span><span class="rb ${TIER[RARITY[c]]}"></span>`);
+    b.addEventListener('click', () => { selCls = c; selSkill = 0; renderMenu(); });
+    grid.appendChild(b);
   }
-  const cards = document.getElementById('cards'); cards.innerHTML = '';
-  for (const id of CLASS_ORDER) {
-    const C = CLASSES[id], unlocked = save.unlocked.includes(id), b = document.createElement('button');
-    b.className = 'card' + (unlocked ? '' : ' locked') + (id === selCls ? ' sel' : '');
-    b.style.setProperty('--c', C.color);
-    b.innerHTML = `<h2>${C.name}${unlocked ? `<span class="rank">${'◆'.repeat(rankOf(id))}${'◇'.repeat(5 - rankOf(id))}</span>` : ''}</h2><div class="role">${C.hero} · ${C.role} · J: ${C.basic.name}</div>` +
-      C.skills.map((s, i) => `<div class="sk"><b>${i + 1}. ${s.name}${tierOf(id, i) > 1 ? ` (bậc ${tierOf(id, i)})` : ''}:</b> ${s.desc}</div>`).join('') +
-      `<div class="passive"><b>Nội tại · ${PASSIVES[id].name}:</b> ${PASSIVES[id].desc}</div>` +
-      (unlocked ? '' : `<div class="lock"><span>🔒</span>${UNLOCK_HINT[id]}</div>`);
-    if (unlocked) b.addEventListener('click', () => { selCls = id; renderMenu(); });
-    else b.setAttribute('aria-disabled', 'true');
-    cards.appendChild(b);
+  // ----- khu trưng bày -----
+  $('showTags').innerHTML = tierBadge(selCls) + ROLES[selCls].map(r => `<span class="tag2 role">${r}</span>`).join('') +
+    (own ? `<span class="tag2 rank">${'◆'.repeat(rankOf(selCls))}${'◇'.repeat(5 - rankOf(selCls))}</span>` : `<span class="tag2 role">🔒 ${UNLOCK_HINT[selCls] || ''}</span>`);
+  $('showName').textContent = C.name;
+  $('showTitle').textContent = `${C.hero} · ${TITLES[selCls]}`;
+  const st = STATS[selCls];
+  $('showStats').innerHTML = ['Sát thương', 'Sống sót', 'Kỹ năng', 'Độ khó'].map((l, i) =>
+    `<div class="stat">${l}<div class="seg">${[0, 1, 2, 3, 4].map(k => `<i class="${k < st[i] ? 'on' : ''}"></i>`).join('')}</div></div>`).join('');
+  const bar = $('skillBar'); bar.innerHTML = '';
+  [-1, 0, 1, 2, 3].forEach(i => {
+    const b = document.createElement('button');
+    b.className = 'sk-ico' + (i < 0 ? ' passive' : '') + (i === selSkill ? ' sel' : '');
+    const icon = i < 0 ? '✧' : (C.skills[i].icon || '•');
+    b.innerHTML = `<span>${icon}</span><em>${i < 0 ? 'NT' : SKILL_KEYS[i]}</em>`;
+    b.setAttribute('aria-label', i < 0 ? `Nội tại ${PASSIVES[selCls].name}` : C.skills[i].name);
+    b.addEventListener('click', () => { selSkill = i; renderMenu(); });
+    b.addEventListener('mouseenter', () => { if (selSkill !== i) { selSkill = i; renderMenu(); } });
+    bar.appendChild(b);
+  });
+  const sd = $('skillDesc');
+  if (selSkill < 0) {
+    sd.innerHTML = `<h4>Nội tại · ${PASSIVES[selCls].name}<small>Luôn kích hoạt</small></h4><p>${PASSIVES[selCls].desc}.</p><p class="t3">Bậc tướng 5: ${PASSIVE5[selCls]}</p>`;
+  } else {
+    const sk = C.skills[selSkill], tr = tierOf(selCls, selSkill);
+    const cdTxt = sk.cd >= 60 ? `${Math.round(sk.cd / 6) / 10} giây` : `${(sk.cd / 60).toFixed(1)} giây`;
+    sd.innerHTML = `<h4>${selSkill + 1}. ${sk.name}<small>Hồi chiêu ${cdTxt} · Mở ở cấp ${selSkill + 1} · Bậc ${tr}/3</small></h4><p>${sk.desc}.</p>` +
+      `<p class="t3">Bậc 3: ${T3_DESC[selCls][selSkill]}${selCls === 'king' ? ` · Khi Thánh hóa: ${CLASSES.king.tskills[selSkill].name}` : ''}</p>`;
   }
-  document.getElementById('playBtn').textContent = `Bắt đầu Màn ${selStage} với ${CLASSES[selCls].name}`;
+  // ----- chân trang -----
+  const S = STAGES[selStage], m = save.stars[selStage] || 0;
+  $('footInfo').innerHTML = `<b>Màn ${selStage} · ${S.name}</b>${selStage === 0 ? 'Hướng dẫn' : `<span class="st">${[0, 1, 2].map(i => m & (1 << i) ? '★' : '☆').join('')}</span>`} · Đội cấp ${levelFromXp(save.xp)}`;
+  const pb = $('playBtn');
+  pb.classList.toggle('buy', !own);
+  pb.textContent = own ? 'Khóa chọn' : selCls === 'beast' ? `Mua · ${BEAST_PRICE} ✦` : 'Chiêu mộ để mở';
 }
-document.getElementById('playBtn').addEventListener('click', () => startStage(selStage, selCls));
+$('playBtn').addEventListener('click', () => {
+  if (save.unlocked.includes(selCls)) { startStage(selStage, selCls); return; }
+  if (selCls === 'beast') $('shopBtn').click(); else $('summonBtn').click();
+});
+
+// ----- Khu trưng bày tướng động -----
+const showCv = $('showCanvas');
+const motes = Array.from({ length: 26 }, () => ({ x: Math.random() * 640, y: 300 + Math.random() * 300, s: .4 + Math.random() * 1.2, r: 1 + Math.random() * 2.5 }));
+function drawShowcase() {
+  const old = ctx; ctx = showCv.getContext('2d');
+  const C = CLASSES[selCls], rgb = hexRgb(C.color), own = save.unlocked.includes(selCls), t = Date.now() / 1000;
+  ctx.clearRect(0, 0, 640, 640);
+  const cx = 320, py = 500;
+  const beam = ctx.createLinearGradient(0, py, 0, 60);
+  beam.addColorStop(0, `rgba(${rgb},.34)`); beam.addColorStop(1, `rgba(${rgb},0)`);
+  ctx.fillStyle = beam; ctx.beginPath(); ctx.moveTo(cx - 150, py); ctx.lineTo(cx - 70, 60); ctx.lineTo(cx + 70, 60); ctx.lineTo(cx + 150, py); ctx.fill();
+  glow(cx, py - 150, 230, rgb, .22);
+  for (const m of motes) { m.y -= m.s; if (m.y < 80) { m.y = 560; m.x = 160 + Math.random() * 320; }
+    ctx.globalAlpha = Math.min(1, (m.y - 80) / 200) * .8; ctx.fillStyle = C.color; ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, 7); ctx.fill(); }
+  ctx.globalAlpha = 1;
+  // bệ Hextech xoay
+  ctx.save(); ctx.translate(cx, py); ctx.scale(1, .26);
+  ctx.strokeStyle = 'rgba(200,170,110,.85)'; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(0, 0, 175, 0, 7); ctx.stroke();
+  ctx.strokeStyle = `rgba(${rgb},.9)`; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, 150, 0, 7); ctx.stroke();
+  ctx.strokeStyle = 'rgba(10,200,185,.7)'; ctx.lineWidth = 2; ctx.setLineDash([14, 10]); ctx.lineDashOffset = -t * 40; ctx.beginPath(); ctx.arc(0, 0, 125, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+  ctx.rotate(t * .4);
+  for (let i = 0; i < 12; i++) { ctx.rotate(Math.PI / 6); ctx.fillStyle = 'rgba(240,230,210,.8)'; ctx.fillRect(160, -3, 16, 6); }
+  ctx.restore();
+  glow(cx, py, 150, rgb, .35);
+  // tướng
+  const sc = 6.4, bob = Math.sin(t * 2) * 5;
+  ctx.save(); ctx.translate(cx, py - 38 * sc + bob - 6); ctx.scale(sc, sc);
+  if (!own) ctx.filter = 'grayscale(1) brightness(.35)';
+  const stub = heroStub(selCls, -13, 0, 1); stub.ground = true;
+  if (selCls === 'king' && Math.sin(t * .7) > .6) stub.trans = 1;
+  drawHero(stub, 1);
+  ctx.restore();
+  ctx.filter = 'none';
+  if (!own) { ctx.font = '600 64px "Be Vietnam Pro", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🔒', cx, py - 130); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; }
+  ctx = old;
+}
+
 
 // ======================= CỬA HÀNG =======================
 let shopCls = null;
@@ -2628,18 +3209,20 @@ document.getElementById('shopClose').addEventListener('click', toMenu);
 
 // ======================= CHIÊU MỘ =======================
 function addShards(c, n) { save.gacha.shards[c] = (save.gacha.shards[c] || 0) + n; }
-function pickHero() {   // trọng số: Nhà vua 2, Đấu sĩ 2, mỗi tướng hiếm 4, Chiến binh 15 (tổng 31)
+const LEG_POOL = ['king', 'wukong', 'pirate'], EPIC_POOL = ['brawler', 'ninja'], RARE_POOL = ['mage', 'samurai', 'gunner'];
+const pickOf = a => a[Math.floor(Math.random() * a.length)];
+function pickHero() {   // trong 31%: Huyền thoại 3, Sử thi 6, Hiếm 9, Thường 13
   const r = Math.random() * 31;
-  if (r < 2) return 'king';
-  if (r < 4) return 'brawler';
-  if (r < 16) return ['mage', 'samurai', 'gunner'][Math.floor(Math.random() * 3)];
+  if (r < 3) return pickOf(LEG_POOL);
+  if (r < 9) return pickOf(EPIC_POOL);
+  if (r < 18) return pickOf(RARE_POOL);
   return 'warrior';
 }
 function rollOnce() {
   const g = save.gacha;
   g.pity++; g.legPity++; g.pulls++;
   let hero = null;
-  if (g.legPity >= 60) hero = Math.random() < .5 ? 'king' : 'brawler';                         // bảo hiểm Huyền thoại sau 60 lượt
+  if (g.legPity >= 60) hero = pickOf(LEG_POOL);                         // bảo hiểm Huyền thoại sau 60 lượt
   else if (g.pity >= 10 || Math.random() < 0.31) hero = pickHero(); // bảo hiểm tướng sau 10 lượt
   if (hero) {
     g.pity = 0; if (RARITY[hero] === 'leg') { g.legPity = 0; unlockAch('gachaLeg'); }
@@ -2811,7 +3394,7 @@ function updateTouchUI() {
     const ratio = locked ? 0 : Math.min(1, cd / base);
     const secs = !locked && cd > 60 ? Math.ceil(cd / 60) : '';
     const pips = cls === 'samurai' && i === 0 ? p.stack : -1;
-    const glowOn = (cls === 'brawler' && i === 0 && p.fistEmp > 0) || (cls === 'warrior' && i === 0 && p.empower) || (cls === 'samurai' && i === 0 && p.stack >= 2) || (cls === 'king' && p.trans > 0);
+    const glowOn = (cls === 'pirate' && i < 2 && p.armed > 0) || (cls === 'wukong' && (i === 0 || i === 2) && p.cloud > 0) || (cls === 'brawler' && i === 0 && p.fistEmp > 0) || (cls === 'warrior' && i === 0 && p.empower) || (cls === 'samurai' && i === 0 && p.stack >= 2) || (cls === 'king' && p.trans > 0);
     const key = [locked, sk[i].icon, Math.round(ratio * 40), secs, pips, glowOn].join('|');
     if (key === skCache[i]) continue;
     skCache[i] = key;
