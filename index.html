@@ -628,8 +628,18 @@ const CLASSES = {
     { name: 'Phản thuẫn',     cd: 360, icon: '⟲', desc: 'Khiên + phản sát thương' },
     { name: 'Tam thánh kiếm', cd: 360, icon: '†', desc: '3 thanh thánh kiếm giáng xuống' },
     { name: 'Thánh quang đột', cd: 0,  icon: '✦', desc: 'Đâm tới: 5 sát thương toàn màn hình, kết thúc biến hình' } ] },
+  giong: { name: 'Thánh Gióng', hero: 'Gióng', color: '#7ee08a', role: 'Hóa thánh khi gục ngã', basic: { name: 'Gậy tre', cd: 22 }, skills: [
+    { name: 'Quất tre',            cd: 40,   icon: '⌒', desc: 'Quất roi tre theo hình vòng cung trước mặt' },
+    { name: 'Ngựa sắt xung phong', cd: 720,  icon: '♞', desc: 'Cưỡi ngựa sắt húc xuyên qua quái, xoay tre liên tục, miễn sát thương 3 giây' },
+    { name: 'Nhổ tre',             cd: 300,  icon: '↗', desc: 'Nhổ tre phóng về phía quái được chỉ định (tự khóa quái gần nhất)' },
+    { name: 'Bão Tre',             cd: 1500, icon: '✺', desc: 'Nhổ cả bụi tre quét một vùng rộng phía trước' } ],
+    tskills: [
+    { name: 'Thiết Côn Càn Quét',  cd: 30,  icon: '⌒', desc: 'Vung gậy sắt một vòng rộng, phóng sóng ánh vàng' },
+    { name: 'Ngựa Sắt Phun Lửa',   cd: 300, icon: '♨', desc: 'Phi tới, để lại vệt lửa thiêu quái' },
+    { name: 'Thiết Mã Đạp Đất',    cd: 360, icon: '✹', desc: 'Ngựa chồm lên giẫm xuống, sóng chấn làm choáng quái' },
+    { name: 'Phi Thiên',           cd: 0,   icon: '☀', desc: 'Bay lên trời, ánh sáng giáng xuống toàn màn hình (càng nhiều tim càng mạnh), rồi trở về dạng thường' } ] },
 };
-const CLASS_ORDER = ['warrior', 'mage', 'samurai', 'gunner', 'beast', 'brawler', 'ninja', 'king', 'wukong', 'pirate'];
+const CLASS_ORDER = ['warrior', 'mage', 'samurai', 'gunner', 'beast', 'brawler', 'ninja', 'king', 'wukong', 'pirate', 'giong'];
 const BEAST_PRICE = 400;
 const PASSIVES = {
   warrior: { name: 'Thân Thép', desc: '25% cơ hội chặn hoàn toàn một đòn đánh' },
@@ -642,16 +652,17 @@ const PASSIVES = {
   ninja:   { name: 'Ám Kích', desc: 'Đánh thường vào sau lưng quái gây gấp đôi sát thương' },
   wukong:  { name: 'Thạch Hầu Bất Diệt', desc: 'Mỗi màn một lần, khi gục ngã sẽ đứng dậy với 2 tim' },
   pirate:  { name: 'Ý Chí Thép', desc: 'Khi còn 2 tim trở xuống, đánh thường +1 sát thương' },
+  giong:   { name: 'Hóa Thánh', desc: 'Mỗi màn một lần, khi gục ngã sẽ hóa thánh: cưỡi ngựa sắt, hồi đầy tim, đổi toàn bộ chiêu. Mất 1 tim mỗi 2 giây; hạ quái chặn mất máu thêm 2 giây' },
 };
 const TIER = { com: 'C', rare: 'B', epic: 'A', leg: 'S' };
 const ROLES = { warrior: ['Đỡ đòn'], mage: ['Pháp sư'], samurai: ['Sát thủ'], gunner: ['Xạ thủ'], beast: ['Đấu sĩ', 'Sát thủ'], brawler: ['Đấu sĩ'],
-  ninja: ['Sát thủ'], king: ['Đấu sĩ', 'Đỡ đòn'], wukong: ['Đấu sĩ'], pirate: ['Xạ thủ', 'Đấu sĩ'] };
+  ninja: ['Sát thủ'], king: ['Đấu sĩ', 'Đỡ đòn'], wukong: ['Đấu sĩ'], pirate: ['Xạ thủ', 'Đấu sĩ'], giong: ['Đỡ đòn', 'Đấu sĩ'] };
 const ROLE_LIST = ['Đỡ đòn', 'Đấu sĩ', 'Sát thủ', 'Pháp sư', 'Xạ thủ'];
 // [Sát thương, Sống sót, Kỹ năng, Độ khó] thang 5
 const STATS = { warrior: [3, 5, 2, 1], mage: [4, 2, 5, 3], samurai: [4, 2, 4, 4], gunner: [4, 2, 3, 3], beast: [3, 4, 3, 2], brawler: [5, 4, 3, 2],
-  ninja: [4, 2, 4, 5], king: [5, 4, 5, 4], wukong: [5, 3, 4, 4], pirate: [5, 3, 4, 3] };
+  ninja: [4, 2, 4, 5], king: [5, 4, 5, 4], wukong: [5, 3, 4, 4], pirate: [5, 3, 4, 3], giong: [5, 5, 4, 3] };
 const TITLES = { warrior: 'Tấm khiên cuối cùng', mage: 'Pháp sư thủy nguyệt', samurai: 'Lưỡi gió phương Đông', gunner: 'Mắt ưng thung lũng', beast: 'Sói hoang huyết nguyệt',
-  brawler: 'Nắm đấm thép', ninja: 'Bóng tối vô hình', king: 'Ánh sáng vương quốc', wukong: 'Tề Thiên Đại Thánh', pirate: 'Thuyền trưởng biển đen' };
+  brawler: 'Nắm đấm thép', ninja: 'Bóng tối vô hình', king: 'Ánh sáng vương quốc', wukong: 'Tề Thiên Đại Thánh', pirate: 'Thuyền trưởng biển đen', giong: 'Thiên Vương làng Gióng' };
 // Hiệu ứng khi nâng kỹ năng lên bậc 3 (bậc 2 luôn là giảm 20% hồi chiêu)
 const T3_DESC = {
   warrior: ['Cuồng nộ kéo dài 6 giây, cường hóa 2 đòn', 'Giáp kéo dài 3.5 giây', 'Vòng xoay kiếm rộng hơn nhiều', 'Vùng nổ thánh kiếm rộng hơn'],
@@ -664,6 +675,7 @@ const T3_DESC = {
   pirate:  ['Vụ nổ rộng hơn', 'Sóng kiếm +1 sát thương', 'Nâng cấp vũ khí 12 giây', 'Bá khí phủ toàn màn hình, hạ quái đến 5 máu'],
   beast:   ['Hồi 2 tim khi trúng', 'Hóa cuồng kéo dài 8 giây', 'Lướt xa hơn, gây 3 sát thương', 'Cắn xé lâu hơn'],
   king:    ['Sóng kiếm mạnh thêm 1 sát thương', 'Khiên kéo dài thêm 1 giây', 'Kiếm vũ rơi 9 thanh', 'Thánh hóa kéo dài 14 giây'],
+  giong:   ['Quất tre rộng hơn; sóng vàng +1 sát thương', 'Miễn sát thương 4 giây khi xung phong', 'Tre phóng gây 4 sát thương; sóng chấn rộng hơn', 'Bão Tre quét xa hơn'],
 };
 const TEAM_UPG = [
   { id: 'hearts', name: 'Tim tối đa',       desc: '+1 tim tối đa cho cả đội', cost: [30, 60, 100] },
@@ -698,9 +710,9 @@ const ACHS = [
   { id: 'gachaLeg',  ico: '🌞', name: 'Ánh sáng huyền thoại', desc: 'Chiêu mộ ra tướng Huyền thoại' },
   { id: 'rank5',     ico: '💠', name: 'Thức tỉnh',            desc: 'Nâng một tướng lên bậc 5' },
 ];
-const UNLOCK_HINT = { ninja: 'Chiêu mộ (Sử thi)', wukong: 'Chiêu mộ (Huyền thoại)', pirate: 'Chiêu mộ (Huyền thoại)', brawler: 'Chiêu mộ (Sử thi)', beast: `Mua trong Cửa hàng (${400} ✦)`, mage: 'Giải cứu ở Màn 1 hoặc chiêu mộ', samurai: 'Giải cứu ở Màn 2 hoặc chiêu mộ', gunner: 'Giải cứu ở Màn 3 hoặc chiêu mộ', king: 'Giải phong ấn (Quả cầu ở Chương 1 + 4 mảnh từ Tứ Đại Thiên Vương ở Chương 3) hoặc chiêu mộ' };
+const UNLOCK_HINT = { giong: 'Chiêu mộ (Huyền thoại)', ninja: 'Chiêu mộ (Sử thi)', wukong: 'Chiêu mộ (Huyền thoại)', pirate: 'Chiêu mộ (Huyền thoại)', brawler: 'Chiêu mộ (Sử thi)', beast: `Mua trong Cửa hàng (${400} ✦)`, mage: 'Giải cứu ở Màn 1 hoặc chiêu mộ', samurai: 'Giải cứu ở Màn 2 hoặc chiêu mộ', gunner: 'Giải cứu ở Màn 3 hoặc chiêu mộ', king: 'Giải phong ấn (Quả cầu ở Chương 1 + 4 mảnh từ Tứ Đại Thiên Vương ở Chương 3) hoặc chiêu mộ' };
 // ---------- Chiêu mộ ----------
-const RARITY = { warrior: 'com', mage: 'rare', samurai: 'rare', gunner: 'rare', beast: 'epic', brawler: 'epic', ninja: 'epic', king: 'leg', wukong: 'leg', pirate: 'leg' };
+const RARITY = { warrior: 'com', mage: 'rare', samurai: 'rare', gunner: 'rare', beast: 'epic', brawler: 'epic', ninja: 'epic', king: 'leg', wukong: 'leg', pirate: 'leg', giong: 'leg' };
 const RARITY_NAME = { com: 'Thường', rare: 'Hiếm', epic: 'Sử thi', leg: 'Huyền thoại' };
 const DUP_SHARDS = { com: 6, rare: 10, epic: 15, leg: 25 };
 const PULL_COST = 30, PULL10_COST = 270;
@@ -711,6 +723,7 @@ const PASSIVE5 = {
   gunner: 'Mắt Ưng: 35% chí mạng', king: 'Vương Uy: hồi 1 tim mỗi 12 giây',
   brawler: 'Liên Kích: cứ đòn thứ 2 là gấp đôi', beast: 'Huyết Khát: hạ 5 quái hồi 1 tim',
   ninja: 'Ám Kích: đánh sau lưng gây gấp 3', wukong: 'Thạch Hầu Bất Diệt: đứng dậy với 3 tim', pirate: 'Ý Chí Thép: +2 sát thương khi yếu máu',
+  giong: 'Hóa Thánh: chỉ mất 1 tim mỗi 3 giây',
 };
 
 // ======================= MÀN CHƠI & CỐT TRUYỆN =======================
@@ -882,7 +895,7 @@ const BOSS_DEFS = {
 // ======================= LƯU TIẾN TRÌNH =======================
 const SAVE_KEY = 'bmvq-save-v1';
 const DEFAULT_SAVE = { cleared: 0, unlocked: ['warrior'], frags: [false, false, false, false], orb: false, xp: 0, cls: 'warrior',
-  coins: 0, stars: {}, upg: {}, sk: {}, ach: {}, stats: { kills: 0, parries: 0, minis: {}, heroes: {}, sins: {} }, tutDone: false, giftUsed: {}, ver: 2,
+  coins: 0, stars: {}, upg: {}, sk: {}, ach: {}, stats: { kills: 0, parries: 0, minis: {}, heroes: {}, sins: {} }, tutDone: false, giftUsed: {}, ver: 3, hxp: {},
   gacha: { tickets: 3, pity: 0, legPity: 0, pulls: 0, shards: {}, rank: {} } };
 const clone = o => JSON.parse(JSON.stringify(o));
 function loadSave() {
@@ -900,13 +913,21 @@ if ((save.ver || 1) < 2) {
   save.stats.sins = save.stats.sins || {};
   save.ver = 2; try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {}
 }
+// Chuyển sang cấp riêng từng tướng: tướng đã có giữ đúng số kỹ năng đã mở theo cấp đội cũ
+if ((save.ver || 1) < 3) {
+  save.hxp = save.hxp || {};
+  const oldLv = levelFromXp(save.xp || 0), map = [1, 1, 10, 20, 30][oldLv];
+  for (const c of save.unlocked) if (!save.hxp[c]) save.hxp[c] = LV_TOTAL[map] || 0;
+  save.ver = 3; try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {}
+}
+save.hxp = save.hxp || {};
 const upgLv = id => save.upg[id] || 0;
 const tierOf = (c, i) => ((save.sk[c] || [1, 1, 1, 1])[i]) || 1;
 const tier = i => tierOf(cls, i);
 const rankOf = c => (save.gacha.rank[c] || 1);
 const rank = () => rankOf(cls);
 const bonusDmg = () => upgLv('dmg') + (rank() >= 3 ? 1 : 0);
-const maxHearts = () => MAX_HEARTS + upgLv('hearts') + (rank() >= 2 ? 1 : 0);
+const maxHearts = () => MAX_HEARTS + upgLv('hearts') + (rank() >= 2 ? 1 : 0) + lvHearts(heroLv(cls));
 const totalStars = () => Object.values(save.stars).reduce((a, m) => a + (m & 1) + ((m >> 1) & 1) + ((m >> 2) & 1), 0);
 function unlockAch(id) {
   if (save.ach[id]) return;
@@ -917,6 +938,17 @@ function unlockAch(id) {
   el.hidden = false; clearTimeout(unlockAch.t); unlockAch.t = setTimeout(() => { el.hidden = true; }, 3200);
 }
 const levelFromXp = xp => { let l = 1; while (l < 4 && xp >= XP_NEED[l]) l++; return l; };
+// ---- Cấp riêng từng tướng: tối đa 100; kỹ năng 1/2/3/4 mở ở cấp 1/10/20/30; từ cấp 30 tăng chỉ số ----
+const MAX_LV = 100, SKILL_LV = [1, 10, 20, 30];
+const lvNeed = L => 8 + 3 * L + Math.floor(L * L / 6);
+const LV_TOTAL = (() => { const a = [0, 0]; for (let L = 1; L < MAX_LV; L++) a[L + 1] = a[L] + lvNeed(L); return a; })();
+const heroLvFromXp = xp => { let l = 1; while (l < MAX_LV && xp >= LV_TOTAL[l + 1]) l++; return l; };
+const heroXp = c => (save.hxp && save.hxp[c]) || 0;
+const heroLv = c => heroLvFromXp(heroXp(c));
+const lvDmgMul = L => 1 + Math.max(0, L - 30) * 0.015;
+const lvHearts = L => (L >= 50 ? 1 : 0) + (L >= 75 ? 1 : 0) + (L >= 100 ? 1 : 0);
+const lvCdMul = L => 1 - Math.max(0, L - 30) * 0.002;
+const lvBonusText = L => L < 30 ? '' : `+${Math.round((lvDmgMul(L) - 1) * 100)}% sát thương · −${Math.round((1 - lvCdMul(L)) * 100)}% hồi chiêu${lvHearts(L) ? ` · +${lvHearts(L)} tim` : ''}`;
 
 // ======================= TRẠNG THÁI =======================
 let stageNum = 1, cls = 'warrior', world = null;
@@ -1053,10 +1085,10 @@ function buildWorld(n) {
   else if (S.type === 'normal' || S.type === 'tutorial') goal = { kind: 'lantern', x: gc * T + 8, y: 9 * T - 40, w: 24, h: 80 };
   else goal = null;
   world.arenaL = world.len * T; world.arenaR = world.cols * T;
-  const lv = levelFromXp(save.xp);
+  const lv = heroLv(cls);
   const sx = 4 * T;
   player = { cls, x: sx, y: 9 * T + 2, w: 26, h: 38, vx: 0, vy: 0, ground: false, face: 1, sx, sy: 9 * T + 2, run: 0,
-    maxHearts: maxHearts(), hearts: maxHearts(), inv: 60, hurtCount: 0, parryWin: 0, parryCd: 0, airJumps: 0, regen: 0, kills: 0, cds: [0, 0, 0, 0], atkCd: 0, atk: 0, atkId: 0, atkEmp: false, level: lv, xp: save.xp, toast: null, pulled: 0,
+    maxHearts: maxHearts(), hearts: maxHearts(), inv: 60, hurtCount: 0, parryWin: 0, parryCd: 0, airJumps: 0, regen: 0, kills: 0, cds: [0, 0, 0, 0], atkCd: 0, atk: 0, atkId: 0, atkEmp: false, level: lv, xp: heroXp(cls), toast: null, pulled: 0, holy: false, holyUsed: false, holyDrain: 0, gcharge: 0, rear: 0, dropT: 0, coyote: 0, airT: 0, squash: 0, jumping: false,
     dash: 0, thrust: 0, thrustId: 0, thrustHit: false, thrustTornado: false, stack: 0, stackTimer: 0,
     buff: 0, empower: false, shield: 0, spin: 0, spinAng: 0, plant: 0,
     target: null, volley: null, phase: 0, crystal: null, charge: 0, trans: 0, reflect: 0,
@@ -1074,7 +1106,7 @@ const hit = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a
 const center = o => ({ x: o.x + o.w / 2, y: o.y + o.h / 2 });
 const onScreen = e => e.x + e.w > camX && e.x < camX + W;
 const wallHit = o => solids.some(s => !s.top && hit(o, s));
-const skillsOf = p => (p.cls === 'king' && p.trans > 0) ? CLASSES.king.tskills : CLASSES[p.cls].skills;
+const skillsOf = p => (p.cls === 'king' && p.trans > 0) ? CLASSES.king.tskills : (p.cls === 'giong' && p.holy) ? CLASSES.giong.tskills : CLASSES[p.cls].skills;
 const invulnerable = () => { const p = player; return p.inv > 0 || p.dash > 0 || p.shield > 0 || p.phase > 0 || p.iron > 0 || !!p.skyfall || !!p.maul || !!p.killSeq || !!ult; };
 
 function updateHud() {
@@ -1093,16 +1125,17 @@ function groundY(x, fromY) {
 function haz(o) { const h = Object.assign({ isHaz: true, vx: 0, vy: 0, g: 0, life: 60, delay: 0, blockable: false, solidStop: false, once: true }, o); hazards.push(h); return h; }
 
 function gainXp(n, x, y) {
-  const p = player;
-  p.xp += n; save.xp = p.xp;
-  popups.push({ text: `+${n} KN`, x, y, t: 50, color: CLASSES[cls].color });
-  while (p.level < 4 && p.xp >= XP_NEED[p.level]) {
-    p.level++;
-    const sk = CLASSES[cls].skills[p.level - 1];
-    p.toast = { text: `Lên cấp ${p.level}! Mở khóa ${sk.name} (${SKILL_KEYS[p.level - 1]})`, color: '#ffd166', t: 140 };
-    burst(p.x + 13, p.y + 19, '#ffd166', 36, 9);
-    p.hearts = Math.min(p.maxHearts, p.hearts + 1); updateHud();
+  const p = player; if (!p) return;
+  p.xp += n; save.hxp[cls] = p.xp;
+  if (x !== undefined) popups.push({ text: `+${n} KN`, x, y: y - 14, t: 30, color: '#9ff0d8' });
+  let up = false;
+  while (p.level < MAX_LV && p.xp >= LV_TOTAL[p.level + 1]) {
+    p.level++; up = true;
+    const si = SKILL_LV.indexOf(p.level);
+    if (si >= 0) { const sk = CLASSES[cls].skills[si]; p.toast = { text: `Lên cấp ${p.level}! Mở khóa ${sk.name} (${SKILL_KEYS[si]})`, color: '#ffd166', t: 150 }; }
+    else p.toast = { text: p.level >= 30 ? `Lên cấp ${p.level}! Chỉ số tăng (${lvBonusText(p.level)})` : `Lên cấp ${p.level}!`, color: '#ffd166', t: 110 };
   }
+  if (up) { const mh = maxHearts(); if (mh > p.maxHearts) { p.hearts += mh - p.maxHearts; p.maxHearts = mh; } burst(p.x + 13, p.y + 19, '#ffd166', 24, 7); updateHud(); }
 }
 
 function hurt(src) {
@@ -1121,12 +1154,13 @@ function hurt(src) {
   p.charge = 0; p.thrust = 0; shake = Math.max(shake, 5);
   updateHud();
   if (p.hearts <= 0 && wukongRevive()) return;
+  if (p.hearts <= 0 && giongAwaken()) return;
   if (p.hearts <= 0) gameOver();
 }
 function fallDown() {
   const p = player;
   p.hearts--; p.hurtCount++; updateHud();
-  if (p.hearts <= 0 && !wukongRevive()) { gameOver(); return; }
+  if (p.hearts <= 0 && !wukongRevive() && !giongAwaken()) { gameOver(); return; }
   p.x = p.sx; p.y = p.sy; p.vx = p.vy = 0; p.inv = 80; p.dash = p.phase = p.charge = p.barrage = 0; p.skyfall = null; p.maul = null; p.killSeq = null; p.cloud = 0;
 }
 let hitStop = 0, flashT = 0, fxList = [];
@@ -1172,6 +1206,7 @@ function reflectHit(src) {
 
 function damage(e, dmg, color) {
   if (!e.alive || e.transforming) return;
+  dmg = Math.round(dmg * lvDmgMul(player ? player.level : 1) * 10) / 10;
   e.hp -= dmg; e.flash = 8;
   if (!e.boss) e.stun = Math.max(e.stun, 12);
   const c = center(e);
@@ -1181,6 +1216,7 @@ function damage(e, dmg, color) {
     if (e.boss) { bossDown(e); return; }
     e.alive = false; burst(c.x, c.y, '#b69cff', 20, 7); gainXp(e.xp, c.x, e.y);
     player.kills++; save.stats.kills = (save.stats.kills || 0) + 1;
+    if (cls === 'giong' && player.holy) player.holyDrain = Math.min(player.holyDrain + 120, 240);
     if (cls === 'beast' && ++player.killHeal >= (rank() >= 5 ? 5 : 8)) { player.killHeal = 0; if (player.hearts < player.maxHearts) { player.hearts++; updateHud(); popups.push({ text: '+1 ♥', x: center(player).x, y: player.y - 12, t: 40, color: '#e0a060' }); } }
     unlockAch('kill1'); if (save.stats.kills >= 100) unlockAch('kill100'); if (save.stats.kills >= 500) unlockAch('kill500');
   }
@@ -1238,7 +1274,7 @@ function startUlt(color, dmg, name, king) {
 function endTrans() { const p = player; p.trans = 0; p.reflect = 0; p.cds[3] = CLASSES.king.skills[3].cd; }
 
 // ======================= ĐÁNH THƯỜNG =======================
-const MELEE = { ninja: { reach: 42, dmg: 1 }, wukong: { reach: 64, dmg: 2 }, pirate: { reach: 52, dmg: 2 }, samurai: { reach: 46, dmg: 1 }, warrior: { reach: 56, dmg: 2 }, king: { reach: 56, dmg: 2 }, brawler: { reach: 42, dmg: 2 }, beast: { reach: 48, dmg: 1 } };
+const MELEE = { giong: { reach: 60, dmg: 2 }, ninja: { reach: 42, dmg: 1 }, wukong: { reach: 64, dmg: 2 }, pirate: { reach: 52, dmg: 2 }, samurai: { reach: 46, dmg: 1 }, warrior: { reach: 56, dmg: 2 }, king: { reach: 56, dmg: 2 }, brawler: { reach: 42, dmg: 2 }, beast: { reach: 48, dmg: 1 } };
 function basicAttack() {
   const p = player, C = CLASSES[cls];
   if (p.parryCd <= 0) { p.parryWin = 10; p.parryCd = 34; }
@@ -1406,9 +1442,43 @@ const SKILL_FN = {
       return 'custom'; },
   ],
 };
+function arcHit(reach, dmg, color) {
+  const p = player, pc = center(p);
+  for (const e of enemies) if (e.alive) { const c = center(e), dx = (c.x - pc.x) * p.face, dy = c.y - pc.y;
+    if (dx > -20 && Math.hypot(dx, dy) < reach + Math.max(e.w, e.h) / 2) damage(e, dmg, color); }
+  fxList.push({ type: 'garc', x: pc.x, y: pc.y, face: p.face, r: reach, color, t: 14, max: 14 });
+}
+function giongAwaken() {
+  const p = player;
+  if (cls !== 'giong' || p.holy || p.holyUsed) return false;
+  p.holy = true; p.holyUsed = true; p.hearts = p.maxHearts; p.holyDrain = rank() >= 5 ? 180 : 120; p.inv = 100; p.cds = [0, 0, 0, 0];
+  const pc = center(p); burst(pc.x, pc.y, '#ffd84d', 50, 10); rings.push({ x: pc.x, y: pc.y, r: 10, max: 160, t: 26, color: '#ffd84d' }); flashT = 8; shake = 12; hitStop = 10;
+  p.toast = { text: 'HÓA THÁNH! Ngựa sắt, gậy sắt, đổi toàn bộ chiêu', color: '#ffd84d', t: 120 };
+  updateHud(); return true;
+}
+SKILL_FN.giong = [
+  () => { const p = player, pc = center(p); p.atk = 14; p.atkId = newId();
+    if (p.holy) { arcHit(96, 3, '#ffd84d');
+      shots.push({ type: 'wave', big: true, color: '#ffd84d', x: pc.x + p.face * 20 - 25, y: p.y - 62, w: 50, h: 112, vx: p.face * 10, face: p.face, life: 50, dmg: 2 + (tier(0) >= 3 ? 1 : 0), pierce: true, hits: new Set() }); return; }
+    arcHit(tier(0) >= 3 ? 104 : 84, 2, '#7ee08a'); },
+  () => { const p = player; if (p.gcharge > 0) return false;
+    p.gcharge = p.holy ? 46 : 50; p.gchargeFire = !!p.holy; p.dashHits = new Set();
+    p.inv = Math.max(p.inv, p.holy ? 60 : (tier(1) >= 3 ? 240 : 180)); burst(center(p).x, p.y + 30, p.holy ? '#ff6a2a' : '#e8ecf7', 16, 6); },
+  () => { const p = player, pc = center(p);
+    if (p.holy) { if (p.rear > 0) return false; p.rear = 26; return; }
+    const tg = getTarget(); let vx = p.face * 12, vy = 0;
+    if (tg) { const c = center(tg), d = Math.hypot(c.x - pc.x, c.y - pc.y) || 1; vx = (c.x - pc.x) / d * 12; vy = (c.y - pc.y) / d * 12; p.face = vx < 0 ? -1 : 1; }
+    shots.push({ type: 'bamboo', x: pc.x - 10, y: pc.y - 8, w: 20, h: 16, vx, vy, life: 80, dmg: tier(2) >= 3 ? 4 : 3, pierce: true, hits: new Set() }); p.atk = 10; },
+  () => { const p = player, pc = center(p);
+    if (p.holy) { if (ult) return false; startUlt('#ffd84d', 2 + p.hearts, 'Phi Thiên', true); p.holy = false; p.holyDrain = 0; p.rear = 0; p.gcharge = 0;
+      p.toast = { text: 'Phi Thiên! Trở về dạng thường', color: '#ffd84d', t: 90 }; p.cds = [0, 0, 0, 0]; p.cds[3] = skillCd(3); return 'custom'; }
+    const R = tier(3) >= 3 ? 330 : 260;
+    for (const e of enemies) if (e.alive) { const c = center(e), dx = (c.x - pc.x) * p.face; if (dx > -30 && dx < R && Math.abs(c.y - pc.y) < 170) damage(e, 4, '#7ee08a'); }
+    fxList.push({ type: 'bstorm', x: pc.x + p.face * 18, y: p.y + p.h - 12, face: p.face, r: R, t: 40, max: 40 }); shake = 10; p.atk = 14; },
+];
 function skillCd(i) {
   const base = skillsOf(player)[i].cd;
-  return Math.round(base * (tier(i) >= 2 ? 0.8 : 1) * (1 - 0.08 * upgLv('cd')) * (rank() >= 4 ? 0.9 : 1));
+  return Math.round(base * (tier(i) >= 2 ? 0.8 : 1) * (1 - 0.08 * upgLv('cd')) * (rank() >= 4 ? 0.9 : 1) * lvCdMul(player ? player.level : heroLv(cls)));
 }
 // Kỹ năng có thời gian hiệu lực: hồi chiêu chỉ bắt đầu đếm sau khi hiệu ứng kết thúc
 const lastWall = () => walls.length ? walls[walls.length - 1].life : 0;
@@ -1423,10 +1493,11 @@ const SKILL_DUR = {
   wukong:  [null, p => p.cloud, null, p => p.bigSpin],
   pirate:  [null, null, p => p.armed, null],
   king:    [null, p => p.shield, null, null],
+  giong:   [null, p => p.gcharge, null, null],
 };
 function useSkill(i) {
   const p = player;
-  if (p.level < i + 1 || p.cds[i] > 0) return;
+  if (p.level < SKILL_LV[i] || p.cds[i] > 0) return;
   const res = SKILL_FN[cls][i]();
   if (res === false) return;
   if (res !== 'custom') { const dur = SKILL_DUR[cls] && SKILL_DUR[cls][i]; p.cds[i] = skillCd(i) + (dur ? Math.max(0, dur(p) || 0) : 0); }
@@ -1768,6 +1839,15 @@ function update() {
         if (m.t % 8 === 0) { damage(e, 1, '#ff5a3d'); burst(ec.x, ec.y, '#ff5a3d', 6, 5); }
       }
     }
+  } else if (p.gcharge > 0) {
+    p.gcharge--; p.vx = p.face * (p.gchargeFire ? 10 : 9); p.vy = Math.min(p.vy + 0.6, 13);
+    for (const e of enemies) if (e.alive && !p.dashHits.has(e) && hit({ x: p.x - 14, y: p.y - 12, w: p.w + 28, h: p.h + 16 }, e)) { p.dashHits.add(e); damage(e, p.gchargeFire ? 3 : 2, p.gchargeFire ? '#ff6a2a' : '#7ee08a'); }
+    if (p.gchargeFire && p.gcharge % 4 === 0) shots.push({ type: 'ftrail', x: center(p).x - 12, y: p.y + p.h - 26, w: 24, h: 26, vx: 0, life: 150, dmg: 1, pierce: true, hits: new Set() });
+    moveX(p); p.y += p.vy; p.ground = false;
+    for (const s of solids) if (hit(p, s)) {
+      if (s.top) { if (p.vy > 0 && prevBottom <= s.y + 16) { p.y = s.y - p.h; p.vy = 0; p.ground = true; } }
+      else if (p.vy > 0) { p.y = s.y - p.h; p.vy = 0; p.ground = true; } else if (p.vy < 0) { p.y = s.y + s.h; p.vy = 0; }
+    }
   } else if (p.dash > 0) {
     p.dash--; p.vx = p.face * 13; p.vy = 0;
     if (p.dashHits) for (const e of enemies) if (e.alive && !p.dashHits.has(e) && hit({ x: p.x - 8, y: p.y - 6, w: p.w + 16, h: p.h + 12 }, e)) { p.dashHits.add(e); damage(e, p.dashDmg || 1, p.dashColor || '#9ff0d8'); }
@@ -1805,14 +1885,14 @@ function update() {
     if (p.dropT > 0) p.dropT--;
     // --- trọng lực mềm: nhả nút sớm thì nhảy thấp dần (không bị cắt phụt), lơ lửng nhẹ ở đỉnh, rơi dứt khoát ---
     let grav = 0.6;
-    if (p.vy < 0) { if (p.jumping && !keys.jump && p.pulled <= 0) grav = 1.35; else if (p.vy > -2.2) grav = 0.42; }
+    if (p.vy < 0) { if (p.jumping && !keys.jump && p.pulled <= 0) grav = 0.95; else if (p.vy > -2.2) grav = 0.42; }
     else grav = p.vy < 2 ? 0.5 : 0.72;
     p.vy = Math.min(p.vy + grav, 13);
     if (p.vy >= 0) p.jumping = false;
     moveX(p);
     p.y += p.vy; const wasGround = p.ground; p.ground = false;
     for (const s of solids) if (hit(p, s)) {
-      if (s.top) { if (p.dropT <= 0 && p.vy > 0 && prevBottom <= s.y + 1) { p.y = s.y - p.h; p.vy = 0; p.ground = true; } }
+      if (s.top) { if (!(p.dropT > 0) && p.vy >= 0 && prevBottom <= s.y + 16) { p.y = s.y - p.h; p.vy = 0; p.ground = true; } }
       else if (p.vy > 0) { p.y = s.y - p.h; p.vy = 0; p.ground = true; }
       else if (p.vy < 0) { p.y = s.y + s.h; p.vy = 0; p.jumping = false; }
     }
@@ -1820,6 +1900,18 @@ function update() {
     p.airT = p.ground ? 0 : (p.airT || 0) + 1;
   }
   if (p.squash > 0) p.squash--;
+  if (cls === 'giong') {
+    if (p.rear > 0) { p.rear--; p.vx *= .5;
+      if (p.rear === 8) { const pc = center(p), R = tier(2) >= 3 ? 300 : 230;
+        for (const e of enemies) if (e.alive) { const c = center(e); if (Math.abs(c.x - pc.x) < R && Math.abs(c.y - pc.y) < 150) { damage(e, 3, '#ffd84d');
+          if (!e.alive) continue; if (e.boss) { if (!e.float && !e.transforming) { e.stunT = 60; e.state = 'stun'; e.vx = 0; e.warn = false; } } else e.stun = 90; } }
+        rings.push({ x: pc.x, y: p.y + p.h, r: 10, max: R, t: 22, color: '#ffd84d' }); fxList.push({ type: 'gquake', x: pc.x, y: p.y + p.h, r: R, t: 30, max: 30 }); shake = 12; } }
+    if (p.holy && !ult && --p.holyDrain <= 0) {
+      p.holyDrain = rank() >= 5 ? 180 : 120; p.hearts--; updateHud();
+      popups.push({ text: '-1 ♥', x: center(p).x, y: p.y - 30, t: 36, color: '#ffd84d' });
+      if (p.hearts <= 0) { gameOver(); return; }
+    }
+  }
   if (p.x < 0) { p.x = 0; p.vx = 0; }
   if (p.x > world.cols * T - p.w) { p.x = world.cols * T - p.w; p.vx = 0; }
   if (Math.abs(p.vx) > 0.5 && p.ground) p.run += Math.abs(p.vx) * 0.08;
@@ -1928,7 +2020,7 @@ function update() {
   if (p.atk > 0) {
     p.atk--;
     if (MELEE[cls] && p.atk <= 11 && p.atk >= 3) {
-      const M = MELEE[cls], reach = M.reach, dmg = (cls === 'warrior' && p.atkEmp ? 3 : M.dmg) * (p.atkMul || 1);
+      const M = (cls === 'giong' && p.holy) ? { reach: 74, dmg: 3 } : MELEE[cls], reach = M.reach, dmg = (cls === 'warrior' && p.atkEmp ? 3 : M.dmg) * (p.atkMul || 1);
       const box = { x: p.face > 0 ? p.x + p.w - 4 : p.x - reach + 4, y: p.y - 8, w: reach, h: p.h + 14 };
       const pb = cls === 'pirate' && p.hearts <= 2 ? (rank() >= 5 ? 2 : 1) : 0;
       for (const e of enemies) if (e.alive && !e.hitIds.has(p.atkId) && hit(box, e)) {
@@ -1983,10 +2075,9 @@ function update() {
     if (e.boss) updateBoss(e); else updateEnemy(e, pc);
     if (!e.alive) continue;
     if (e.boss && (e.alpha < .5 || e.float || e.transforming)) continue;
-    if (hit(p, e) && p.dash <= 0 && p.phase <= 0 && !p.maul && !p.skyfall && !p.killSeq && !p.hidden) {
+    if (hit(p, e) && p.dash <= 0 && p.gcharge <= 0 && p.phase <= 0 && !p.maul && !p.skyfall && !p.killSeq && !p.hidden) {
       if (p.vy > 0 && prevBottom <= e.y + 12) { damage(e, 1); p.vy = -9; }
-      else if (p.shield > 0) { if (p.reflect > 0) reflectHit(e); }
-      else hurt(e);
+      else if (bodyAttacking(e)) { if (p.shield > 0) { if (p.reflect > 0) reflectHit(e); } else hurt(e); }
       if (state !== 'play') return;
     }
   }
@@ -2007,6 +2098,11 @@ function update() {
   camX = Math.max(camMin, Math.min(camX, camMax));
 }
 
+// Thân quái chỉ gây sát thương khi đang trong đòn tấn công (lao, húc, đập xuống), chạm bình thường thì không
+function bodyAttacking(e) {
+  if (e.boss) return e.state === 'act' && (Math.abs(e.vx) >= 6 || (e.id === 'demon' && e.float && e.dvy && !e.landed && e.at > 21));
+  return (e.kind === 'b' && e.mode === 'swoop') || (e.kind === 'c' && e.charge > 0) || (e.kind === 'j' && !e.ground && e.vy > 1);
+}
 function updateEnemy(e, pc) {
   if (e.flash > 0) e.flash--; if (e.lift > 0) e.lift--; if (e.rcd > 0) e.rcd--;
   const c = center(e), dx = pc.x - c.x, dy = pc.y - c.y, sp = e.sp;
@@ -2022,7 +2118,19 @@ function updateEnemy(e, pc) {
     if (e.y > H + 100) e.alive = false;
     return;
   }
-  if (stunned) return;
+  if (stunned) { e.wind = 0; return; }
+  // Đòn cận chiến: vung lên (báo trước) rồi chém một nhát ngắn trước mặt
+  if (e.kind === 'e' || e.kind === 'E' || e.kind === 'g') {
+    if (e.mcd > 0) e.mcd--;
+    if (e.wind > 0) {
+      e.wind--;
+      if (e.wind === 6) haz({ type: 'zone', follow: e, reach: e.kind === 'E' ? 44 : 32, yOff: e.h * .1, x: 0, y: 0, w: 32, h: e.h * .8, life: 6, fx: 'slash', once: true, color: e.kind === 'E' ? '#ff6b6b' : '#ff9a7a' });
+      if (e.kind !== 'g') return;
+    } else if (!player.hidden && (e.mcd || 0) <= 0 && Math.abs(dx) < e.w / 2 + 30 && Math.abs(dy) < 46) {
+      e.wind = e.kind === 'E' ? 30 : 24; e.mcd = e.kind === 'E' ? 90 : 75; e.face = dx < 0 ? -1 : 1; if (e.kind !== 'g') e.dir = e.face;
+      if (e.kind !== 'g') return;
+    }
+  }
   switch (e.kind) {
     case 'a':
       e.face = dx < 0 ? -1 : 1;
@@ -2124,6 +2232,14 @@ function updateShots(p, pc) {
     if (q.delay > 0) { q.delay--; continue; }
     q.life--;
     switch (q.type) {
+      case 'bamboo':
+        q.x += q.vx; q.y += q.vy;
+        if (wallHit({ x: q.x + 4, y: q.y + 4, w: q.w - 8, h: q.h - 8 })) { q.life = 0; burst(q.x + 10, q.y + 8, '#7ee08a', 10); break; }
+        hitEnemies(q, '#7ee08a'); if (Math.random() < .4) particles.push({ x: q.x + 10, y: q.y + 8, vx: -q.vx * .1, vy: 0, life: 10, color: '#a8f0a0' });
+        break;
+      case 'ftrail':
+        hitEnemies(q, '#ff6a2a'); if (Math.random() < .35) particles.push({ x: q.x + Math.random() * q.w, y: q.y + q.h - 4, vx: 0, vy: -1.5, life: 16, color: Math.random() < .5 ? '#ffd166' : '#ff6a2a' });
+        break;
       case 'tornado':
         q.x += q.vx; q.spin += 0.4;
         if (wallHit(q)) { q.life = 0; burst(q.x + 20, q.y + 30, '#9ff0d8', 12); break; }
@@ -2296,6 +2412,73 @@ function drawBg() {
   hills(camX * .45, TH.hill2, 24, 385);
 }
 
+function drawGiong(p) {
+  const t = Date.now() / 1000, sw = Math.sin(t * 5);
+  const P = (pts, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); ctx.fill(); };
+  const E = (x, y, rx, ry, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.fill(); };
+  const L = (x1, y1, x2, y2, c, w) => { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); };
+  const R = (x, y, w, h, r, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill(); };
+  const SKIN = '#d9a070', SKIND = '#b8805a', INK = '#1a1a2a';
+  const bamboo = (x1, y1, x2, y2, w = 2.6) => {
+    L(x1, y1, x2, y2, '#3f9a4a', w); L(x1, y1, x2, y2, 'rgba(160,230,140,.5)', w * .35);
+    const a = Math.atan2(y2 - y1, x2 - x1), n = a + Math.PI / 2;
+    for (let k = .15; k < 1; k += .17) { const x = x1 + (x2 - x1) * k, y = y1 + (y2 - y1) * k; L(x - Math.cos(n) * w * .6, y - Math.sin(n) * w * .6, x + Math.cos(n) * w * .6, y + Math.sin(n) * w * .6, '#2a6a32', 1); }
+    for (const d of [-.6, .6]) P([[x2, y2], [x2 + Math.cos(a + d) * 6, y2 + Math.sin(a + d) * 6], [x2 + Math.cos(a + d * .5) * 3, y2 + Math.sin(a + d * .5) * 3]], '#5ec46a');
+  };
+  const horse = (gallop, rear) => {
+    ctx.save(); ctx.translate(0, 38); ctx.scale(1.3, 1.3); ctx.translate(0, -38);
+    ctx.save(); ctx.translate(-2, 26); ctx.rotate(-rear); ctx.translate(2, -26);
+    const fl = k => Math.sin(t * 14 + k) * 1.2;
+    glow(-20, 18, 10, '255,120,40', .5); for (let i = 0; i < 4; i++) E(-19 - i * 2.5, 16 + i * 2 + fl(i), 3 - i * .5, 2 - i * .3, i % 2 ? '#ffd166' : '#ff6a2a');
+    for (const [x, ph, back] of [[-11, 0, 1], [-6, Math.PI, 1], [8, Math.PI, 0], [13, 0, 0]]) { const k = Math.sin(t * 22 + ph) * (gallop ? 4 : 0), ex = back ? 0 : rear * 8, ry = back ? 0 : rear;
+      L(x, 27, x + k * .6 + ex, 33 - ry * 6, back ? '#262a36' : '#3a3f4e', 3.2); L(x + k * .6 + ex, 33 - ry * 6, x + k + ex * 1.4, 38 - ry * 10, back ? '#262a36' : '#3a3f4e', 2.8); R(x + k + ex * 1.4 - 2, 37 - ry * 10, 4, 2, 1, '#14161e'); }
+    E(0, 22, 18, 7.5, '#3a3f4e'); E(-2, 20, 14, 4, '#4a5062'); ctx.fillStyle = '#ffd166'; ctx.fillRect(-12, 19, 1.5, 6); ctx.fillRect(-4, 18, 1.5, 6); ctx.fillRect(4, 18, 1.5, 6);
+    ctx.strokeStyle = '#3a3f4e'; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(13, 20); ctx.quadraticCurveTo(19, 14, 19, 6); ctx.stroke();
+    for (let i = 0; i < 5; i++) E(14 - i * .4 + fl(i) * .5, 6 + i * 3, 2.6, 2, i % 2 ? '#ffd166' : '#ff6a2a');
+    R(16, 1, 12, 7, 3, '#3a3f4e'); R(25, 4, 5, 4, 2, '#2a2e3a'); P([[18, 1.5], [17.5, -3], [20.5, 1]], '#2a2e3a');
+    ctx.save(); ctx.shadowColor = '#ff3b3b'; ctx.shadowBlur = 6; E(22.5, 3.5, 1.4, 1, '#ff4a3a'); ctx.restore();
+    ctx.restore(); ctx.restore();
+  };
+  const swing = p.atk > 0 ? -2.2 + (1 - p.atk / 14) * 3.1 : null;
+  const base = (dy, ang, spin) => {
+    ctx.save(); ctx.translate(0, dy);
+    R(-9, 32, 7, 6, 2.5, SKIN); R(2, 32, 8, 6, 2.5, SKIN); ctx.fillStyle = SKIND; ctx.fillRect(-9, 36, 7, 2); ctx.fillRect(2, 36, 8, 2);
+    P([[-9, 20], [9, 20], [10, 30], [3, 32], [-3, 30], [-10, 32]], '#7a4a2a'); P([[-8, 21], [-14 - sw, 29], [-6, 25]], '#7a4a2a'); ctx.fillStyle = '#5a3420'; ctx.fillRect(-9, 20, 18, 3);
+    R(-11, 8, 22, 14, 6, SKIN); ctx.fillStyle = SKIND; ctx.fillRect(-5, 13, 4, 3.5); ctx.fillRect(1, 13, 4, 3.5); ctx.fillRect(-5, 17.5, 4, 2.5); ctx.fillRect(1, 17.5, 4, 2.5); ctx.fillRect(-.5, 9, 1, 3);
+    E(-10, 11, 5, 4.5, SKIN); E(10, 11, 5.5, 4.5, SKIN);
+    E(0, 5, 7.5, 7.5, SKIN); E(2, 7, 5.5, 5.5, 'rgba(0,0,0,.08)');
+    ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(-1, 4, 7.5, Math.PI * .95, Math.PI * 1.6); ctx.lineTo(-2, 3); ctx.fill();
+    ctx.fillStyle = INK; ctx.fillRect(3, 5, 2, 3); ctx.fillStyle = '#fff'; ctx.fillRect(4, 5, 1, 1); L(2, 3, 6.5, 2.4, INK, 1.5); L(2, 10.5, 5.5, 10.3, '#8a4a3a', 1);
+    P([[-17, 2], [0, -11], [17, 2], [12, 3.5], [-12, 3.5]], '#e8cf8a'); ctx.strokeStyle = '#b89a50'; ctx.lineWidth = .7; for (let i = -12; i <= 12; i += 4) { ctx.beginPath(); ctx.moveTo(0, -10); ctx.lineTo(i, 2.5); ctx.stroke(); }
+    L(-5, 3, -3, 11, '#8a6a3a', .6); L(5, 3, 3, 11, '#8a6a3a', .6);
+    E(9, 16, 3, 3, SKIN);
+    if (ang !== null) bamboo(9 - Math.cos(ang) * 12, 16 - Math.sin(ang) * 12, 9 + Math.cos(ang) * 34, 16 + Math.sin(ang) * 34);
+    ctx.restore();
+  };
+  if (p.holy) {
+    glow(0, 10, 34, '255,210,90', .35 + Math.sin(t * 4) * .08);
+    const rear = p.rear > 8 ? (26 - p.rear) / 18 * .45 : p.rear > 0 ? p.rear / 8 * .45 : 0;
+    horse(p.gcharge > 0 || Math.abs(p.vx) > 1, rear);
+    ctx.save(); ctx.translate(-2, -17 - rear * 8);
+    ctx.save(); ctx.shadowColor = '#ffd84d'; ctx.shadowBlur = 10;
+    P([[-6, 21], [6, 21], [8, 30], [3, 31], [1, 24], [-4, 24]], '#5a4a2a'); R(2, 28, 6, 5, 2, '#3a2a1a');
+    R(-10, 9, 20, 14, 4, '#e8b830'); ctx.fillStyle = '#b8862a'; ctx.fillRect(-10, 18, 20, 5); ctx.fillStyle = '#fff2b0'; ctx.fillRect(-1, 10, 2, 8);
+    E(-9, 11, 5, 4, '#f4cc50'); E(9, 11, 5.5, 4, '#f4cc50');
+    E(0, 5, 7.5, 7.5, SKIN); E(2, 7, 5.5, 5.5, 'rgba(0,0,0,.08)');
+    P([[-14, 2], [0, -10], [14, 2], [10, 3.5], [-10, 3.5]], '#4a5062'); ctx.fillStyle = '#ffd84d'; ctx.fillRect(-13, 1.5, 26, 1.6); E(0, -9, 1.6, 1.6, '#ffd84d');
+    ctx.restore();
+    ctx.fillStyle = INK; ctx.fillRect(3, 5, 2, 3); ctx.fillStyle = '#fff6c0'; ctx.fillRect(4, 5, 1, 1); L(2, 3, 6.5, 2.4, INK, 1.5); L(2, 10.5, 5.5, 10.3, '#8a4a3a', 1);
+    E(9, 16, 3, 3, '#e8b830');
+    const a = swing !== null ? swing : -0.4;
+    ctx.save(); ctx.shadowColor = '#ffd84d'; ctx.shadowBlur = 12; const x1 = 9 - Math.cos(a) * 10, y1 = 16 - Math.sin(a) * 10, x2 = 9 + Math.cos(a) * 34, y2 = 16 + Math.sin(a) * 34;
+    L(x1, y1, x2, y2, '#5a6070', 3.2); L(x1, y1, x2, y2, '#ffe9a0', 1); E(x2, y2, 2.4, 2.4, '#ffd84d'); E(x1, y1, 2, 2, '#ffd84d'); ctx.restore();
+    ctx.restore();
+    for (let i = 0; i < 3; i++) { const k = ((t * 1.2 + i / 3) % 1); E(-14 + i * 12, 30 - k * 46, 1, 1, `rgba(255,200,80,${1 - k})`); }
+  } else if (p.gcharge > 0) {
+    horse(true, 0); base(-17, t * 30 % (Math.PI * 2), true);
+    ctx.save(); ctx.strokeStyle = 'rgba(255,216,77,.7)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(0, 4, 30, 0, 7); ctx.stroke(); ctx.restore();
+  } else base(0, swing !== null ? swing : -0.55);
+}
 function heroStub(c, x, y, face) { return { cls: c, x, y, w: 26, h: 38, face, vx: 0, ground: true, run: 0, thrust: 0, atk: 0, stack: 0, empower: false, plant: 0, spin: 0, trans: 0 }; }
 
 function drawHero(p, alpha) {
@@ -2482,6 +2665,8 @@ function drawHero(p, alpha) {
       ctx.shadowBlur = 0; ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.arc(8, 16, 4, Math.PI * 1.1, Math.PI * 2.1); ctx.stroke();
     }
 
+  } else if (c === 'giong') {
+    drawGiong(p);
   }
   ctx.restore();
 }
@@ -2618,6 +2803,22 @@ function drawFxList() {
       drawHero({ ...heroStub('ninja', f.sx - 13, f.y - 19, f.sx < f.x ? 1 : -1) }, .35 + .4 * k);
       ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.ang); ctx.globalAlpha = k; ctx.shadowColor = '#9aa8ff'; ctx.shadowBlur = 14; ctx.lineCap = 'round';
       line(-50, 0, 50, 0, '#dfe4ff', 4); line(-40, 3, 40, 3, '#6a5acd', 2); ctx.restore();
+    } else if (f.type === 'garc') {
+      ctx.save(); ctx.globalAlpha = k; ctx.strokeStyle = f.color; ctx.lineWidth = 9; ctx.shadowColor = f.color; ctx.shadowBlur = 12; ctx.lineCap = 'round';
+      const s0 = f.face > 0 ? -2.1 : Math.PI + 2.1, s1 = f.face > 0 ? .9 : Math.PI - .9, pr = 1 - k;
+      ctx.beginPath(); ctx.arc(f.x, f.y - 6, f.r * (.75 + pr * .25), s0, s0 + (s1 - s0) * Math.min(1, pr * 2.2 + .2), f.face < 0); ctx.stroke(); ctx.restore();
+    } else if (f.type === 'bstorm') {
+      const pr = 1 - k, sw = -2.4 + Math.min(1, pr * 1.6) * 2.5;
+      ctx.save(); ctx.translate(f.x, f.y); ctx.scale(f.face, 1); ctx.rotate(sw); ctx.lineCap = 'round';
+      for (let i = 0; i < 5; i++) { const y = (i - 2) * 7; line(0, y, f.r - i * 10, y + (i - 2) * 3, '#3f9a4a', 7); line(0, y - 1, f.r - i * 10, y + (i - 2) * 3 - 1, 'rgba(160,230,140,.5)', 2);
+        for (let x = 30; x < f.r - i * 10; x += 34) line(x, y - 4, x, y + 4, '#2a6a32', 1.5); }
+      ctx.fillStyle = '#5a3a20'; ctx.beginPath(); ctx.ellipse(0, 0, 16, 10, 0, 0, 7); ctx.fill(); ctx.restore();
+      if (pr > .2 && pr < .8) { ctx.save(); ctx.globalAlpha = .3; ctx.strokeStyle = '#7ee08a'; ctx.lineWidth = 22; ctx.beginPath();
+        if (f.face > 0) ctx.arc(f.x, f.y, f.r * .8, -2.4, sw); else ctx.arc(f.x, f.y, f.r * .8, Math.PI + 2.4, Math.PI - sw, true); ctx.stroke(); ctx.restore(); }
+    } else if (f.type === 'gquake') {
+      const pr = 1 - k;
+      for (const sd of [-1, 1]) { const x = f.x + sd * f.r * pr; ctx.save(); ctx.globalAlpha = k; glow(x, f.y - 10, 26, '255,216,77', .7); ctx.fillStyle = '#ffd84d';
+        ctx.beginPath(); ctx.moveTo(x - 16, f.y); ctx.quadraticCurveTo(x, f.y - 40, x + 16, f.y); ctx.fill(); ctx.restore(); }
     } else if (f.type === 'haki') {
       ctx.save(); ctx.globalAlpha = k * .5; ctx.fillStyle = '#1a0a14'; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (1 - k * .6), 0, 7); ctx.fill(); ctx.restore();
       ctx.save(); ctx.globalAlpha = k; ctx.lineWidth = 3;
@@ -2631,6 +2832,17 @@ function drawShot(q) {
   const c = center(q);
   if (q.delay > 0) return;
   switch (q.type) {
+    case 'bamboo': {
+      ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(Math.atan2(q.vy, q.vx)); ctx.lineCap = 'round';
+      ctx.shadowColor = '#7ee08a'; ctx.shadowBlur = 8; line(-34, 0, 30, 0, '#3f9a4a', 6); ctx.shadowBlur = 0; line(-34, -1, 30, -1, 'rgba(160,230,140,.6)', 2);
+      for (let x = -26; x < 28; x += 12) line(x, -3.5, x, 3.5, '#2a6a32', 1.5);
+      ctx.fillStyle = '#5ec46a'; ctx.beginPath(); ctx.moveTo(30, 0); ctx.lineTo(40, -6); ctx.lineTo(36, 0); ctx.lineTo(40, 6); ctx.fill(); ctx.restore(); break;
+    }
+    case 'ftrail': {
+      const a = Math.min(1, q.life / 40); glow(c.x, q.y + q.h - 6, 22, '255,110,40', .55 * a);
+      ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = '#ff6a2a'; ctx.beginPath(); ctx.moveTo(q.x, q.y + q.h); ctx.quadraticCurveTo(c.x, q.y - 4 - Math.random() * 6, q.x + q.w, q.y + q.h); ctx.fill();
+      ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.moveTo(q.x + 6, q.y + q.h); ctx.quadraticCurveTo(c.x, q.y + 8 - Math.random() * 4, q.x + q.w - 6, q.y + q.h); ctx.fill(); ctx.restore(); break;
+    }
     case 'tornado': {
       const bottom = q.y + q.h;
       ctx.save(); ctx.globalAlpha = Math.min(1, q.life / 15); glow(c.x, c.y, 46, '159,240,216', .35);
@@ -2810,6 +3022,8 @@ function drawHazard(h) {
 function drawEnemy(e) {
   const t = Date.now();
   const ly = e.lift > 0 ? -Math.sin((e.lift / 40) * Math.PI) * 40 : 0;
+  if (e.wind > 6) { const c = center(e); ctx.save(); ctx.globalAlpha = .55 + Math.sin(t / 40) * .3; glow(c.x + e.face * e.w * .45, c.y, 22, '255,90,70', .6);
+    ctx.fillStyle = '#ff5a4a'; ctx.font = '800 16px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('!', c.x, e.y - 8); ctx.textAlign = 'left'; ctx.restore(); }
   ctx.save(); ctx.translate(0, ly);
   const W_ = e.flash ? '#ffffff' : null;
   switch (e.kind) {
@@ -3208,14 +3422,14 @@ function drawSkillIcon(i, x, y, color) {
 }
 
 function drawTouchHud() {
-  const p = player, C = CLASSES[cls], accent = p.trans > 0 ? '#fff0a8' : C.color;
+  const p = player, C = CLASSES[cls], accent = p.trans > 0 || p.holy ? '#fff0a8' : C.color;
   const px = 12, py = 64;
   ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
   ctx.fillStyle = 'rgba(1,10,19,.78)'; rr(px, py, 190, 30, 4); ctx.strokeStyle = '#785a28'; ctx.lineWidth = 1; ctx.strokeRect(px + .5, py + .5, 189, 29);
   ctx.fillStyle = accent; ctx.font = '800 13px "Baloo 2", sans-serif';
   ctx.fillText(`${C.name} · Cấp ${p.level}`, px + 8, py + 13);
   let ratio = 1;
-  if (p.level < 4) { const lo = XP_NEED[p.level - 1], hi = XP_NEED[p.level]; ratio = (p.xp - lo) / (hi - lo); }
+  if (p.level < MAX_LV) { const lo = LV_TOTAL[p.level], hi = LV_TOTAL[p.level + 1]; ratio = (p.xp - lo) / (hi - lo); }
   ctx.fillStyle = 'rgba(232,236,247,.18)'; rr(px + 8, py + 19, 174, 6, 3);
   ctx.fillStyle = accent; rr(px + 8, py + 19, Math.max(3, 174 * ratio), 6, 3);
 }
@@ -3231,21 +3445,21 @@ function drawBossBar() {
 }
 function drawHud() {
   if (IS_TOUCH) { drawTouchHud(); drawBossBar(); updateTouchUI(); return; }
-  const p = player, C = CLASSES[cls], accent = p.trans > 0 ? '#fff0a8' : C.color, sk = skillsOf(p);
+  const p = player, C = CLASSES[cls], accent = p.trans > 0 || p.holy ? '#fff0a8' : C.color, sk = skillsOf(p);
   const px = 12, py = H - 108;
   ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
   ctx.fillStyle = 'rgba(1,10,19,.82)'; rr(px, py, 262, 96, 6); ctx.strokeStyle = '#785a28'; ctx.lineWidth = 1.5; ctx.strokeRect(px + .5, py + .5, 261, 95);
-  if (p.trans > 0) { ctx.strokeStyle = '#ffd84d'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(px, py, 262, 96, 12) : ctx.rect(px, py, 262, 96); ctx.stroke(); }
+  if (p.trans > 0 || p.holy) { ctx.strokeStyle = '#ffd84d'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(px, py, 262, 96, 12) : ctx.rect(px, py, 262, 96); ctx.stroke(); }
   ctx.fillStyle = accent; ctx.font = '800 15px "Baloo 2", sans-serif';
   ctx.fillText(`${C.name} · Cấp ${p.level}`, px + 12, py + 21);
   const bx = px + 142, by = py + 12, bw = 106;
   ctx.fillStyle = 'rgba(232,236,247,.18)'; rr(bx, by, bw, 9, 5);
   let ratio = 1, label = 'Tối đa';
-  if (p.level < 4) { const lo = XP_NEED[p.level - 1], hi = XP_NEED[p.level]; ratio = (p.xp - lo) / (hi - lo); label = `${p.xp} / ${hi} KN`; }
+  if (p.level < MAX_LV) { const lo = LV_TOTAL[p.level], hi = LV_TOTAL[p.level + 1]; ratio = (p.xp - lo) / (hi - lo); label = `${p.xp - lo} / ${hi - lo} KN`; }
   ctx.fillStyle = accent; rr(bx, by, Math.max(4, bw * ratio), 9, 5);
   ctx.fillStyle = '#e8ecf7'; ctx.font = '500 11px "Baloo 2", sans-serif'; ctx.textAlign = 'right'; ctx.fillText(label, bx + bw, py + 33); ctx.textAlign = 'left';
   for (let i = 0; i < 4; i++) {
-    const sx = px + 12 + i * 61, sy = py + 38, s = 50, locked = p.level < i + 1;
+    const sx = px + 12 + i * 61, sy = py + 38, s = 50, locked = p.level < SKILL_LV[i];
     ctx.fillStyle = locked ? 'rgba(232,236,247,.06)' : 'rgba(232,236,247,.12)'; rr(sx, sy, s, s, 10);
     const ready = !locked && p.cds[i] <= 0;
     drawSkillIcon(i, sx + s / 2, sy + s / 2 - 3, locked ? 'rgba(232,236,247,.25)' : ready ? accent : 'rgba(232,236,247,.55)');
@@ -3256,7 +3470,7 @@ function drawHud() {
       if (p.cds[i] > 60) { ctx.fillStyle = '#ffffff'; ctx.font = '800 16px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(Math.ceil(p.cds[i] / 60), sx + s / 2, sy + s / 2 + 6); ctx.textAlign = 'left'; }
     }
     ctx.font = '700 11px "Baloo 2", sans-serif'; ctx.fillStyle = locked ? 'rgba(232,236,247,.45)' : '#e8ecf7';
-    if (locked) { ctx.textAlign = 'center'; ctx.fillText(`Cấp ${i + 1}`, sx + s / 2, sy + s - 5); ctx.textAlign = 'left'; }
+    if (locked) { ctx.textAlign = 'center'; ctx.fillText(`Cấp ${SKILL_LV[i]}`, sx + s / 2, sy + s - 5); ctx.textAlign = 'left'; }
     else ctx.fillText(SKILL_KEYS[i], sx + s - 11, sy + s - 5);
     if (cls === 'samurai' && i === 0 && !locked) for (let k = 0; k < 2; k++) { ctx.fillStyle = k < p.stack ? accent : 'rgba(232,236,247,.25)'; ctx.beginPath(); ctx.arc(sx + 8 + k * 9, sy + s - 8, 3, 0, 7); ctx.fill(); }
     if ((cls === 'warrior' && i === 0 && p.empower) || (cls === 'brawler' && i === 0 && p.fistEmp > 0)) { ctx.strokeStyle = accent; ctx.lineWidth = 2; ctx.strokeRect(sx + 1, sy + 1, s - 2, s - 2); }
@@ -3415,7 +3629,7 @@ function startStage(n, c) {
   showDialog(STORY[n] && STORY[n].intro);
 }
 function gameOver() {
-  state = 'over'; save.xp = player.xp;
+  state = 'over'; save.hxp[cls] = player.xp;
   const keep = Math.floor(collected / 2); save.coins += keep; persist();
   document.getElementById('endTitle').textContent = 'Gục ngã rồi';
   document.getElementById('endStars').innerHTML = '';
@@ -3426,7 +3640,8 @@ function gameOver() {
 function stageClear() {
   state = 'clear';
   const n = stageNum, S = STAGES[n], msgs = [];
-  save.xp = player.xp;
+  const xpBonus = Math.round(20 + S.d * 6 + (S.type === 'boss' ? 40 : 0)); gainXp(xpBonus); msgs.push(`+${xpBonus} KN cho ${CLASSES[cls].name}.`);
+  save.hxp[cls] = player.xp;
   if (S.type === 'rescue') {
     if (!save.unlocked.includes(S.rescue)) { save.unlocked.push(S.rescue); msgs.push(`Mở khóa nhân vật mới: ${CLASSES[S.rescue].name} ${CLASSES[S.rescue].hero}!`); }
     else if (n > save.cleared) { addShards(S.rescue, 10); msgs.push(`${CLASSES[S.rescue].name} đã có trong đội, nhận 10 mảnh tướng.`); }
@@ -3477,7 +3692,7 @@ function stageClear() {
   persist();
   document.getElementById('endTitle').textContent = n === LAST ? 'Bình minh đã trở lại!' : n === 0 ? 'Hoàn thành Sân Tập!' : `Qua Màn ${n}!`;
   document.getElementById('endStars').innerHTML = starHtml;
-  document.getElementById('endText').textContent = `${S.name} · Hạ ${kills} quái · Đội cấp ${player.level} · Nhận +${earned} ✦${starBonus ? ` (gồm ${starBonus} từ sao mới)` : ''}, hiện có ${save.coins} ✦. ${msgs.join(' ')}`;
+  document.getElementById('endText').textContent = `${S.name} · Hạ ${kills} quái · ${CLASSES[cls].name} cấp ${player.level} · Nhận +${earned} ✦${starBonus ? ` (gồm ${starBonus} từ sao mới)` : ''}, hiện có ${save.coins} ✦. ${msgs.join(' ')}`;
   document.getElementById('nextBtn').hidden = n >= LAST;
   document.getElementById('endPanel').hidden = false;
 }
@@ -3486,7 +3701,7 @@ function togglePause() {
   else if (state === 'pause') { state = 'play'; document.getElementById('pausePanel').hidden = true; }
 }
 function toMenu() {
-  if (player) { save.xp = player.xp; persist(); }
+  if (player) { save.hxp[cls] = player.xp; persist(); }
   state = 'menu'; hideAll(); renderMenu(); document.getElementById('menuPanel').hidden = false;
   document.body.classList.remove('playing');
 }
@@ -3504,7 +3719,7 @@ function renderMenu() {
   // ----- tài nguyên -----
   $('lbRes').innerHTML = `<span class="chip"><i>✦</i>${save.coins}</span><span class="chip"><i>🎟</i>${save.gacha.tickets}</span>` +
     `<span class="chip"><i>★</i>${totalStars()}/${MAX_STARS}</span><span class="chip"><i>🧩</i>${save.frags.filter(Boolean).length}/4 phong ấn</span>` +
-    `<span class="chip"><i>Lv</i>${levelFromXp(save.xp)} · ${save.xp} KN</span>`;
+    `<span class="chip"><i>Lv</i>${heroLv(selCls)} · ${CLASSES[selCls].name}</span>`;
   $('summonDot').textContent = save.gacha.tickets > 0 ? save.gacha.tickets : '';
   const achN = ACHS.filter(a => save.ach[a.id]).length;
   $('achDot').textContent = ''; $('achBtn').title = `${achN}/${ACHS.length} thành tựu`;
@@ -3552,7 +3767,7 @@ function renderMenu() {
     b.className = 'champ' + (mine ? '' : ' locked') + (c === selCls ? ' sel' : '');
     b.title = `${CLASSES[c].name} · ${RARITY_NAME[RARITY[c]]}`;
     b.appendChild(heroPortrait(c, 60));
-    b.insertAdjacentHTML('beforeend', `${mine ? '' : '<span class="lk">🔒</span>'}<span class="cn">${CLASSES[c].name}</span><span class="rb ${TIER[RARITY[c]]}"></span>`);
+    b.insertAdjacentHTML('beforeend', `${mine ? '' : '<span class="lk">🔒</span>'}<span class="cn">${CLASSES[c].name}${mine ? ` · ${heroLv(c)}` : ''}</span><span class="rb ${TIER[RARITY[c]]}"></span>`);
     b.addEventListener('click', () => { selCls = c; selSkill = 0; renderMenu(); });
     grid.appendChild(b);
   }
@@ -3581,12 +3796,12 @@ function renderMenu() {
   } else {
     const sk = C.skills[selSkill], tr = tierOf(selCls, selSkill);
     const cdTxt = (sk.cd >= 60 ? `${Math.round(sk.cd / 6) / 10} giây` : `${(sk.cd / 60).toFixed(1)} giây`) + (SKILL_DUR[selCls] && SKILL_DUR[selCls][selSkill] ? ' sau khi hết hiệu lực' : '');
-    sd.innerHTML = `<h4>${selSkill + 1}. ${sk.name}<small>Hồi chiêu ${cdTxt} · Mở ở cấp ${selSkill + 1} · Bậc ${tr}/3</small></h4><p>${sk.desc}.</p>` +
+    sd.innerHTML = `<h4>${selSkill + 1}. ${sk.name}<small>Hồi chiêu ${cdTxt} · Mở ở cấp ${SKILL_LV[selSkill]}${heroLv(selCls) >= SKILL_LV[selSkill] ? ' ✓' : ''} · Bậc ${tr}/3</small></h4><p>${sk.desc}.</p>` +
       `<p class="t3">Bậc 3: ${T3_DESC[selCls][selSkill]}${selCls === 'king' ? ` · Khi Thánh hóa: ${CLASSES.king.tskills[selSkill].name}` : ''}</p>`;
   }
   // ----- chân trang -----
   const S = STAGES[selStage], m = save.stars[selStage] || 0;
-  $('footInfo').innerHTML = `<b>Màn ${selStage} · ${S.name}</b>${selStage === 0 ? 'Hướng dẫn' : `<span class="st">${[0, 1, 2].map(i => m & (1 << i) ? '★' : '☆').join('')}</span>`} · Đội cấp ${levelFromXp(save.xp)}`;
+  $('footInfo').innerHTML = `<b>Màn ${selStage} · ${S.name}</b>${selStage === 0 ? 'Hướng dẫn' : `<span class="st">${[0, 1, 2].map(i => m & (1 << i) ? '★' : '☆').join('')}</span>`} · ${CLASSES[selCls].name} cấp ${heroLv(selCls)}`;
   const pb = $('playBtn');
   pb.classList.toggle('buy', !own);
   pb.textContent = own ? 'Khóa chọn' : selCls === 'beast' ? `Mua · ${BEAST_PRICE} ✦` : 'Chiêu mộ để mở';
@@ -3692,7 +3907,7 @@ document.getElementById('shopClose').addEventListener('click', toMenu);
 
 // ======================= CHIÊU MỘ =======================
 function addShards(c, n) { save.gacha.shards[c] = (save.gacha.shards[c] || 0) + n; }
-const LEG_POOL = ['king', 'wukong', 'pirate'], EPIC_POOL = ['brawler', 'ninja'], RARE_POOL = ['mage', 'samurai', 'gunner'];
+const LEG_POOL = ['king', 'wukong', 'pirate', 'giong'], EPIC_POOL = ['brawler', 'ninja'], RARE_POOL = ['mage', 'samurai', 'gunner'];
 const pickOf = a => a[Math.floor(Math.random() * a.length)];
 function pickHero() {   // trong 31%: Huyền thoại 3, Sử thi 6, Hiếm 9, Thường 13
   const r = Math.random() * 31;
@@ -3716,7 +3931,7 @@ function rollOnce() {
   const r = Math.random();
   if (r < 0.45) { const n = 8 + Math.floor(Math.random() * 13); save.coins += n; return { kind: 'coins', n }; }
   if (r < 0.80) { const h = CLASS_ORDER[Math.floor(Math.random() * CLASS_ORDER.length)], n = 2 + Math.floor(Math.random() * 3); addShards(h, n); return { kind: 'shard', hero: h, n }; }
-  const n = 8; save.xp += n; return { kind: 'xp', n };
+  const n = 150; save.hxp[selCls] = heroXp(selCls) + n; return { kind: 'xp', n };
 }
 function doPull(count) {
   const g = save.gacha;
@@ -3761,7 +3976,7 @@ function renderSummon(results) {
       } else {
         d.className = 'pull';
         const ico = r.kind === 'coins' ? '✦' : r.kind === 'xp' ? '📘' : '🧩';
-        const t = r.kind === 'coins' ? `${r.n} đom đóm` : r.kind === 'xp' ? `${r.n} kinh nghiệm` : `${r.n} mảnh`;
+        const t = r.kind === 'coins' ? `${r.n} đom đóm` : r.kind === 'xp' ? `${r.n} KN cho ${CLASSES[selCls].name}` : `${r.n} mảnh`;
         const sub = r.kind === 'shard' ? CLASSES[r.hero].name : 'Vật phẩm';
         d.innerHTML = `<div class="ico">${ico}</div><b>${t}</b><small>${sub}</small>`;
       }
@@ -3915,7 +4130,7 @@ function updateTouchUI() {
   const sk = skillsOf(p);
   for (let i = 0; i < 4; i++) {
     const b = skBtns[i]; if (!b) continue;
-    const locked = p.level < i + 1, cd = p.cds[i], base = skillCd(i) || CLASSES[cls].skills[i].cd || 1;
+    const locked = p.level < SKILL_LV[i], cd = p.cds[i], base = skillCd(i) || CLASSES[cls].skills[i].cd || 1;
     const ratio = locked ? 0 : Math.min(1, cd / base);
     const secs = !locked && cd > 60 ? Math.ceil(cd / 60) : '';
     const pips = cls === 'samurai' && i === 0 ? p.stack : -1;
@@ -3927,7 +4142,7 @@ function updateTouchUI() {
     b.classList.toggle('ready', !locked && cd <= 0);
     b.classList.toggle('glow', !locked && glowOn);
     b.style.setProperty('--cd', ratio.toFixed(3));
-    b.innerHTML = locked ? `<span class="ic">Cấp ${i + 1}</span>`
+    b.innerHTML = locked ? `<span class="ic">Cấp ${SKILL_LV[i]}</span>`
       : `<span class="ic">${sk[i].icon}</span>${secs ? `<span class="cdt">${secs}</span>` : ''}<span class="num">${i + 1}</span>` +
         (pips >= 0 ? `<span class="pips"><i class="${pips > 0 ? 'on' : ''}"></i><i class="${pips > 1 ? 'on' : ''}"></i></span>` : '');
   }

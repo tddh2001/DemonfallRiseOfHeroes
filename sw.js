@@ -1,6 +1,6 @@
 // Service worker: cho phép chơi offline sau lần mở đầu tiên.
 // Mỗi lần sửa game, tăng số phiên bản để máy người chơi tải bản mới.
-const CACHE = 'bmvq-v15';
+const CACHE = 'bmvq-v16';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
