@@ -582,7 +582,7 @@ const CLASSES = {
     { name: 'Cầu nước',        cd: 60,   icon: '◉', desc: 'Bay tới trước rồi quay về tay' },
     { name: 'Dị không gian',   cd: 720,  icon: '◐', desc: 'Bay tự do 4 giây, miễn nhiễm bẫy và quái' },
     { name: 'Tinh thể băng',   cd: 600,  icon: '✧', desc: 'Tự bắn băng đuổi theo quái' },
-    { name: 'Đại cầu năng lượng', cd: 1500, icon: '✺', desc: 'Tụ lực ném cầu nổ, 2 sát thương vùng' } ] },
+    { name: 'Đại cầu năng lượng', cd: 1500, icon: '✺', desc: 'Bay lên trời tụ một quả cầu khổng lồ rồi ném xuống, nổ tung một vùng rộng (5 sát thương)' } ] },
   samurai: { name: 'Kiếm sĩ', hero: 'Phong', color: '#9ff0d8', role: 'Cận chiến linh hoạt', basic: { name: 'Chém', cd: 20 }, skills: [
     { name: 'Đâm kiếm',   cd: 30,   icon: '➤', desc: 'Trúng 2 lần thì lần 3 bắn lốc xoáy' },
     { name: 'Lướt',       cd: 60,   icon: '»', desc: 'Lướt ngắn tới trước, né mọi đòn' },
@@ -612,7 +612,7 @@ const CLASSES = {
     { name: 'Thiết bổng',   cd: 150,  icon: '⚒', desc: 'Đập gậy tới trước gây sát thương và choáng. Trên mây: gậy giáng thẳng xuống đất' },
     { name: 'Cân đẩu vân',  cd: 1200,  icon: '☁', desc: 'Cưỡi mây bay tự do 10 giây, đổi kỹ năng 1 và 3' },
     { name: 'Phân thân',    cd: 600,  icon: '⧉', desc: '3 phân thân lao vào quái gần nhất trong 3 giây. Trên mây: nhảy xuống từ mây' },
-    { name: 'Như ý kim cô', cd: 1800, icon: '↻', desc: 'Hóa to gậy và xoay ngang 5 giây, mỗi lần trúng 3 sát thương' } ] },
+    { name: 'Đại náo thiên cung', cd: 1800, icon: '↻', desc: 'Phân thân khắp màn hình, đồng loạt hóa to gậy như ý và đập xuống, gây sát thương toàn màn hình' } ] },
   pirate: { name: 'Hải tặc', hero: 'Hắc Hải', color: '#e04848', role: 'Thuyền trưởng biển đen', basic: { name: 'Kiếm hải tặc', cd: 22 }, skills: [
     { name: 'Đạn nổ',        cd: 90,   icon: '✹', desc: 'Bắn đạn nổ. Khi nâng cấp: bắn 3 viên' },
     { name: 'Hồng kiếm',     cd: 150,  icon: '〰', desc: 'Chém sóng kiếm đỏ. Khi nâng cấp: sóng đen kèm sét, xuyên qua quái' },
@@ -671,7 +671,7 @@ const T3_DESC = {
   gunner:  ['Bom nảy tối đa 6 lần', 'Phát bắn xuyên gây 5 sát thương', 'Đặt tối đa 5 bẫy, nổ rộng hơn', 'Loạt đạn bắn 6 viên'],
   brawler: ['Cường hóa 2 cú đấm', 'Đấm liên hoàn lâu hơn', 'Kim cương thân kéo dài 7 giây', 'Cú đấm từ trời còn làm choáng toàn màn hình'],
   ninja:   ['Phóng 3 phi tiêu', 'Khói dày và lâu hơn (8 giây)', 'Bản sao tồn tại 12 giây', 'Chém liên tiếp 7 lần'],
-  wukong:  ['Choáng lâu hơn (2 giây)', 'Cưỡi mây 15 giây', 'Tạo 5 phân thân', 'Gậy xoay rộng hơn'],
+  wukong:  ['Choáng lâu hơn (2 giây)', 'Cưỡi mây 15 giây', 'Tạo 5 phân thân', 'Thêm phân thân, đập mạnh hơn (8 sát thương)'],
   pirate:  ['Vụ nổ rộng hơn', 'Sóng kiếm +1 sát thương', 'Nâng cấp vũ khí 12 giây', 'Bá khí phủ toàn màn hình, hạ quái đến 5 máu'],
   beast:   ['Hồi 2 tim khi trúng', 'Hóa cuồng kéo dài 8 giây', 'Lướt xa hơn, gây 3 sát thương', 'Cắn xé lâu hơn'],
   king:    ['Sóng kiếm mạnh thêm 1 sát thương', 'Khiên kéo dài thêm 1 giây', 'Kiếm vũ rơi 9 thanh', 'Thánh hóa kéo dài 14 giây'],
@@ -1069,7 +1069,7 @@ function buildWorld(n) {
   const TH = THEMES[STAGES[n].theme] || THEMES.forest;
   world.theme = TH;
   solids = []; spikes = []; coins = []; enemies = []; shots = []; walls = []; hazards = []; traps = []; rings = [];
-  particles = []; trail = []; popups = []; ult = null; shake = 0; dialog = null; petals = []; bolts = []; decals = []; cutin = null; flashT = 0; curBoss = null;
+  particles = []; trail = []; popups = []; ult = null; ultCine = null; shake = 0; dialog = null; petals = []; bolts = []; decals = []; cutin = null; flashT = 0; curBoss = null;
   boss = null; bossStarted = false; reward = null; goalTaken = false; gate = null;
   const G = world.G;
   G.forEach((row, y) => row.forEach((c, x) => {
@@ -1107,7 +1107,7 @@ const center = o => ({ x: o.x + o.w / 2, y: o.y + o.h / 2 });
 const onScreen = e => e.x + e.w > camX && e.x < camX + W;
 const wallHit = o => solids.some(s => !s.top && hit(o, s));
 const skillsOf = p => (p.cls === 'king' && p.trans > 0) ? CLASSES.king.tskills : (p.cls === 'giong' && p.holy) ? CLASSES.giong.tskills : CLASSES[p.cls].skills;
-const invulnerable = () => { const p = player; return p.inv > 0 || !!p.leap || p.dash > 0 || p.shield > 0 || p.phase > 0 || p.iron > 0 || !!p.skyfall || !!p.maul || !!p.killSeq || !!ult; };
+const invulnerable = () => { const p = player; return p.inv > 0 || !!p.leap || !!p.mUlt || !!p.wUlt || p.dash > 0 || p.shield > 0 || p.phase > 0 || p.iron > 0 || !!p.skyfall || !!p.maul || !!p.killSeq || !!ult; };
 
 function updateHud() {
   if (!player) return;
@@ -1403,7 +1403,7 @@ const SKILL_FN = {
       vys.forEach(vy => shots.push({ type: 'water', x: pc.x + p.face * 14 - 12, y: p.y + 6, w: 24, h: 24, vx: p.face * 10, vy, dir: p.face, back: false, life: 240, dmg: 2, pierce: true, hits: new Set() })); },
     () => { const p = player; p.phase = tier(1) >= 3 ? 360 : 240; p.phaseMax = p.phase; p.vy = 0; burst(p.x + 13, p.y + 19, '#b69cff', 24, 8); },
     () => { const p = player, pc = center(p), t3 = tier(2) >= 3; p.crystal = { t: t3 ? 480 : 300, cool: 10, rate: t3 ? 15 : 24, x: pc.x, y: p.y - 30, rot: 0 }; },
-    () => { player.charge = 1; },
+    () => { const p = player; if (p.mUlt) return false; p.mUlt = { t: 0, y0: p.y }; p.vx = 0; p.vy = 0; },
   ],
   brawler: [
     () => { const p = player; p.fistEmp = tier(0) >= 3 ? 2 : 1; burst(center(p).x, center(p).y, '#ff7a59', 18, 7);
@@ -1440,7 +1440,10 @@ const SKILL_FN = {
     () => { const p = player, n = tier(2) >= 3 ? 5 : 3, pc = center(p);
       for (let i = 0; i < n; i++) p.wkc.push({ x: pc.x - 13 + (i - (n - 1) / 2) * 18, y: p.y + (p.cloud > 0 ? 10 : -10), t: 180, target: null, cd: 10 + i * 4, face: p.face, fromCloud: p.cloud > 0, vy: p.cloud > 0 ? 2 : -5 });
       burst(pc.x, pc.y, '#ffc53d', 24, 7); },
-    () => { const p = player; p.bigSpin = 300; p.bigR = tier(3) >= 3 ? 200 : 150; p.spinAngle = 0; shake = 6; },
+    () => { const p = player; if (p.wUlt) return false;
+      const n = tier(3) >= 3 ? 9 : 7, xs = []; for (let k = 0; k < n; k++) xs.push(camX + 70 + k * (W - 140) / (n - 1));
+      p.wUlt = { t: 0, xs: xs.map(x => ({ x, gy: groundY(x, p.y), face: x < center(p).x ? 1 : -1 })) };
+      for (const c of p.wUlt.xs) { burst(c.x, c.gy - 20, '#ffffff', 14, 5); dust(c.x, c.gy, 6); } },
   ],
   pirate: [
     () => { const p = player, pc = center(p), vys = p.armed > 0 ? [-1.5, 0, 1.5] : [0];
@@ -1550,24 +1553,54 @@ function skillCd(i) {
 const lastWall = () => walls.length ? walls[walls.length - 1].life : 0;
 const SKILL_DUR = {
   warrior: [p => p.buff, p => p.shield, p => p.spin, null],
-  mage:    [null, p => p.phase, p => p.crystal ? p.crystal.t : 0, null],
+  mage:    [null, p => p.phase, p => p.crystal ? p.crystal.t : 0, p => p.mUlt ? 130 : 0],
   samurai: [null, null, () => lastWall(), null],
   gunner:  [null, null, null, null],
   beast:   [null, p => p.frenzy, null, null],
   brawler: [null, p => p.barrage, p => p.iron, null],
   ninja:   [null, p => p.smoke ? p.smoke.t : 0, p => p.clone ? p.clone.t : 0, null],
-  wukong:  [null, p => p.cloud, null, p => p.bigSpin],
+  wukong:  [null, p => p.cloud, null, p => p.wUlt ? 72 : 0],
   pirate:  [null, null, p => p.armed, null],
   king:    [null, p => p.shield, null, null],
   giong:   [null, p => p.gcharge, null, null],
 };
+// Tướng hạng S trở lên: chiêu cuối có đoạn dừng hình (thu phóng vào nhân vật → hiện tên chiêu → thi triển)
+let ultCine = null;
+const CINE_LEN = 64;
+const cineZoom = t => t < 14 ? 1 + .9 * (1 - Math.pow(1 - t / 14, 3)) : t < 48 ? 1.9 + (t - 14) / 34 * .12 : t < 60 ? 2.02 - 1.02 * (1 - Math.pow(1 - (t - 48) / 12, 2)) : 1;
 function useSkill(i) {
   const p = player;
-  if (p.level < SKILL_LV[i] || p.cds[i] > 0 || p.leap) return;
+  if (p.level < SKILL_LV[i] || p.cds[i] > 0 || p.leap || p.mUlt || p.wUlt || ultCine) return;
+  if (i === 3 && RARITY[cls] === 'leg') {
+    if ((cls === 'king' && p.trans > 0 && ult) || (cls === 'giong' && (p.gcharge > 0 || p.rear > 0))) return;
+    ultCine = { t: 0, i, name: skillsOf(p)[3].name, color: (p.holy || p.trans > 0) ? '#ffd84d' : CLASSES[cls].color }; return;
+  }
+  castSkill(i, false);
+}
+function castSkill(i, cine) {
+  const p = player;
   const res = SKILL_FN[cls][i]();
   if (res === false) return;
-  if (i === 3 && !(cls === 'king' && p.trans <= 0 && false)) startCutin();
+  if (i === 3) { if (cine) { (ULT_FX[cls] || (() => {}))(); shake = Math.max(shake, 12); } else startCutin(); }
   if (res !== 'custom') { const dur = SKILL_DUR[cls] && SKILL_DUR[cls][i]; p.cds[i] = skillCd(i) + (dur ? Math.max(0, dur(p) || 0) : 0); }
+}
+function tickCine() { const c = ultCine; c.t++; if (c.t >= CINE_LEN) { ultCine = null; castSkill(c.i, true); } }
+function drawCine() {
+  const c = ultCine, t = c.t, p = player, sx = (center(p).x - camX), sy = center(p).y - 10;
+  const a = t < 10 ? t / 10 : t > 54 ? Math.max(0, (CINE_LEN - t) / 10) : 1;
+  ctx.save();
+  const vg = ctx.createRadialGradient(W / 2, H / 2, H * .25, W / 2, H / 2, W * .7); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, `rgba(4,4,14,${.85 * a})`); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  ctx.globalAlpha = a * .5; ctx.strokeStyle = c.color; ctx.lineWidth = 2;
+  for (let k = 0; k < 40; k++) { const ang = k * 2.39996, r0 = 160 + ((k * 53 + t * 18) % 260); ctx.beginPath(); ctx.moveTo(W / 2 + Math.cos(ang) * r0, H / 2 + Math.sin(ang) * r0); ctx.lineTo(W / 2 + Math.cos(ang) * (r0 + 70), H / 2 + Math.sin(ang) * (r0 + 70)); ctx.stroke(); }
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = `rgba(0,0,0,${.9 * a})`; const bar = 54 * a; ctx.fillRect(0, 0, W, bar); ctx.fillRect(0, H - bar, W, bar);
+  if (t >= 12) { const k = Math.min(1, (t - 12) / 8), ty = H - 120, txt = c.name;
+    ctx.globalAlpha = Math.min(a, k); ctx.textAlign = 'center';
+    ctx.font = '700 15px "Baloo 2", sans-serif'; ctx.fillStyle = c.color; ctx.fillText(`TUYỆT KỸ · ${CLASSES[cls].name.toUpperCase()}`, W / 2, ty - 46);
+    const fs = 58 + (1 - k) * 30; ctx.font = `900 ${fs}px "Baloo 2", sans-serif`; ctx.lineWidth = 8; ctx.strokeStyle = 'rgba(0,0,0,.75)'; ctx.strokeText(txt, W / 2, ty);
+    ctx.shadowColor = c.color; ctx.shadowBlur = 26; ctx.fillStyle = '#ffffff'; ctx.fillText(txt, W / 2, ty); ctx.shadowBlur = 0;
+    const lw = Math.min(1, (t - 12) / 14) * 280; ctx.fillStyle = c.color; ctx.fillRect(W / 2 - lw, ty + 14, lw * 2, 3); ctx.textAlign = 'left'; }
+  ctx.restore();
 }
 
 // ======================= BOSS =======================
@@ -1844,8 +1877,19 @@ function update() {
   }
 
   const prevBottom = p.y + p.h;
-  const rooted = p.charge > 0 || p.plant > 0 || p.barrage > 0;
-  if (p.skyfall) {
+  const rooted = p.charge > 0 || p.plant > 0 || p.barrage > 0 || !!p.wUlt;
+  if (p.mUlt) {
+    const M = p.mUlt; M.t++; p.vx = 0;
+    if (M.t <= 24) { const k = M.t / 24, e2 = 1 - (1 - k) * (1 - k); p.y = M.y0 - 140 * e2; p.vy = 0; }
+    else if (M.t < 86) { p.vy = 0; p.y += Math.sin(M.t / 6) * .3;
+      const pc2 = center(p), r = 8 + Math.min(1, (M.t - 24) / 50) * 40;
+      for (let k = 0; k < 2; k++) { const a = Math.random() * 7, d = r + 40; particles.push({ x: pc2.x + Math.cos(a) * d, y: p.y - 40 + Math.sin(a) * d, vx: -Math.cos(a) * 3, vy: -Math.sin(a) * 3, life: 14, color: Math.random() < .5 ? '#8fb8ff' : '#e6efff' }); }
+      if (M.t === 85) { const tx = pc2.x + p.face * 160, ty = groundY(tx, p.y + 140), sx = pc2.x, sy = p.y - 40, tf = 22;
+        shots.push({ type: 'meteorb', x: sx - 46, y: sy - 46, w: 92, h: 92, vx: (tx - sx) / tf, vy: (ty - sy) / tf - .5 * .5 * tf, g: .5, life: 90, radius: tier(3) >= 3 ? 240 : 190 }); p.toast = null; } }
+    else { p.vy = Math.min(p.vy + .35, 7); p.y += p.vy; p.ground = false;
+      for (const s2 of solids) if (hit(p, s2) && p.vy > 0 && (!s2.top || prevBottom <= s2.y + 16)) { p.y = s2.y - p.h; p.vy = 0; p.ground = true; }
+      if (p.ground || M.t > 160) p.mUlt = null; }
+  } else if (p.skyfall) {
     // Thiên chấn quyền: bay lên, lơ lửng tụ lực, rồi đấm thẳng xuống
     const sf = p.skyfall; sf.t++; p.vx = 0;
     if (sf.stage === 0) { p.y -= 16; if (sf.t >= 16 || p.y < 30) { sf.stage = 1; sf.t = 0; } }
@@ -2035,6 +2079,18 @@ function update() {
     if (c.t <= 0) burst(c.x + 13, c.y + 19, '#ffc53d', 10, 5);
   }
   p.wkc = p.wkc.filter(c => c.t > 0);
+  if (p.wUlt) {
+    const Wd = p.wUlt; Wd.t++; p.vx = 0;
+    if (Wd.t === 30) shake = Math.max(shake, 6);
+    if (Wd.t === 44) {
+      const dmg = tier(3) >= 3 ? 8 : 6;
+      for (const e of enemies) if (e.alive && onScreen(e)) { damage(e, dmg, '#ffc53d'); if (!e.alive) continue; if (e.boss) { if (!e.float && !e.transforming) { e.stunT = 60; e.state = 'stun'; e.vx = 0; e.warn = false; } } else e.stun = 90; }
+      for (const c of Wd.xs) { const tx = c.x + c.face * 120; crack(tx, c.gy, 1.2); rings.push({ x: tx, y: c.gy, r: 8, max: 90, t: 18, color: '#ffc53d' }); burst(tx, c.gy - 10, '#ffd84d', 16, 7); }
+      hazards = hazards.filter(h => !h.boss || h.type === 'beam'); flashT = 9; flashCol = '255,224,140'; shake = 22; hitStop = 10;
+    }
+    if (Wd.t === 66) for (const c of Wd.xs) { burst(c.x, c.gy - 20, '#ffffff', 12, 5); dust(c.x, c.gy, 5); }
+    if (Wd.t >= 72) p.wUlt = null;
+  }
   // Như ý kim cô bổng xoay
   if (p.bigSpin > 0) {
     p.bigSpin--; p.spinAngle += .32;
@@ -2439,6 +2495,16 @@ function updateShots(p, pc) {
         hitEnemies(q, '#bfe9ff');
         break;
       }
+      case 'meteorb': {
+        q.x += q.vx; q.vy += q.g; q.y += q.vy; const c = center(q);
+        let boom = q.life <= 0 || c.y + 20 >= groundY(c.x, q.y);
+        for (const e of enemies) if (e.alive && hit({ x: q.x + 16, y: q.y + 16, w: 60, h: 60 }, e)) boom = true;
+        if (boom) { q.life = 0; const gy = Math.min(c.y + 30, groundY(c.x, q.y));
+          explode(c.x, gy - 20, q.radius, 5, '#8fb8ff'); for (let k = 1; k <= 3; k++) rings.push({ x: c.x, y: gy - 20, r: 10, max: q.radius * (.5 + k * .3), t: 18 + k * 5, color: k % 2 ? '#bfe0ff' : '#6f95f0' });
+          crack(c.x, GROUND_Y, 1.8); petalStorm('frost', 70); flashT = 10; flashCol = '170,210,255'; shake = 20; hitStop = 8; fxList.push({ type: 'rays', x: c.x, col: '160,210,255', t: 40, max: 40 }); }
+        else for (let k = 0; k < 3; k++) particles.push({ x: c.x + (Math.random() - .5) * 70, y: c.y + (Math.random() - .5) * 70, vx: -q.vx * .2, vy: -q.vy * .2, life: 18, color: Math.random() < .5 ? '#cfe0ff' : '#8fb8ff' });
+        break;
+      }
       case 'bigorb': {
         q.x += q.vx;
         const c = center(q);
@@ -2486,7 +2552,7 @@ function drawBg() {
   const TH = world.theme;
   const g = ctx.createLinearGradient(0, 0, 0, H);
   g.addColorStop(0, TH.sky[0]); g.addColorStop(1, TH.sky[1]);
-  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = g; ctx.fillRect(-W, -H, W * 3, H * 3);
   ctx.fillStyle = '#e8ecf7'; ctx.globalAlpha = .45;
   for (const s of stars) { ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill(); }
   ctx.globalAlpha = 1;
@@ -3037,6 +3103,12 @@ function drawShot(q) {
     case 'shard':
       ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(Math.atan2(q.vy, q.vx));
       ctx.fillStyle = '#e6f7ff'; ctx.beginPath(); ctx.moveTo(9, 0); ctx.lineTo(-5, -4); ctx.lineTo(-5, 4); ctx.fill(); ctx.restore(); break;
+    case 'meteorb': {
+      const pulse = Math.sin(Date.now() / 50) * 4; glow(c.x, c.y, 110 + pulse, '143,184,255', .55);
+      ctx.fillStyle = '#4f75d8'; ctx.beginPath(); ctx.arc(c.x, c.y, 44 + pulse * .3, 0, 7); ctx.fill();
+      ctx.fillStyle = '#8fb8ff'; ctx.beginPath(); ctx.arc(c.x - 6, c.y - 6, 32, 0, 7); ctx.fill(); ctx.fillStyle = '#e6efff'; ctx.beginPath(); ctx.arc(c.x - 10, c.y - 10, 14, 0, 7); ctx.fill();
+      ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(Date.now() / 160); ctx.strokeStyle = 'rgba(230,240,255,.7)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(0, 0, 58, 18, 0, 0, 7); ctx.stroke(); ctx.restore(); break;
+    }
     case 'bigorb': {
       const pulse = Math.sin(Date.now() / 60) * 3;
       glow(c.x, c.y, 60 + pulse, '143,184,255', .6);
@@ -3681,13 +3753,15 @@ function drawDialog() {
 }
 
 function draw() {
+  const zoomK = ultCine ? cineZoom(ultCine.t) : 1;
+  ctx.save(); if (zoomK !== 1) { const fx = center(player).x - camX, fy = center(player).y - 10, kk = Math.min(1, (zoomK - 1) / .9), tx = fx + (W / 2 - fx) * kk, ty = fy + (H * .42 - fy) * kk; ctx.translate(tx, ty); ctx.scale(zoomK, zoomK); ctx.translate(-fx, -fy); }
   drawBg();
   const TH = world.theme;
   ctx.save();
   const sx = shake > .5 ? (Math.random() - .5) * shake : 0, sy = shake > .5 ? (Math.random() - .5) * shake : 0;
   ctx.translate(-Math.round(camX) + sx, sy);
   for (const s of solids) {
-    if (s.x + T < camX || s.x > camX + W) continue;
+    if (s.x + T < camX - 320 || s.x > camX + W + 320) continue;
     if (s.gate) { ctx.fillStyle = 'rgba(40,20,30,.85)'; ctx.fillRect(s.x, 0, T, GROUND_Y); for (let i = 0; i < 4; i++) line(s.x + 5 + i * 10, 0, s.x + 5 + i * 10, GROUND_Y, '#6a6f86', 3); continue; }
     ctx.fillStyle = s.top ? TH.plat : TH.ground;
     ctx.fillRect(s.x, s.y + (s.top ? 6 : 0), T, s.top ? 14 : T);
@@ -3712,6 +3786,18 @@ function draw() {
   const blink = p.inv > 0 && p.dash <= 0 && p.phase <= 0 && Math.floor(p.inv / 5) % 2;
   if (!blink && p.phase <= 0 && !(p.killSeq && p.killSeq.dash <= 0)) drawHero(p, p.hidden ? .4 : 1);
   drawSlash(p);
+  if (p.mUlt && p.mUlt.t > 24 && p.mUlt.t < 86) { const pc2 = center(p), r = 8 + Math.min(1, (p.mUlt.t - 24) / 50) * 40, oy = p.y - 40, pu = Math.sin(Date.now() / 50) * 3;
+    glow(pc2.x, oy, r * 2.4 + pu, '143,184,255', .6); ctx.fillStyle = '#4f75d8'; ctx.beginPath(); ctx.arc(pc2.x, oy, r + pu * .3, 0, 7); ctx.fill();
+    ctx.fillStyle = '#e6efff'; ctx.beginPath(); ctx.arc(pc2.x - r * .25, oy - r * .25, r * .35, 0, 7); ctx.fill();
+    ctx.save(); ctx.translate(pc2.x, oy); ctx.rotate(Date.now() / 160); ctx.strokeStyle = 'rgba(230,240,255,.7)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(0, 0, r * 1.35, r * .42, 0, 0, 7); ctx.stroke(); ctx.restore(); }
+  if (p.wUlt) { const t = p.wUlt.t;
+    for (const c of p.wUlt.xs) {
+      const al = t < 6 ? t / 6 : t > 62 ? Math.max(0, (72 - t) / 10) : 1;
+      drawHero({ ...heroStub('wukong', c.x - 13, c.gy - 38, c.face), smash: t >= 4 && t < 66 ? { t: 1, down: false } : null, atk: 0 }, al * .95);
+      if (t >= 4 && t < 66) { const L = t < 30 ? 30 + (t - 4) / 26 * 240 : 270, ang = t < 38 ? -Math.PI / 2 + Math.sin(t / 3) * .03 : t < 44 ? -Math.PI / 2 + (t - 38) / 6 * (Math.PI / 2) : 0;
+        const hx = c.x + c.face * 6, hy = c.gy - 22, ex = hx + Math.cos(ang) * L * c.face, ey = hy + Math.sin(ang) * L;
+        ctx.save(); ctx.globalAlpha = al; ctx.lineCap = 'round'; ctx.shadowColor = '#ffc53d'; ctx.shadowBlur = 16;
+        line(hx, hy, ex, ey, '#c8423b', 9); line(hx, hy, ex, ey, '#ff7a6a', 2.5); ctx.fillStyle = '#ffd84d'; ctx.beginPath(); ctx.arc(ex, ey, 8, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(hx, hy, 6, 0, 7); ctx.fill(); ctx.restore(); } } }
   if (p.parryWin > 0) { ctx.save(); ctx.globalAlpha = p.parryWin / 10 * .7; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(p.x + 13, p.y + 19, 26, 0, 7); ctx.stroke(); ctx.restore(); }
   shots.forEach(drawShot);
   hazards.forEach(drawHazard);
@@ -3755,6 +3841,8 @@ function draw() {
   ctx.textAlign = 'left';
   ctx.restore();
   if (p.killSeq) { ctx.fillStyle = 'rgba(20,16,50,.35)'; ctx.fillRect(0, 0, W, H); }
+  ctx.restore();
+  if (ultCine) drawCine();
   if (ult) drawUlt();
   if (flashT > 0) { ctx.fillStyle = `rgba(${flashCol},${Math.min(1, flashT / 14)})`; ctx.fillRect(0, 0, W, H); flashT--; if (flashT <= 0) flashCol = '255,236,220'; }
   if (cutin) drawCutin();
@@ -3774,7 +3862,7 @@ function loop(now) {
   let steps = 0;
   while (stepAcc >= STEP_MS && steps < 5) {
     stepAcc -= STEP_MS; steps++;
-    if (state === 'play' && !dialog) { if (hitStop > 0) hitStop--; else update(); }
+    if (state === 'play' && !dialog) { if (ultCine) tickCine(); else if (hitStop > 0) hitStop--; else update(); }
   }
   if (steps >= 5) stepAcc = 0;
   if (world && state !== 'menu') draw();
