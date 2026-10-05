@@ -751,7 +751,7 @@ const ACHS = [
   { id: 'gachaLeg',  ico: '🌞', name: 'Ánh sáng huyền thoại', desc: 'Chiêu mộ ra tướng Huyền thoại' },
   { id: 'rank5',     ico: '💠', name: 'Thức tỉnh',            desc: 'Nâng một tướng lên bậc 5' },
 ];
-const UNLOCK_HINT = { hound: 'Chiêu mộ (Huyền thoại)', giong: 'Chiêu mộ (Huyền thoại)', ninja: 'Chiêu mộ (Sử thi)', wukong: 'Chiêu mộ (Huyền thoại)', pirate: 'Chiêu mộ (Huyền thoại)', brawler: 'Chiêu mộ (Sử thi)', beast: `Mua trong Cửa hàng (${400} ✦)`, mage: 'Giải cứu ở Màn 1 hoặc chiêu mộ', samurai: 'Giải cứu ở Màn 2 hoặc chiêu mộ', gunner: 'Giải cứu ở Màn 3 hoặc chiêu mộ', king: 'Giải phong ấn (Quả cầu ở Chương 1 + 4 mảnh từ Tứ Đại Thiên Vương ở Chương 3). Chỉ sau khi sở hữu mới chiêu mộ ra mảnh tướng' };
+const UNLOCK_HINT = { hound: 'Hạ Quỷ Vương ở Chương 4. Chỉ sau khi sở hữu mới chiêu mộ ra mảnh tướng', giong: 'Chiêu mộ (Huyền thoại)', ninja: 'Chiêu mộ (Sử thi)', wukong: 'Chiêu mộ (Huyền thoại)', pirate: 'Chiêu mộ (Huyền thoại)', brawler: 'Chiêu mộ (Sử thi)', beast: `Mua trong Cửa hàng (${400} ✦)`, mage: 'Giải cứu ở Màn 1 hoặc chiêu mộ', samurai: 'Giải cứu ở Màn 2 hoặc chiêu mộ', gunner: 'Giải cứu ở Màn 3 hoặc chiêu mộ', king: 'Giải phong ấn (Quả cầu ở Chương 1 + 4 mảnh từ Tứ Đại Thiên Vương ở Chương 3). Chỉ sau khi sở hữu mới chiêu mộ ra mảnh tướng' };
 // ---------- Chiêu mộ ----------
 const RARITY = { warrior: 'com', mage: 'rare', samurai: 'rare', gunner: 'rare', beast: 'epic', brawler: 'epic', ninja: 'epic', king: 'leg', wukong: 'leg', pirate: 'leg', giong: 'leg', hound: 'leg' };
 const RARITY_NAME = { com: 'Thường', rare: 'Hiếm', epic: 'Sử thi', leg: 'Huyền thoại' };
@@ -809,7 +809,7 @@ const SPEAKERS = {
   ung: ['Thiện xạ Ưng', '#ff8f6b'], vua: ['Vua Thái Dương', '#ffd84d'], orb: ['Quả cầu phong ấn', '#ffd84d'],
   fist: ['Liệt Quyền', '#ff7a4d'], sword: ['Hắc Kiếm', '#b69cff'], whip: ['Độc Tiên', '#8fdc6f'], spear: ['Phá Thương', '#8fc0ff'], demon: ['Quỷ Vương', '#ff4d4d'],
   wrath: ['Phẫn Nộ', '#ff5a3d'], pride: ['Kiêu Ngạo', '#ffd166'], greed: ['Tham Lam', '#e8c14a'], glutton: ['Tham Ăn', '#b4d455'],
-  lust: ['Dục Vọng', '#ff7ac8'], envy: ['Đố Kị', '#4fd18b'], sloth: ['Lười Biếng', '#6fb6ff'],
+  lust: ['Dục Vọng', '#ff7ac8'], envy: ['Đố Kị', '#4fd18b'], sloth: ['Lười Biếng', '#6fb6ff'], hound: ['Hắc Khuyển', '#ff5a6a'],
 };
 const STORY = {
   0: { intro: [['nar', 'Chào mừng tới Sân Tập. Hãy đọc các tấm biển gỗ dọc đường, chúng sẽ dạy bạn mọi thứ cần biết.']],
@@ -867,8 +867,18 @@ STORY[LAST] = {
   intro: [['nar', 'Lâu Đài Quỷ Vương. Trận chiến cuối cùng.']],
   boss:  [['demon', 'Thái Dương. Ngươi thoát khỏi phong ấn chỉ để chết thêm lần nữa sao?'], ['vua', 'Lần này, ta không đơn độc.']],
   phase2: [['demon', 'Khá lắm... nhưng đủ rồi!'], ['nar', 'Đôi cánh đen khổng lồ xé toạc lưng Quỷ Vương. Hắn bay vút lên không trung.'], ['demon', 'Hãy nhìn chân thân của ta, và tuyệt vọng đi!']],
-  end:   [['demon', 'Không... ánh sáng này... không thể...'], ['nar', 'Quỷ Vương tan biến. Lần đầu tiên sau nhiều năm, mặt trời mọc trên vương quốc.'],
-          ['vua', 'Bóng tối đã tan. Cảm ơn tất cả các con. Vương quốc lại có bình minh.'], ['nar', 'HẾT SAGA I. Các saga tiếp theo sẽ sớm ra mắt.']],
+  end: [
+    ['demon', 'Hộc... hộc... Các ngươi tưởng... đã thắng sao? Ta sẽ trở lại... một ngàn lần nữa!', () => startEndScene()],
+    ['nar', 'Một đường kiếm đỏ đen xé toạc bóng tối.', () => endScene && endScene.cut()],
+    ['hound', 'Không có lần sau.'],
+    ['hound', 'Ở dòng thời gian trước, ngươi đã trở lại... và cả thế giới chìm trong biển máu.'],
+    ['vua', 'Ngươi... là ai?'],
+    ['hound', 'Một kẻ đã thấy ngày tận thế.'],
+    ['hound', 'Hắn chỉ là con chó canh cửa. Kẻ thật sự đứng sau... đang bắt đầu thức dậy.'],
+    ['nar', 'Mặt trời mọc trên vương quốc. Nhưng phía chân trời, vầng trăng đang dần nhuốm đỏ.', () => endScene && (endScene.moon = true)],
+    ['nar', 'Huyết Kiếm Khuyển Vệ gia nhập đội.'],
+    ['nar', 'HẾT SAGA I. Saga II · Huyết Nguyệt Hồi Quy · Sắp ra mắt.', () => endScene && (endScene.done = true)],
+  ],
 };
 
 const THEMES = {
@@ -1137,7 +1147,7 @@ function buildWorld(n) {
   const TH = THEMES[STAGES[n].theme] || THEMES.forest;
   world.theme = TH;
   solids = []; spikes = []; coins = []; enemies = []; shots = []; walls = []; hazards = []; traps = []; rings = [];
-  particles = []; trail = []; popups = []; ult = null; ultCine = null; shake = 0; dialog = null; petals = []; bolts = []; decals = []; cutin = null; flashT = 0; curBoss = null;
+  particles = []; trail = []; popups = []; ult = null; ultCine = null; endScene = null; shake = 0; dialog = null; petals = []; bolts = []; decals = []; cutin = null; flashT = 0; curBoss = null;
   boss = null; bossStarted = false; reward = null; goalTaken = false; gate = null; trainLog = [];
   const G = world.G;
   G.forEach((row, y) => row.forEach((c, x) => {
@@ -2058,6 +2068,7 @@ function bossDown(b) {
     return;
   }
   for (const e of enemies) if (e.alive && !e.boss) { e.alive = false; burst(center(e).x, center(e).y, '#b69cff', 10); }
+  if (b.id === 'demon') world.demonDeath = { x: b.x, y: b.y, w: b.w, h: b.h, face: b.face };
   reward = { kind: b.id === 'demon' ? 'light' : STAGES[stageNum].sin ? 'sin' : 'frag', x: clampBossX(c.x - 16, { w: 32 }), y: GROUND_Y - 70, w: 32, h: 40, t: 0, color: BOSS_DEFS[b.id].color };
 }
 
@@ -3861,6 +3872,7 @@ const BOSS_ART = (() => {
       P([[-18, 5], [-8, 4], [-9, 12], [-20, 13]], '#141018'); P([[8, 4], [18, 5], [20, 13], [9, 12]], '#141018');
       E(-15, 11, 6, 5, skin); E(16, 10, 6.5, 5.5, skin);
       E(-17, 22, 5.5, 5.5, '#4a0e16'); E(20, 19, 6, 6, '#4a0e16'); ctx.save(); ctx.shadowColor = D.color; ctx.shadowBlur = 10; E(20, 19, 3, 3, 'rgba(255,90,58,.55)'); ctx.restore();
+      if (b && b.headless) { glow(0, 4, 10, '255,40,60', .6); return; }
       head(skin, 6.5, 1); P([[-4, -3], [-11, -12], [-1, -3]], '#0c0406'); P([[2, -4], [9, -13], [6, -2]], '#0c0406');
       ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(0, -1, 6, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke();
       evil('#ffdd55', 1);
@@ -4081,6 +4093,53 @@ function drawUlt() {
   if (t < 30 && !cutin) { ctx.globalAlpha = Math.min(1, t / 6); ctx.fillStyle = '#ffffff'; ctx.font = '800 48px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(ult.name, W / 2, H / 2 - 60); ctx.textAlign = 'left'; ctx.globalAlpha = 1; }
 }
 
+// ======================= CẢNH KẾT SAGA I: "KẺ CHÉM ĐẦU" =======================
+let endScene = null;
+function startEndScene() {
+  const d = world.demonDeath || { x: center(player).x + 160, y: GROUND_Y - 120, w: 84, h: 120, face: -1 };
+  endScene = { t: 0, d, cutT: -1, ash: [], head: null, hound: null, moon: false,
+    cut() { this.cutT = this.t; const hx = d.x + d.w / 2, hy = d.y + d.h * .12;
+      this.head = { x: hx, y: hy, vx: 3.2, vy: -9, rot: 0 }; shake = 22; flashT = 8; flashCol = '120,0,20';
+      const side = center(player).x < d.x + d.w / 2 ? 1 : -1, hx2 = Math.max(world.arenaL + T + 4, Math.min(world.arenaR - T - 30, d.x + d.w / 2 - 13 + side * 70));
+      this.hound = { x: hx2, y: d.y - 160, vy: 0, a: 0, delay: 30, face: -side }; } };
+  reward = null;
+}
+function drawEndScene() {
+  const E = endScene; if (!E) return; E.t++;
+  const d = E.d, since = E.cutT >= 0 ? E.t - E.cutT : -1;
+  // xác Quỷ Vương: quỳ gối, thở dốc; sau nhát chém thì tan thành tro
+  const bodyA = since < 0 ? 1 : Math.max(0, 1 - since / 70);
+  if (bodyA > 0) { const kneel = Math.sin(E.t / 12) * 1.5;
+    drawBossBody({ id: 'demon', x: d.x, y: d.y + d.h * .12 + kneel, w: d.w, h: d.h * .88, face: d.face, phase: 2, wings: since < 0, state: 'idle', alpha: 1, headless: since >= 0 }, bodyA);
+    if (since >= 0 && Math.random() < .9) for (let i = 0; i < 3; i++) E.ash.push({ x: d.x + Math.random() * d.w, y: d.y + d.h * (.2 + Math.random() * .8), vx: .6 + Math.random(), vy: -.6 - Math.random() * 1.4, life: 50 }); }
+  // nhát chém đỏ đen xé ngang
+  if (since >= 0 && since < 60) { const k = 1 - since / 60, y0 = d.y + d.h * .2, grow = Math.min(1, since / 5);
+    ctx.save(); ctx.globalAlpha = Math.min(1, k * 1.4); ctx.fillStyle = 'rgba(6,0,3,.65)'; ctx.fillRect(camX - 50, 0, W + 100, H);
+    const x1 = camX - 40, x2 = camX - 40 + (W + 80) * grow; ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = 40; ctx.lineCap = 'round';
+    ctx.strokeStyle = '#ff2a3a'; ctx.lineWidth = 26 * k + 4; ctx.beginPath(); ctx.moveTo(x1, y0 + 60); ctx.lineTo(x2, y0 + 60 - 120 * grow); ctx.stroke();
+    ctx.strokeStyle = '#14060a'; ctx.lineWidth = 12 * k + 2; ctx.stroke(); ctx.strokeStyle = '#ffe0e4'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore(); }
+  // đầu bay lên, xoay, rơi rồi tan
+  if (E.head && since < 90) { const h = E.head; h.x += h.vx; h.vy += .35; h.y += h.vy; h.rot += .22; const a = since < 50 ? 1 : Math.max(0, 1 - (since - 50) / 40);
+    ctx.save(); ctx.globalAlpha = a; ctx.translate(h.x, h.y); ctx.rotate(h.rot);
+    ctx.fillStyle = '#0c0406'; ctx.beginPath(); ctx.moveTo(-8, -6); ctx.quadraticCurveTo(-18, -14, -22, -26); ctx.quadraticCurveTo(-12, -14, -3, -9); ctx.fill(); ctx.beginPath(); ctx.moveTo(6, -7); ctx.quadraticCurveTo(17, -15, 20, -28); ctx.quadraticCurveTo(12, -14, 8, -3); ctx.fill();
+    ctx.fillStyle = '#6a1622'; ctx.beginPath(); ctx.arc(0, 0, 13, 0, 7); ctx.fill(); ctx.fillStyle = '#ffdd55'; ctx.fillRect(2, -3, 7, 3); ctx.fillStyle = '#b0101e'; ctx.fillRect(-8, 10, 16, 3); ctx.restore();
+    if (Math.random() < .6) E.ash.push({ x: h.x, y: h.y, vx: (Math.random() - .5), vy: -1, life: 40 }); }
+  // tro bụi
+  for (const q of E.ash) { q.x += q.vx; q.y += q.vy; q.life--; ctx.globalAlpha = Math.max(0, q.life / 50); ctx.fillStyle = q.life > 25 ? '#3a1a1a' : '#8a6a6a'; ctx.fillRect(q.x, q.y, 3, 3); }
+  ctx.globalAlpha = 1; E.ash = E.ash.filter(q => q.life > 0);
+  // Hắc Khuyển đáp xuống từ trên cao, tra kiếm vào vỏ
+  if (E.hound && --E.hound.delay < 0) { const hd = E.hound, gy = groundY(hd.x + 13, hd.y);
+    if (hd.y + 38 < gy) { hd.vy += .7; hd.y = Math.min(gy - 38, hd.y + hd.vy); if (hd.y + 38 >= gy) { dust(hd.x + 13, gy, 8); rings.push({ x: hd.x + 13, y: gy, r: 6, max: 40, t: 12, color: '#e0303c' }); } }
+    hd.a = Math.min(1, hd.a + .08);
+    glow(hd.x + 13, hd.y + 20, 40, '224,48,60', .25 * hd.a);
+    drawHero({ ...heroStub('hound', hd.x, hd.y, hd.face || -1), ground: hd.y + 38 >= gy - 1, vy: hd.vy, regressed: true }, hd.a); }
+}
+function drawEndOverlay() {
+  const E = endScene; if (!E || !E.moon) return;
+  const k = Math.min(1, (E.t - (E.moonT || (E.moonT = E.t))) / 90);
+  ctx.save(); ctx.globalAlpha = k; glow(W - 160, 90, 120, '200,20,40', .45); ctx.fillStyle = '#b0101e'; ctx.beginPath(); ctx.arc(W - 160, 90, 34, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(255,120,130,.35)'; ctx.beginPath(); ctx.arc(W - 170, 82, 12, 0, 7); ctx.fill(); ctx.restore();
+}
 function drawCutin() {
   const c = cutin; c.t++; const t = c.t, D = 48;
   if (t > D) { cutin = null; return; }
@@ -4110,8 +4169,8 @@ function drawDialog() {
   const d = dialog, [who, text] = d.lines[d.i], [name, color] = SPEAKERS[who];
   d.t++;
   const shown = text.slice(0, Math.floor(d.t * 1.6));
-  const bx = 40, by = IS_TOUCH ? 104 : H - 162, bw = W - 80, bh = 128;
-  ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H);
+  const bx = 40, by = (IS_TOUCH || endScene) ? 70 : H - 162, bw = W - 80, bh = 128;
+  ctx.fillStyle = endScene ? 'rgba(0,0,0,.15)' : 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = 'rgba(16,19,40,.95)'; rr(bx, by, bw, bh, 14);
   ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 14) : ctx.rect(bx, by, bw, bh); ctx.stroke();
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
@@ -4151,6 +4210,7 @@ function draw() {
   for (const t of trail) if (t.boss) drawBossBody({ ...t.boss, x: t.x, y: t.y, face: t.face, label: null, warn: false, state: 'idle' }, t.life / 10 * .3);
   for (const e of enemies) if (e.alive && onScreen(e)) { if (e.boss) { drawBossBody(e, e.alpha); if (e.stunT > 0) drawDizzy(center(e).x, e.y - 8); } else { drawEnemy(e); if (e.stun > 30) drawDizzy(center(e).x, e.y - 6); } }
   walls.forEach(drawWall);
+  if (endScene) drawEndScene();
   const p = player;
   if (cls === 'gunner' && p.level >= 2 && state === 'play') { const t = getTarget(); if (t) drawReticle(t); }
   for (const t of trail) if (!t.boss) drawHero({ ...p, x: t.x, y: t.y, face: t.face, thrust: 0, atk: 0 }, t.life / 12 * .35);
@@ -4218,6 +4278,7 @@ function draw() {
   if (p.killSeq) { ctx.fillStyle = 'rgba(20,16,50,.35)'; ctx.fillRect(0, 0, W, H); }
   ctx.restore();
   if (ultCine) drawCine();
+  drawEndOverlay();
   if (world.training) {
     let tot5 = 0; for (const q of trainLog) tot5 += q.d; world.trainTotal = world.trainTotal || 0;
     const bx = W / 2 - 170, by = 52; ctx.save(); ctx.fillStyle = 'rgba(8,10,22,.72)'; ctx.beginPath(); ctx.roundRect(bx, by, 340, 34, 8); ctx.fill();
@@ -4255,12 +4316,14 @@ function loop(now) {
 function showDialog(lines, onDone) {
   if (!lines || !lines.length) { if (onDone) onDone(); return; }
   dialog = { lines, i: 0, t: 0, onDone };
+  if (lines[0][2]) lines[0][2]();
 }
 function advanceDialog() {
   if (!dialog) return;
   const full = dialog.lines[dialog.i][1].length;
   if (dialog.t * 1.6 < full) { dialog.t = Math.ceil(full / 1.6) + 1; return; }
   dialog.i++; dialog.t = 0;
+  if (dialog.i < dialog.lines.length && dialog.lines[dialog.i][2]) dialog.lines[dialog.i][2]();
   if (dialog.i >= dialog.lines.length) {
     const f = dialog.onDone; dialog = null;
     for (const k in keys) keys[k] = false; for (const k in pressed) pressed[k] = false; jumpHeld = true; jumpBuf = 0; dropReq = false;
@@ -4333,6 +4396,7 @@ function stageClear() {
   if (save.frags.every(Boolean)) unlockAch('tvv');
   if (save.unlocked.includes('king')) unlockAch('kingfree');
   if (n === LAST) unlockAch('demon');
+  if (n === LAST && !save.unlocked.includes('hound')) { save.unlocked.push('hound'); msgs.push('Mở khóa nhân vật mới: Huyết Kiếm Khuyển Vệ!'); }
   if (S.type === 'boss' && player.hurtCount === 0) unlockAch('flawless');
   if (got[1] && coins.length > 0) unlockAch('allFlies');
   if (totalStars() >= 20) unlockAch('stars20');
@@ -4561,7 +4625,7 @@ document.getElementById('shopClose').addEventListener('click', toMenu);
 function addShards(c, n) { save.gacha.shards[c] = (save.gacha.shards[c] || 0) + n; }
 const LEG_POOL = ['king', 'wukong', 'pirate', 'giong', 'hound'],
   // Nhà vua chỉ mở khóa qua cốt truyện; chưa sở hữu thì không ra trong chiêu mộ (kể cả mảnh)
-  gachaOk = c => c !== 'king' || save.unlocked.includes('king'), legPool = () => LEG_POOL.filter(gachaOk), EPIC_POOL = ['brawler', 'ninja'], RARE_POOL = ['mage', 'samurai', 'gunner'];
+  gachaOk = c => !['king', 'hound'].includes(c) || save.unlocked.includes(c), legPool = () => LEG_POOL.filter(gachaOk), EPIC_POOL = ['brawler', 'ninja'], RARE_POOL = ['mage', 'samurai', 'gunner'];
 const pickOf = a => a[Math.floor(Math.random() * a.length)];
 function pickHero() {   // trong 31%: Huyền thoại 3, Sử thi 6, Hiếm 9, Thường 13
   const r = Math.random() * 31;
