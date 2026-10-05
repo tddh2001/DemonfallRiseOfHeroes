@@ -344,6 +344,27 @@
     .foot-info { font-size: 11px; } .foot-info b { font-size: 14px; }
   }
 
+  #libPanel { justify-content: flex-start; overflow-y: auto; padding-top: max(20px, env(safe-area-inset-top)); }
+  .lib-tabs { display: flex; gap: 8px; margin: 4px 0 14px; }
+  .lib-tab { font: 600 14px 'Oswald', sans-serif; letter-spacing: .08em; padding: 7px 18px; color: #a09b8c; background: #0a0e13; border: 1px solid #3c3c41; border-radius: 2px; cursor: pointer; }
+  .lib-tab.on { color: #f0e6d2; border-color: #c8aa6e; box-shadow: inset 0 0 0 1px #785a28; }
+  .lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; width: min(860px, 100%); }
+  .lib-grid[hidden], .lib-detail[hidden] { display: none; }
+  .lib-card { background: linear-gradient(#0d1520, #091018); border: 1px solid #3c3c41; border-radius: 3px; padding: 6px 6px 8px; cursor: pointer; color: #f0e6d2; text-align: center; font-size: 13px; }
+  .lib-card:hover { border-color: #c8aa6e; }
+  .lib-card canvas { width: 100%; aspect-ratio: 1; display: block; margin-bottom: 4px; }
+  .lib-card small { display: block; color: #a09b8c; font-size: 11px; }
+  .lib-card.locked { color: #5b5a56; }
+  .lib-detail { width: min(860px, 100%); display: grid; grid-template-columns: 220px 1fr; gap: 18px; text-align: left; background: #0a0e13; border: 1px solid #785a28; border-radius: 3px; padding: 16px; }
+  .lib-detail canvas { width: 220px; height: 220px; background: radial-gradient(#1a2840, #091018); border-radius: 3px; }
+  .lib-detail h2 { margin: 0; font: 700 26px 'Oswald', sans-serif; color: #f0e6d2; letter-spacing: .04em; }
+  .lib-detail .ttl { color: #c8aa6e; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+  .lib-detail .meta { color: #a09b8c; font-size: 13px; margin-bottom: 8px; }
+  .lib-detail .desc { color: #cdbe91; font-size: 14px; line-height: 1.5; margin-bottom: 12px; }
+  .lib-sk { display: flex; gap: 10px; padding: 8px 0; border-top: 1px solid #1e2328; }
+  .lib-sk b { flex: 0 0 26px; height: 26px; display: grid; place-items: center; border: 1px solid #c8aa6e; color: #c8aa6e; font: 700 13px 'Oswald', sans-serif; border-radius: 2px; }
+  .lib-sk div { color: #f0e6d2; font-size: 14px; } .lib-sk div span { display: block; color: #a09b8c; font-size: 13px; margin-top: 2px; }
+  @media (max-width: 640px) { .lib-detail { grid-template-columns: 1fr; } .lib-detail canvas { margin: 0 auto; } }
   .gift-form { display: flex; gap: 8px; width: min(460px, 100%); margin-top: 6px; }
   .gift-form input { flex: 1; min-width: 0; font: 600 17px 'Be Vietnam Pro', sans-serif; letter-spacing: .06em; color: #f0e6d2; padding: 10px 14px;
     background: #010a13; border: 1px solid #785a28; border-radius: 2px; outline: none; }
@@ -450,6 +471,7 @@
         <button class="nav-btn" id="shopBtn"><i>🛒</i><span>Cửa hàng</span></button>
         <button class="nav-btn hot" id="summonBtn"><i>✨</i><span>Chiêu mộ</span><b class="dot" id="summonDot"></b></button>
         <button class="nav-btn" id="achBtn"><i>🏆</i><span>Thành tựu</span><b class="dot" id="achDot"></b></button>
+        <button class="nav-btn" id="libBtn"><i>📖</i><span>Thư viện</span></button>
         <button class="nav-btn" id="giftBtn"><i>🎁</i><span>Quà tặng</span></button>
       </nav>
     </header>
@@ -523,6 +545,13 @@
     <h3>Đội hình · Nâng bậc tướng</h3>
     <div class="roster" id="roster"></div>
     <div class="btns"><button class="btn ghost" id="summonClose">Xong</button></div>
+  </div>
+  <div class="overlay" id="libPanel" hidden>
+    <h1>Thư viện</h1>
+    <div class="lib-tabs"><button class="lib-tab on" data-t="enemy">Quái thú</button><button class="lib-tab" data-t="boss">Boss</button></div>
+    <div class="lib-grid" id="libGrid"></div>
+    <div class="lib-detail" id="libDetail" hidden></div>
+    <div class="btns"><button class="btn ghost" id="libBack" hidden>← Danh sách</button><button class="btn ghost" id="libClose">Đóng</button></div>
   </div>
   <div class="overlay" id="giftPanel" hidden>
     <h1>Mã quà tặng</h1>
@@ -759,6 +788,8 @@ TVV_ARCS.forEach((a, ai) => a.names.forEach((name, k) => STAGES.push({ name, typ
 STAGES.push({ name: 'Lâu Đài Quỷ Vương', type: 'boss', boss: 'demon', chapter: 4, d: 15, theme: 'castle' });
 const LAST = STAGES.length - 1;
 const MAX_STARS = LAST * 3;
+// Sân đấu tập: nằm ngoài cốt truyện (không tính sao, không thưởng)
+const TRAIN = STAGES.push({ name: 'Sân Đấu Tập', type: 'training', chapter: 0, d: 1, theme: 'forest' }) - 1;
 
 const SPEAKERS = {
   nar: ['', '#e8ecf7'], thach: ['Chiến binh Thạch', '#ffb347'], lam: ['Pháp sư Lam', '#8fb8ff'], phong: ['Kiếm sĩ Phong', '#9ff0d8'],
@@ -853,6 +884,7 @@ const ETYPES = {
   c: { w: 44, h: 32, hp: 3, xp: 4, spd: 0.9 },            // lợn rừng húc
   m: { w: 28, h: 40, hp: 2, xp: 4, spd: 0 },              // pháp sư lửa
   g: { w: 30, h: 34, hp: 3, xp: 4, spd: 0, fly: true },   // hồn ma xuyên tường
+  dummy: { w: 34, h: 56, hp: 1, xp: 0, spd: 0 },          // bù nhìn sân tập (không bao giờ gục)
 };
 function enemyPool(n) {
   const p = ['e'];
@@ -921,6 +953,9 @@ if ((save.ver || 1) < 3) {
   save.ver = 3; try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {}
 }
 save.hxp = save.hxp || {};
+if (!save.seen) { save.seen = {};
+  for (let n = 1; n <= Math.min(save.cleared, LAST); n++) { const S = STAGES[n]; for (const k of enemyPool(S.d)) save.seen['e:' + k] = true; if (S.boss) save.seen['b:' + S.boss] = true; }
+  if (save.cleared >= LAST) save.seen['b:demon2'] = true; }
 const upgLv = id => save.upg[id] || 0;
 const tierOf = (c, i) => ((save.sk[c] || [1, 1, 1, 1])[i]) || 1;
 const tier = i => tierOf(cls, i);
@@ -959,7 +994,7 @@ let actionId = 0;
 const newId = () => ++actionId;
 const keys = { left: false, right: false, jump: false, down: false, atk: false, s1: false, s2: false, s3: false, s4: false };
 const pressed = { atk: false, s1: false, s2: false, s3: false, s4: false };
-let jumpHeld = false, jumpBuf = 0, dropReq = false;
+let jumpHeld = false, jumpBuf = 0, dropReq = false, trainLog = [];
 
 const MINI_LINES = {
   9: [['nar', 'Cát tro cuộn lên. Một bóng quỷ khổng lồ chặn đường.'], ['m9', 'Muốn tới lâu đài? Bước qua xác ta trước đã!']],
@@ -996,8 +1031,27 @@ function buildTutorial() {
   return { G, cols, len: cols, spawn: [[25, 9, 'e'], [31, 9, 'e'], [38, 9, 'E'], [53, 9, 'a']],
     flies: [[12, 7], [16, 7], [18, 7], [19, 7], [25, 7], [40, 8], [45, 8], [58, 7], [59, 7]], cps: [43], goalCol: 66, isBoss: false, n: 0, d: 0, signs, tutorial: true };
 }
+function buildTraining() {
+  const cols = 54;
+  const G = Array.from({ length: ROWS }, () => Array(cols).fill(' '));
+  for (let x = 0; x < cols; x++) for (let y = 10; y < ROWS; y++) G[y][x] = '#';
+  for (let x = 0; x < 2; x++) for (let y = 0; y < 10; y++) G[y][x] = '#';
+  for (let x = cols - 2; x < cols; x++) for (let y = 0; y < 10; y++) G[y][x] = '#';
+  for (let x = 22; x <= 25; x++) G[8][x] = '=';
+  for (let x = 28; x <= 30; x++) G[6][x] = '=';
+  for (const x of [36, 37, 38]) { G[10][x] = ' '; G[11][x] = '^'; }
+  G[9][44] = '^'; G[9][45] = '^';
+  const signs = [
+    [4, 'Sân đấu tập: bù nhìn không bao giờ gục. Thử chiêu thoải mái, ở đây bạn cũng không thể thua.'],
+    [19, 'Bảng sát thương ở trên cùng: tổng sát thương, sát thương trong 5 giây gần nhất và sát thương mỗi giây.'],
+    [33, IS_TOUCH ? 'Phi tiêu bay tới định kỳ: bấm ⚔ đúng lúc để đỡ đòn.' : 'Phi tiêu bay tới định kỳ: bấm J đúng lúc để đỡ đòn.'],
+    [41, 'Cẩn thận gai và đá rơi (có vòng đỏ báo trước).'],
+  ];
+  return { G, cols, len: cols, spawn: [[14, 9, 'dummy'], [48, 9, 'dummy']], flies: [], cps: [6], goalCol: 999, isBoss: false, n: TRAIN, d: 1, signs, training: true, tick: 0 };
+}
 function buildStage(n) {
   if (n === 0) return buildTutorial();
+  if (STAGES[n].type === 'training') return buildTraining();
   const S = STAGES[n], rnd = mulberry32(n * 7919 + 17), d = S.d;
   const isBoss = S.type === 'boss';
   const len = Math.round(isBoss ? 56 + d * 3 : 80 + d * 4);
@@ -1070,7 +1124,7 @@ function buildWorld(n) {
   world.theme = TH;
   solids = []; spikes = []; coins = []; enemies = []; shots = []; walls = []; hazards = []; traps = []; rings = [];
   particles = []; trail = []; popups = []; ult = null; ultCine = null; shake = 0; dialog = null; petals = []; bolts = []; decals = []; cutin = null; flashT = 0; curBoss = null;
-  boss = null; bossStarted = false; reward = null; goalTaken = false; gate = null;
+  boss = null; bossStarted = false; reward = null; goalTaken = false; gate = null; trainLog = [];
   const G = world.G;
   G.forEach((row, y) => row.forEach((c, x) => {
     if (c === '#' || c === '=') solids.push({ x: x * T, y: y * T, w: T, h: T, top: c === '=', grass: y === 0 || G[y - 1][x] !== '#' });
@@ -1078,6 +1132,7 @@ function buildWorld(n) {
   }));
   world.flies.forEach(([x, y]) => coins.push({ x: x * T + 20, y: y * T + 20, t: Math.random() * 6, got: false }));
   world.spawn.forEach(([cx, row, k]) => enemies.push(makeEnemy(k, cx, row, Math.max(1, world.d))));
+  save.seen = save.seen || {}; for (const [, , k] of world.spawn) save.seen['e:' + k] = true;
   checkpoints = world.cps.map(cx => ({ x: cx * T + 10, y: 9 * T - 10, w: 20, h: 50, on: false }));
   const S = STAGES[n], gc = world.goalCol;
   if (S.type === 'rescue') goal = { kind: 'cage', who: S.rescue, x: gc * T - 10, y: 9 * T - 30, w: 60, h: 70 };
@@ -1095,7 +1150,7 @@ function buildWorld(n) {
     fistEmp: 0, barrage: 0, iron: 0, skyfall: null, combo: 0, comboT: 0, atkMul: 1, claw: 0, frenzy: 0, maul: null, killHeal: 0,
     smoke: null, hidden: false, clone: null, killSeq: null, cloud: 0, smash: null, wkc: [], bigSpin: 0, spinAngle: 0, revived: false, armed: 0 };
   camX = 0; collected = 0;
-  document.getElementById('stageName').textContent = n === 0 ? `Hướng dẫn · ${S.name}` : `Màn ${n} · ${S.name}`;
+  document.getElementById('stageName').textContent = n === 0 ? `Hướng dẫn · ${S.name}` : S.type === 'training' ? `🎯 ${S.name}` : `Màn ${n} · ${S.name}`;
   if (world.mini) world.mini = { ...world.mini, l: world.mini.c0 * T, r: world.mini.c1 * T, started: false, done: false };
   if (n === 0) enemies.forEach(e => { if (e.kind === 'a') { e.rate = 100; e.hp = e.maxHp = 5; } });
   updateHud();
@@ -1128,7 +1183,7 @@ const LIGHT_HAZ = new Set(['dart', 'fireball', 'coin', 'acid', 'arrow', 'feather
 const hazDmg = h => !h.boss ? 1 : h.type === 'beam' ? 3 : (LIGHT_HAZ.has(h.type) && !h.big) ? 1 : 2;
 
 function gainXp(n, x, y) {
-  const p = player; if (!p) return;
+  const p = player; if (!p || (world && world.training)) return;
   p.xp += n; save.hxp[cls] = p.xp;
   if (x !== undefined) popups.push({ text: `+${n} KN`, x, y: y - 14, t: 30, color: '#9ff0d8' });
   let up = false;
@@ -1161,12 +1216,14 @@ function hurt(src) {
   updateHud();
   if (p.hearts <= 0 && wukongRevive()) return;
   if (p.hearts <= 0 && giongAwaken()) return;
+  if (p.hearts <= 0 && world.training) { p.hearts = p.maxHearts; p.holyUsed = false; p.toast = { text: 'Sân tập: hồi đầy tim', color: '#9ff0d8', t: 70 }; updateHud(); return; }
   if (p.hearts <= 0) gameOver();
 }
 function fallDown() {
   const p = player;
   p.hearts--; p.hurtCount++; updateHud();
-  if (p.hearts <= 0 && !wukongRevive() && !giongAwaken()) { gameOver(); return; }
+  if (p.hearts <= 0 && world.training) { p.hearts = p.maxHearts; p.holyUsed = false; updateHud(); }
+  else if (p.hearts <= 0 && !wukongRevive() && !giongAwaken()) { gameOver(); return; }
   p.x = p.sx; p.y = p.sy; p.vx = p.vy = 0; p.inv = 80; p.dash = p.phase = p.charge = p.barrage = 0; p.leap = null; p.skyfall = null; p.maul = null; p.killSeq = null; p.cloud = 0;
 }
 let hitStop = 0, flashT = 0, fxList = [];
@@ -1251,6 +1308,7 @@ function damage(e, dmg, color) {
   if (!e.alive || e.transforming) return;
   dmg = Math.round(dmg * lvDmgMul(player ? player.level : 1) * 10) / 10;
   e.hp -= dmg; e.flash = 8;
+  if (e.kind === 'dummy') { e.hp = e.maxHp; e.wob = 14; if (world.training) { trainLog.push({ t: world.tick, d: dmg }); world.trainTotal = (world.trainTotal || 0) + dmg; } }
   if (!e.boss) e.stun = Math.max(e.stun, 12);
   const c = center(e);
   burst(c.x, c.y, color || '#ffffff', 6);
@@ -1606,7 +1664,7 @@ function drawCine() {
 // ======================= BOSS =======================
 function startBossFight(mini) {
   bossStarted = true;
-  const id = mini ? world.mini.id : STAGES[stageNum].boss, D = BOSS_DEFS[id];
+  const id = mini ? world.mini.id : STAGES[stageNum].boss, D = BOSS_DEFS[id]; markSeen('b:' + id);
   if (mini) { world.arenaL = world.mini.l; world.arenaR = world.mini.r; world.mini.started = true; }
   gate = { x: world.arenaL, y: 0, w: T, h: GROUND_Y, top: false, gate: true };
   solids.push(gate);
@@ -1826,7 +1884,7 @@ function bossDown(b) {
   if (b.id === 'demon' && b.phase === 1) {
     b.hp = 1; b.transforming = true; hazards = []; b.vx = 0;
     showDialog(STORY[LAST].phase2, () => {
-      b.transforming = false; b.phase = 2; b.maxHp = b.hp = 90; b.fly = true; b.float = false; b.wings = true;
+      b.transforming = false; b.phase = 2; b.maxHp = b.hp = 90; b.fly = true; b.float = false; b.wings = true; markSeen('b:demon2');
       const oldBottom = b.y + b.h; b.w = 84; b.h = 120; b.y = oldBottom - b.h; b.x = clampBossX(b.x - 8, b);
       b.state = 'idle'; b.timer = 40; shake = 16; { const c = center(b); for (let i = 0; i < 5; i++) strike(c.x + (i - 2) * 90, GROUND_Y, i % 2 ? '#ff4d4d' : '#ffb0b0'); petalStorm('ember', 80); }
       rings.push({ x: center(b).x, y: center(b).y, r: 10, max: 260, t: 30, color: '#ff4d4d' });
@@ -2013,6 +2071,12 @@ function update() {
     p.airT = p.ground ? 0 : (p.airT || 0) + 1;
   }
   if (p.squash > 0) p.squash--;
+  if (world.training) {
+    world.tick++;
+    if (world.tick % 150 === 0) haz({ type: 'dart', x: (world.cols - 2) * T - 20, y: p.y + 10, w: 18, h: 8, vx: -6.5, vy: 0, life: 260, blockable: true, solidStop: true, color: '#c9cfe6' });
+    if (world.tick % 230 === 115) { const tx = center(p).x; haz({ type: 'mark', x: tx - 26, y: GROUND_Y - 6, w: 52, h: 6, life: 46, color: '#ff6b6b' }); haz({ type: 'fallsword', x: tx - 12, y: -90, w: 24, h: 60, delay: 46, g: 1.2, life: 220, groundKill: true, color: '#9a8a7a' }); }
+    if (trainLog.length && trainLog[0].t < world.tick - 300) trainLog = trainLog.filter(q => q.t >= world.tick - 300);
+  }
   if (cls === 'giong') {
     if (p.leap) { const L = p.leap; L.t++;
       if (L.phase === 'up' && (p.vy >= -1 || L.t > 45)) L.phase = 'hang';
@@ -2027,7 +2091,7 @@ function update() {
     if (p.holy && !ult && --p.holyDrain <= 0) {
       p.holyDrain = rank() >= 5 ? 180 : 120; p.hearts--; updateHud();
       popups.push({ text: '-1 ♥', x: center(p).x, y: p.y - 30, t: 36, color: '#ffd84d' });
-      if (p.hearts <= 0) { gameOver(); return; }
+      if (p.hearts <= 0) { if (world.training) { p.holy = false; p.holyUsed = false; p.hearts = p.maxHearts; p.toast = { text: 'Sân tập: hồi đầy tim', color: '#9ff0d8', t: 70 }; updateHud(); } else { gameOver(); return; } }
     }
   }
   if (p.x < 0) { p.x = 0; p.vx = 0; }
@@ -2245,6 +2309,7 @@ function bodyAttacking(e) {
   return (e.kind === 'b' && e.mode === 'swoop') || (e.kind === 'c' && e.charge > 0) || (e.kind === 'j' && !e.ground && e.vy > 1);
 }
 function updateEnemy(e, pc) {
+  if (e.kind === 'dummy') { if (e.homeX === undefined) e.homeX = e.x; e.x = e.homeX; e.vx = 0; e.vy = 0; e.stun = 0; e.lift = 0; if (e.wob > 0) e.wob--; return; }
   if (e.flash > 0) e.flash--; if (e.lift > 0) e.lift--; if (e.rcd > 0) e.rcd--;
   const c = center(e), dx = pc.x - c.x, dy = pc.y - c.y, sp = e.sp;
   const stunned = e.stun > 0; if (stunned) e.stun--;
@@ -3232,6 +3297,21 @@ function drawEnemy(e) {
     ctx.fillStyle = '#ff5a4a'; ctx.font = '800 16px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('!', c.x, e.y - 8); ctx.textAlign = 'left'; ctx.restore(); }
   ctx.save(); ctx.translate(0, ly);
   const W_ = e.flash ? '#ffffff' : null;
+  if (e.kind === 'dummy') {
+    const c = center(e), wb = e.wob > 0 ? Math.sin(e.wob * .9) * .14 * (e.wob / 14) : 0;
+    ctx.save(); ctx.translate(c.x, e.y + e.h); ctx.rotate(wb);
+    ctx.fillStyle = '#6b4a2a'; ctx.fillRect(-3, -e.h, 6, e.h); ctx.fillRect(-22, -e.h + 18, 44, 5);
+    ctx.fillStyle = W_ || '#d8b860'; ctx.beginPath(); ctx.roundRect(-13, -e.h + 16, 26, 26, 6); ctx.fill();
+    ctx.strokeStyle = '#a8883a'; ctx.lineWidth = 1.5; for (let k = -8; k <= 8; k += 4) { ctx.beginPath(); ctx.moveTo(k, -e.h + 40); ctx.lineTo(k + 1, -e.h + 46); ctx.stroke(); }
+    ctx.fillStyle = W_ || '#e8d8b0'; ctx.beginPath(); ctx.arc(0, -e.h + 9, 11, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#7a5a3a'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(-6, -e.h + 6); ctx.lineTo(-2, -e.h + 10); ctx.moveTo(-2, -e.h + 6); ctx.lineTo(-6, -e.h + 10); ctx.moveTo(2, -e.h + 6); ctx.lineTo(6, -e.h + 10); ctx.moveTo(6, -e.h + 6); ctx.lineTo(2, -e.h + 10); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-5, -e.h + 14); for (let k = -5; k <= 5; k += 2.5) ctx.lineTo(k, -e.h + 14 + (Math.round(k) % 2 ? 1.5 : 0)); ctx.stroke();
+    ctx.fillStyle = '#5a3a20'; ctx.beginPath(); ctx.moveTo(-16, -e.h + 1); ctx.lineTo(16, -e.h + 1); ctx.lineTo(4, -e.h - 12); ctx.lineTo(-6, -e.h - 10); ctx.fill();
+    ctx.fillStyle = '#c8423b'; ctx.beginPath(); ctx.arc(0, -e.h + 30, 8, 0, 7); ctx.fill(); ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(0, -e.h + 30, 5, 0, 7); ctx.fill(); ctx.fillStyle = '#c8423b'; ctx.beginPath(); ctx.arc(0, -e.h + 30, 2.2, 0, 7); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = '#e8ecf7'; ctx.font = '800 14px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('∞', c.x, e.y - 18); ctx.textAlign = 'left';
+    ctx.restore(); return;
+  }
   switch (e.kind) {
     case 'E': {
       ctx.fillStyle = W_ || '#a8433e'; rr(e.x, e.y + 6, e.w, e.h - 6, 10);
@@ -3843,6 +3923,12 @@ function draw() {
   if (p.killSeq) { ctx.fillStyle = 'rgba(20,16,50,.35)'; ctx.fillRect(0, 0, W, H); }
   ctx.restore();
   if (ultCine) drawCine();
+  if (world.training) {
+    let tot5 = 0; for (const q of trainLog) tot5 += q.d; world.trainTotal = world.trainTotal || 0;
+    const bx = W / 2 - 170, by = 52; ctx.save(); ctx.fillStyle = 'rgba(8,10,22,.72)'; ctx.beginPath(); ctx.roundRect(bx, by, 340, 34, 8); ctx.fill();
+    ctx.strokeStyle = 'rgba(159,240,216,.5)'; ctx.lineWidth = 1; ctx.stroke(); ctx.font = '700 14px "Baloo 2", sans-serif'; ctx.textAlign = 'center';
+    ctx.fillStyle = '#9ff0d8'; ctx.fillText(`Tổng ${Math.round(world.trainTotal)}   ·   5 giây ${+tot5.toFixed(1)}   ·   ${(tot5 / 5).toFixed(1)} sát thương/giây`, W / 2, by + 22); ctx.restore();
+  }
   if (ult) drawUlt();
   if (flashT > 0) { ctx.fillStyle = `rgba(${flashCol},${Math.min(1, flashT / 14)})`; ctx.fillRect(0, 0, W, H); flashT--; if (flashT <= 0) flashCol = '255,236,220'; }
   if (cutin) drawCutin();
@@ -3886,7 +3972,7 @@ function advanceDialog() {
     if (f) f();
   }
 }
-function hideAll() { ['menuPanel', 'pausePanel', 'endPanel', 'shopPanel', 'achPanel', 'summonPanel', 'giftPanel'].forEach(id => document.getElementById(id).hidden = true); }
+function hideAll() { ['menuPanel', 'pausePanel', 'endPanel', 'shopPanel', 'achPanel', 'summonPanel', 'giftPanel', 'libPanel'].forEach(id => document.getElementById(id).hidden = true); }
 function startStage(n, c) {
   stageNum = n; cls = c; save.cls = c; persist();
   document.documentElement.style.setProperty('--accent', CLASSES[c].color);
@@ -3980,7 +4066,7 @@ let roleFilter = 'all', selSkill = 0, openChap = null;
 const $ = id => document.getElementById(id);
 function tierBadge(c) { const r = RARITY[c], t = TIER[r]; return `<span class="tag2 tier-${t}">${t} · ${RARITY_NAME[r]}</span>`; }
 function renderMenu() {
-  selStage = Math.min(selStage, save.cleared + 1);
+  if (selStage !== TRAIN) selStage = Math.min(selStage, save.cleared + 1);
   if (!CLASSES[selCls]) selCls = 'warrior';
   const C = CLASSES[selCls], own = save.unlocked.includes(selCls);
   $('menuPanel').style.setProperty('--hc', C.color);
@@ -3993,8 +4079,11 @@ function renderMenu() {
   $('achDot').textContent = ''; $('achBtn').title = `${achN}/${ACHS.length} thành tựu`;
   // ----- danh sách màn -----
   const sg = $('stageGrid'); sg.innerHTML = '';
+  { const b = document.createElement('button'); b.className = 'stg train' + (selStage === TRAIN ? ' sel' : '');
+    b.innerHTML = `<span class="num">🎯</span><span class="nm">Sân Đấu Tập<small class="tut">Bù nhìn vô hạn máu · có bẫy</small></span><span class="st"></span>`;
+    b.addEventListener('click', () => { selStage = TRAIN; renderMenu(); }); sg.appendChild(b); }
   sg.insertAdjacentHTML('beforeend', `<div class="saga">${SAGA.name}</div>`);
-  if (openChap === null) openChap = STAGES[selStage].chapter;
+  if (openChap === null) openChap = STAGES[selStage].chapter || 1;
   [1, 2, 3, 4].forEach(ch => {
     const ids = STAGES.map((S, n) => n).filter(n => STAGES[n].chapter === ch);
     const doneN = ids.filter(n => n === 0 ? save.tutDone : n <= save.cleared).length;
@@ -4069,7 +4158,7 @@ function renderMenu() {
   }
   // ----- chân trang -----
   const S = STAGES[selStage], m = save.stars[selStage] || 0;
-  $('footInfo').innerHTML = `<b>Màn ${selStage} · ${S.name}</b>${selStage === 0 ? 'Hướng dẫn' : `<span class="st">${[0, 1, 2].map(i => m & (1 << i) ? '★' : '☆').join('')}</span>`} · ${CLASSES[selCls].name} cấp ${heroLv(selCls)}`;
+  $('footInfo').innerHTML = selStage === TRAIN ? `<b>🎯 Sân Đấu Tập</b>Thử chiêu, đo sát thương · không nhận thưởng` : `<b>Màn ${selStage} · ${S.name}</b>${selStage === 0 ? 'Hướng dẫn' : `<span class="st">${[0, 1, 2].map(i => m & (1 << i) ? '★' : '☆').join('')}</span>`} · ${CLASSES[selCls].name} cấp ${heroLv(selCls)}`;
   const pb = $('playBtn');
   pb.classList.toggle('buy', !own);
   pb.textContent = own ? 'Khóa chọn' : selCls === 'beast' ? `Mua · ${BEAST_PRICE} ✦` : 'Chiêu mộ để mở';
@@ -4275,6 +4364,86 @@ document.getElementById('pull1').addEventListener('click', () => doPull(1));
 document.getElementById('pull10').addEventListener('click', () => doPull(10));
 document.getElementById('summonClose').addEventListener('click', toMenu);
 
+// ======================= THƯ VIỆN: quái thú & boss =======================
+const LIB_ENEMY = {
+  e: { name: 'Bọ đêm', where: 'Từ Chương 1', desc: 'Loài bọ bò lang thang trên mặt đất, gặp mép vực thì quay đầu.', skills: [['Cắn', 'Khi bạn ở sát bên, hiện dấu "!" rồi cắn một nhát ngắn trước mặt (1 tim).']] },
+  a: { name: 'Ninja phi tiêu', where: 'Từ màn 2', desc: 'Đứng gác một chỗ, luôn giữ khoảng cách với bạn.', skills: [['Phi tiêu', 'Ném phi tiêu thẳng về phía bạn. Đỡ đòn đúng lúc sẽ bật ngược phi tiêu lại.']] },
+  b: { name: 'Dơi đêm', where: 'Từ màn 2', desc: 'Treo mình lơ lửng chờ con mồi đi ngang qua.', skills: [['Lao xuống', 'Bổ nhào xuống chỗ bạn rồi bay ngược lên. Chỉ gây sát thương trong lúc lao.']] },
+  E: { name: 'Oni', where: 'Từ màn 3', desc: 'Quỷ sừng đỏ to khỏe, chịu đòn tốt (4 máu ở màn đầu).', skills: [['Đập chùy', 'Vung lên báo trước lâu hơn bọ đêm rồi đập mạnh, tầm với dài hơn.']] },
+  j: { name: 'Slime nhảy', where: 'Từ màn 4', desc: 'Khối thạch dẻo, luôn tìm cách nhảy lên đầu bạn.', skills: [['Nhảy đè', 'Bật nhảy về phía bạn, gây sát thương khi rơi đè xuống.']] },
+  c: { name: 'Lợn rừng', where: 'Từ Chương 2', desc: 'Hung hăng, thấy bạn là cào chân lấy đà.', skills: [['Húc', 'Lao thẳng tới với tốc độ cao. Chỉ gây sát thương khi đang húc, có thể nhảy qua.']] },
+  m: { name: 'Pháp sư lửa', where: 'Từ Chương 2', desc: 'Đứng từ xa niệm phép, rất yếu khi bị áp sát.', skills: [['Cầu lửa', 'Ném cầu lửa theo đường cong về phía bạn, rơi xuống đất thì tắt.']] },
+  g: { name: 'Hồn ma', where: 'Cuối Chương 2 trở đi', desc: 'Linh hồn lơ lửng, không bị địa hình cản trở.', skills: [['Xuyên tường', 'Bay xuyên qua tường và nền để áp sát bạn.'], ['Chạm hồn', 'Khi ở gần, hiện dấu "!" rồi vung tay chém.']] },
+  dummy: { name: 'Bù nhìn', where: 'Sân Đấu Tập', desc: 'Bù nhìn rơm không bao giờ gục, dùng để thử chiêu và đo sát thương.', skills: [['Đứng im', 'Không di chuyển, không tấn công.']] },
+};
+const LIB_BOSS_SK = {
+  wrath:   ['Hai nhát chém đại kiếm quét rộng trước mặt.', 'Lao húc thẳng tới, thân hắn gây sát thương khi đang lao.', 'Xoay đại kiếm thành vòng tròn nguy hiểm quanh người.', 'Gọi cột lửa phun lên tại các vị trí được đánh dấu.'],
+  pride:   ['Ném lưỡi hái bay vòng ra rồi quay về tay, trúng cả lúc đi lẫn lúc về.', 'Nhảy vọt lên rồi giáng xuống, tạo sóng chấn hai bên.', 'Hai nhát chém lưỡi hái vừa chém vừa lao tới.', 'Mưa lưỡi hái rơi từ trên trời xuống.'],
+  greed:   ['Ba đòn quyền trượng liên hoàn, mỗi đòn tiến thêm một bước.', 'Ném một loạt tiền vàng theo đường cong.', 'Dịch chuyển ra sau lưng bạn rồi đánh.', 'Nhảy lên đập đất tạo sóng chấn.'],
+  glutton: ['Lao tới ngoạm hai lần bằng cái miệng đầy răng.', 'Phóng lưỡi ra trói rồi kéo bạn lại gần.', 'Phun một loạt axit theo đường cong.', 'Nhảy lên dậm cả thân xuống, tạo sóng chấn.'],
+  lust:    ['Đâm đinh ba tầm xa.', 'Dịch chuyển ra sau lưng bạn.', 'Phóng đinh ba bay thẳng về phía bạn.', 'Hàng loạt đinh ba trồi lên khắp đấu trường.'],
+  envy:    ['Ba loạt tên tỏa ra, nhắm thẳng vào bạn.', 'Mưa tên rơi xuống các điểm được đánh dấu.', 'Nhảy lên đập xuống tạo sóng chấn.', 'Một mũi tên độc khổng lồ bắn thẳng, có ánh sáng báo trước.'],
+  sloth:   ['Gọi những quả cầu phép bay chậm đuổi theo bạn.', 'Triệu hồi quái nhỏ ra trận.', 'Cột nước phun lên từ mặt đất.', 'Lạc đà quỷ lao húc thẳng tới.'],
+  fist:    ['Lao tới tung cú đấm, thân hắn gây sát thương khi đang lao.', 'Đấm ra sóng quyền bay ngang.', 'Nhảy lên đập đất tạo sóng chấn hai bên.', 'Chuỗi đấm liên hoàn dồn dập phía trước.'],
+  sword:   ['Chém ra vầng trăng đen bay ngang.', 'Dịch chuyển ra sau lưng bạn rồi chém.', 'Gọi mưa kiếm rơi xuống các điểm được đánh dấu.', 'Chém liên tiếp nhiều nhát, mỗi nhát tiến tới.'],
+  whip:    ['Quất roi dài trước mặt.', 'Phóng roi trói rồi kéo bạn lại gần.', 'Xoay roi tạo vòng tròn nguy hiểm quanh người.', 'Gai độc trồi lên từ mặt đất.'],
+  spear:   ['Đâm thương tầm xa.', 'Ném thương bay thẳng về phía bạn.', 'Nhảy lên bổ thương từ trên xuống.', 'Hàng loạt mũi thương trồi lên khắp đấu trường.'],
+  demon:   ['Ném cầu lửa địa ngục cỡ lớn.', 'Phân thân bóng tối lao tới chém.', 'Cột lửa địa ngục phun lên tại các điểm được đánh dấu.', 'Triệu hồi cả bầy quái.'],
+  demon2:  ['Bay lên cao, bắn ba loạt lông vũ sắc.', 'Vọt lên rồi bổ nhào chéo xuống chỗ bạn, để lại vệt lửa.', 'Ba vòng lửa lan dọc mặt đất, phải nhảy qua.', 'Tia sáng quét ngang đấu trường hai lần: lần thấp phải nhảy, lần cao phải đứng yên. Trúng mất 3 tim.'],
+};
+const LIB_BOSS_ORDER = ['wrath', 'pride', 'greed', 'glutton', 'lust', 'envy', 'sloth', 'fist', 'sword', 'whip', 'spear', 'demon', 'demon2'];
+let libTab = 'enemy';
+const seen = k => !!(save.seen && save.seen[k]);
+function markSeen(k) { save.seen = save.seen || {}; if (!save.seen[k]) { save.seen[k] = true; persist(); } }
+function libPortrait(kind, key, size, locked) {
+  const c = document.createElement('canvas'); c.width = c.height = size; const old = ctx; ctx = c.getContext('2d');
+  try {
+    if (kind === 'enemy') { const e = makeEnemy(key, 0, 0, 1); const k = size / 80; ctx.translate(size / 2, size * .72); ctx.scale(k * 1.4, k * 1.4); e.x = -e.w / 2; e.y = -e.h + (e.fly ? -6 : 0); e.face = 1; e.dir = 1; drawEnemy(e); }
+    else { const p2 = key === 'demon2', id = p2 ? 'demon' : key, D = BOSS_DEFS[id], w = p2 ? 84 : D.w, h = p2 ? 120 : D.h, k = size * (p2 ? .5 : .62) / h;
+      ctx.translate(size / 2, size * .88); ctx.scale(k, k); drawBossBody({ id, x: -w / 2, y: -h, w, h, face: 1, phase: p2 ? 2 : 1, wings: p2, state: 'idle' }, 1); }
+  } catch (err) {}
+  ctx = old;
+  if (locked) { const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(14,16,26,.96)'; g.fillRect(0, 0, size, size); g.globalCompositeOperation = 'source-over'; }
+  return c;
+}
+function bossWhere(id) {
+  if (id === 'demon' || id === 'demon2') return `Chương 4 · ${STAGES[LAST].name}`;
+  const n = STAGES.findIndex(S => S.boss === id); return n > 0 ? `${CHAPTERS[STAGES[n].chapter].split(' · ')[0]} · Màn ${n} · ${STAGES[n].name}` : '';
+}
+function renderLibrary() {
+  document.querySelectorAll('.lib-tab').forEach(t => t.classList.toggle('on', t.dataset.t === libTab));
+  const gEl = $('libGrid'), dEl = $('libDetail'); gEl.innerHTML = ''; gEl.hidden = false; dEl.hidden = true; $('libBack').hidden = true;
+  const keys = libTab === 'enemy' ? Object.keys(LIB_ENEMY) : LIB_BOSS_ORDER;
+  for (const k of keys) {
+    const sk = (libTab === 'enemy' ? 'e:' : 'b:') + k, open = seen(sk) || (libTab === 'enemy' && k === 'dummy');
+    const name = libTab === 'enemy' ? LIB_ENEMY[k].name : k === 'demon2' ? 'Quỷ Vương · Dạng 2' : BOSS_DEFS[k].name;
+    const sub = libTab === 'enemy' ? LIB_ENEMY[k].where : k === 'demon2' ? 'Chân thân có cánh' : BOSS_DEFS[k].title;
+    const card = document.createElement('div'); card.className = 'lib-card' + (open ? '' : ' locked');
+    card.appendChild(libPortrait(libTab, k, 110, !open));
+    card.insertAdjacentHTML('beforeend', open ? `${name}<small>${sub}</small>` : `???<small>Chưa gặp</small>`);
+    if (open) card.addEventListener('click', () => showLibDetail(libTab, k));
+    gEl.appendChild(card);
+  }
+}
+function showLibDetail(kind, k) {
+  const gEl = $('libGrid'), dEl = $('libDetail'); gEl.hidden = true; dEl.hidden = false; $('libBack').hidden = false; dEl.innerHTML = '';
+  dEl.appendChild(libPortrait(kind, k, 220, false));
+  let html;
+  if (kind === 'enemy') { const L = LIB_ENEMY[k], E = ETYPES[k];
+    html = `<h2>${L.name}</h2><div class="ttl">Quái thú</div><div class="meta">Xuất hiện: ${L.where} · Máu gốc: ${k === 'dummy' ? '∞' : E.hp} (tăng dần theo màn)${E.fly ? ' · Bay' : ''}</div><div class="desc">${L.desc}</div>`
+      + L.skills.map((s2, i) => `<div class="lib-sk"><b>${i + 1}</b><div>${s2[0]}<span>${s2[1]}</span></div></div>`).join('');
+  } else { const p2 = k === 'demon2', D = BOSS_DEFS[p2 ? 'demon' : k], names = p2 ? D.skills2 : D.skills, desc = LIB_BOSS_SK[k];
+    html = `<h2>${p2 ? 'Quỷ Vương · Dạng 2' : D.name}</h2><div class="ttl">${p2 ? 'Chân thân có cánh' : D.title}</div><div class="meta">Xuất hiện: ${bossWhere(k)} · Máu: ${p2 ? 90 : D.hp}</div>`
+      + `<div class="desc">Đạn nhỏ trúng mất 1 tim, đòn nặng (chém, đập, sóng chấn, lao húc) mất 2 tim. Vòng phép hiện dưới chân là lúc hắn sắp ra chiêu.</div>`
+      + names.map((n2, i) => `<div class="lib-sk"><b>${i + 1}</b><div>${n2}<span>${desc[i] || ''}</span></div></div>`).join('');
+  }
+  dEl.insertAdjacentHTML('beforeend', `<div>${html}</div>`);
+}
+$('libBtn').addEventListener('click', () => { hideAll(); $('libPanel').hidden = false; renderLibrary(); });
+$('libClose').addEventListener('click', toMenu);
+$('libBack').addEventListener('click', renderLibrary);
+document.querySelectorAll('.lib-tab').forEach(t => t.addEventListener('click', () => { libTab = t.dataset.t; renderLibrary(); }));
+
 // ======================= MÃ QUÀ TẶNG =======================
 // Mã được lưu dưới dạng băm để không đọc thẳng được trong mã nguồn.
 // Lưu ý: đây chỉ là che giấu, không phải bảo mật thật (xem giải thích về máy chủ).
@@ -4308,6 +4477,7 @@ function redeemCode(raw) {
     for (const c of CLASS_ORDER) save.hxp[c] = Math.max(heroXp(c), LV_TOTAL[MAX_LV]);
     save.cleared = Math.max(save.cleared, LAST); save.tutDone = true;
     save.orb = true; save.frags = [true, true, true, true]; save.stats.kingSealBroken = true;
+    save.seen = save.seen || {}; for (const k of Object.keys(LIB_ENEMY)) save.seen['e:' + k] = true; for (const k of LIB_BOSS_ORDER) save.seen['b:' + k] = true;
     got.push(`<b>mở khóa toàn bộ ${CLASS_ORDER.length} tướng</b>`, `<b>mọi màn chơi</b>`, `<b>tất cả tướng cấp ${MAX_LV}</b>`);
   }
   if (g.shardsAll) { CLASS_ORDER.forEach(c => addShards(c, g.shardsAll)); got.push(`<b>+${g.shardsAll} 🧩</b> mảnh cho mọi tướng`); }
