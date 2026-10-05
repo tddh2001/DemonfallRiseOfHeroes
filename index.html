@@ -662,6 +662,11 @@ const CLASSES = {
     { name: 'Phản thuẫn',     cd: 360, icon: '⟲', desc: 'Khiên + phản sát thương' },
     { name: 'Tam thánh kiếm', cd: 360, icon: '†', desc: '3 thanh thánh kiếm giáng xuống' },
     { name: 'Thánh quang đột', cd: 0,  icon: '✦', desc: 'Đâm tới: 5 sát thương toàn màn hình, kết thúc biến hình' } ] },
+  hound: { name: 'Huyết Kiếm Khuyển Vệ', short: 'Khuyển Vệ', hero: 'Hắc Khuyển', color: '#e0303c', role: 'Hồi quy khi gục ngã', basic: { name: 'Song trảm', cd: 18 }, skills: [
+    { name: 'Nanh Nghiền Nát', cd: 60,   icon: '⋀', desc: 'Chém một vệt máu hình nanh vuốt, chắc chắn gây Chảy máu' },
+    { name: 'Nanh Nuốt Chửng', cd: 300,  icon: '»', desc: 'Lướt một đoạn xuyên qua kẻ địch, gây sát thương và Chảy máu, miễn sát thương khi lướt' },
+    { name: 'Nanh Hủy Diệt',   cd: 600,  icon: '≋', desc: 'Chém liên tục về phía trước, hàng chục vệt kiếm đỏ đen' },
+    { name: 'Nanh Tối Cao',    cd: 1800, icon: '✕', desc: 'Bị khóa: chỉ mở khi Hồi Quy kích hoạt. Nhát chém vô định xuyên không thời gian, bỏ qua mọi phòng ngự, kết liễu ngay mục tiêu' } ] },
   giong: { name: 'Thánh Gióng', hero: 'Gióng', color: '#7ee08a', role: 'Hóa thánh khi gục ngã', basic: { name: 'Đâm tre', cd: 22 }, skills: [
     { name: 'Quất tre',            cd: 40,   icon: '⌒', desc: 'Quất roi tre theo hình vòng cung trước mặt. Đâm tre trúng quái tích Khí Thánh; đủ 5 điểm thì lần quất kế tiếp to gấp đôi và mạnh hơn' },
     { name: 'Ngựa sắt xung phong', cd: 720,  icon: '♞', desc: 'Cưỡi ngựa sắt húc xuyên qua quái, xoay tre liên tục, miễn sát thương 3 giây' },
@@ -673,7 +678,7 @@ const CLASSES = {
     { name: 'Thiết Mã Đạp Đất',    cd: 360, icon: '✹', desc: 'Ngựa chồm lên giẫm xuống, sóng chấn làm choáng quái' },
     { name: 'Phi Thiên',           cd: 0,   icon: '☀', desc: 'Cưỡi ngựa bay lên trời rồi bổ nhào đập gậy sắt xuống, gây sát thương toàn màn hình (càng nhiều tim càng mạnh), rồi trở về dạng thường' } ] },
 };
-const CLASS_ORDER = ['warrior', 'mage', 'samurai', 'gunner', 'beast', 'brawler', 'ninja', 'king', 'wukong', 'pirate', 'giong'];
+const CLASS_ORDER = ['warrior', 'mage', 'samurai', 'gunner', 'beast', 'brawler', 'ninja', 'king', 'wukong', 'pirate', 'giong', 'hound'];
 const BEAST_PRICE = 400;
 const PASSIVES = {
   warrior: { name: 'Thân Thép', desc: '25% cơ hội chặn hoàn toàn một đòn đánh' },
@@ -686,17 +691,18 @@ const PASSIVES = {
   ninja:   { name: 'Ám Kích', desc: 'Đánh thường vào sau lưng quái gây gấp đôi sát thương' },
   wukong:  { name: 'Thạch Hầu Bất Diệt', desc: 'Mỗi màn một lần, khi gục ngã sẽ đứng dậy với 2 tim' },
   pirate:  { name: 'Ý Chí Thép', desc: 'Khi còn 2 tim trở xuống, đánh thường +1 sát thương' },
+  hound:   { name: 'Hồi Quy', desc: 'Mỗi màn một lần, khi gục ngã sẽ đứng dậy với một nửa số tim, trở nên nhanh hơn, có 10% né mọi đòn và mở khóa Nanh Tối Cao. Đòn đánh có thể gây Chảy máu' },
   giong:   { name: 'Hóa Thánh', desc: 'Mỗi màn một lần, khi gục ngã sẽ hóa thánh: cưỡi ngựa sắt, hồi đầy tim, đổi toàn bộ chiêu. Mất 1 tim mỗi 2 giây; hạ quái chặn mất máu thêm 2 giây' },
 };
 const TIER = { com: 'C', rare: 'B', epic: 'A', leg: 'S' };
 const ROLES = { warrior: ['Đỡ đòn'], mage: ['Pháp sư'], samurai: ['Sát thủ'], gunner: ['Xạ thủ'], beast: ['Đấu sĩ', 'Sát thủ'], brawler: ['Đấu sĩ'],
-  ninja: ['Sát thủ'], king: ['Đấu sĩ', 'Đỡ đòn'], wukong: ['Đấu sĩ'], pirate: ['Xạ thủ', 'Đấu sĩ'], giong: ['Đỡ đòn', 'Đấu sĩ'] };
+  ninja: ['Sát thủ'], king: ['Đấu sĩ', 'Đỡ đòn'], wukong: ['Đấu sĩ'], pirate: ['Xạ thủ', 'Đấu sĩ'], giong: ['Đỡ đòn', 'Đấu sĩ'], hound: ['Sát thủ', 'Đấu sĩ'] };
 const ROLE_LIST = ['Đỡ đòn', 'Đấu sĩ', 'Sát thủ', 'Pháp sư', 'Xạ thủ'];
 // [Sát thương, Sống sót, Kỹ năng, Độ khó] thang 5
 const STATS = { warrior: [3, 5, 2, 1], mage: [4, 2, 5, 3], samurai: [4, 2, 4, 4], gunner: [4, 2, 3, 3], beast: [3, 4, 3, 2], brawler: [5, 4, 3, 2],
-  ninja: [4, 2, 4, 5], king: [5, 4, 5, 4], wukong: [5, 3, 4, 4], pirate: [5, 3, 4, 3], giong: [5, 5, 4, 3] };
+  ninja: [4, 2, 4, 5], king: [5, 4, 5, 4], wukong: [5, 3, 4, 4], pirate: [5, 3, 4, 3], giong: [5, 5, 4, 3], hound: [5, 3, 5, 4] };
 const TITLES = { warrior: 'Tấm khiên cuối cùng', mage: 'Pháp sư thủy nguyệt', samurai: 'Lưỡi gió phương Đông', gunner: 'Mắt ưng thung lũng', beast: 'Sói hoang huyết nguyệt',
-  brawler: 'Nắm đấm thép', ninja: 'Bóng tối vô hình', king: 'Ánh sáng vương quốc', wukong: 'Tề Thiên Đại Thánh', pirate: 'Thuyền trưởng biển đen', giong: 'Thiên Vương làng Gióng' };
+  brawler: 'Nắm đấm thép', ninja: 'Bóng tối vô hình', king: 'Ánh sáng vương quốc', wukong: 'Tề Thiên Đại Thánh', pirate: 'Thuyền trưởng biển đen', giong: 'Thiên Vương làng Gióng', hound: 'Kiếm sĩ dòng máu chó săn' };
 // Hiệu ứng khi nâng kỹ năng lên bậc 3 (bậc 2 luôn là giảm 20% hồi chiêu)
 const T3_DESC = {
   warrior: ['Cuồng nộ kéo dài 6 giây, cường hóa 2 đòn', 'Giáp kéo dài 3.5 giây', 'Vòng xoay kiếm rộng hơn nhiều', 'Vùng nổ thánh kiếm rộng hơn'],
@@ -709,6 +715,7 @@ const T3_DESC = {
   pirate:  ['Vụ nổ rộng hơn', 'Sóng kiếm +1 sát thương', 'Nâng cấp vũ khí 12 giây', 'Bá khí phủ toàn màn hình, hạ quái đến 5 máu'],
   beast:   ['Hồi 2 tim khi trúng', 'Hóa cuồng kéo dài 8 giây', 'Lướt xa hơn, gây 3 sát thương', 'Cắn xé lâu hơn'],
   king:    ['Sóng kiếm mạnh thêm 1 sát thương', 'Khiên kéo dài thêm 1 giây', 'Kiếm vũ rơi 9 thanh', 'Thánh hóa kéo dài 14 giây'],
+  hound:   ['Vệt nanh rộng hơn, +1 sát thương', 'Lướt xa hơn', 'Thêm nhiều vệt chém', 'Hồi chiêu ngắn hơn một nửa'],
   giong:   ['Quất tre rộng hơn; sóng vàng +1 sát thương', 'Miễn sát thương 4 giây khi xung phong', 'Tre phóng gây 4 sát thương; sóng chấn rộng hơn', 'Sóng xung kích đi xa và nhanh hơn'],
 };
 const TEAM_UPG = [
@@ -744,9 +751,9 @@ const ACHS = [
   { id: 'gachaLeg',  ico: '🌞', name: 'Ánh sáng huyền thoại', desc: 'Chiêu mộ ra tướng Huyền thoại' },
   { id: 'rank5',     ico: '💠', name: 'Thức tỉnh',            desc: 'Nâng một tướng lên bậc 5' },
 ];
-const UNLOCK_HINT = { giong: 'Chiêu mộ (Huyền thoại)', ninja: 'Chiêu mộ (Sử thi)', wukong: 'Chiêu mộ (Huyền thoại)', pirate: 'Chiêu mộ (Huyền thoại)', brawler: 'Chiêu mộ (Sử thi)', beast: `Mua trong Cửa hàng (${400} ✦)`, mage: 'Giải cứu ở Màn 1 hoặc chiêu mộ', samurai: 'Giải cứu ở Màn 2 hoặc chiêu mộ', gunner: 'Giải cứu ở Màn 3 hoặc chiêu mộ', king: 'Giải phong ấn (Quả cầu ở Chương 1 + 4 mảnh từ Tứ Đại Thiên Vương ở Chương 3). Chỉ sau khi sở hữu mới chiêu mộ ra mảnh tướng' };
+const UNLOCK_HINT = { hound: 'Chiêu mộ (Huyền thoại)', giong: 'Chiêu mộ (Huyền thoại)', ninja: 'Chiêu mộ (Sử thi)', wukong: 'Chiêu mộ (Huyền thoại)', pirate: 'Chiêu mộ (Huyền thoại)', brawler: 'Chiêu mộ (Sử thi)', beast: `Mua trong Cửa hàng (${400} ✦)`, mage: 'Giải cứu ở Màn 1 hoặc chiêu mộ', samurai: 'Giải cứu ở Màn 2 hoặc chiêu mộ', gunner: 'Giải cứu ở Màn 3 hoặc chiêu mộ', king: 'Giải phong ấn (Quả cầu ở Chương 1 + 4 mảnh từ Tứ Đại Thiên Vương ở Chương 3). Chỉ sau khi sở hữu mới chiêu mộ ra mảnh tướng' };
 // ---------- Chiêu mộ ----------
-const RARITY = { warrior: 'com', mage: 'rare', samurai: 'rare', gunner: 'rare', beast: 'epic', brawler: 'epic', ninja: 'epic', king: 'leg', wukong: 'leg', pirate: 'leg', giong: 'leg' };
+const RARITY = { warrior: 'com', mage: 'rare', samurai: 'rare', gunner: 'rare', beast: 'epic', brawler: 'epic', ninja: 'epic', king: 'leg', wukong: 'leg', pirate: 'leg', giong: 'leg', hound: 'leg' };
 const RARITY_NAME = { com: 'Thường', rare: 'Hiếm', epic: 'Sử thi', leg: 'Huyền thoại' };
 const DUP_SHARDS = { com: 6, rare: 10, epic: 15, leg: 25 };
 const PULL_COST = 30, PULL10_COST = 270;
@@ -758,6 +765,7 @@ const PASSIVE5 = {
   brawler: 'Liên Kích: cứ đòn thứ 2 là gấp đôi', beast: 'Huyết Khát: hạ 5 quái hồi 1 tim',
   ninja: 'Ám Kích: đánh sau lưng gây gấp 3', wukong: 'Thạch Hầu Bất Diệt: đứng dậy với 3 tim', pirate: 'Ý Chí Thép: +2 sát thương khi yếu máu',
   giong: 'Hóa Thánh: chỉ mất 1 tim mỗi 3 giây',
+  hound: 'Hồi Quy: hồi đầy tim, né 20% mọi đòn',
 };
 
 // ======================= MÀN CHƠI & CỐT TRUYỆN =======================
@@ -889,7 +897,8 @@ const ETYPES = {
   c: { w: 44, h: 32, hp: 3, xp: 4, spd: 0.9 },            // lợn rừng húc
   m: { w: 28, h: 40, hp: 2, xp: 4, spd: 0 },              // pháp sư lửa
   g: { w: 30, h: 34, hp: 3, xp: 4, spd: 0, fly: true },   // hồn ma xuyên tường
-  dummy: { w: 34, h: 56, hp: 1, xp: 0, spd: 0 },          // bù nhìn sân tập (không bao giờ gục)
+  dummy: { w: 34, h: 56, hp: 1, xp: 0, spd: 0 },
+  shadow: { w: 26, h: 38, hp: 4, xp: 3, spd: 2.4 },        // bóng sao chép tướng (Đố Kị triệu hồi)          // bù nhìn sân tập (không bao giờ gục)
 };
 function enemyPool(n) {
   const p = ['e'];
@@ -917,13 +926,13 @@ const BOSS_DEFS = {
   m12: { name: 'Dung Nham Quỷ', title: 'Tướng quỷ Núi Lửa', weapon: 'fist',  color: '#ff8a3d', body: '#6a2a14', dark: '#3a140a', eye: '#ffe07a', w: 56, h: 74, hp: 36, spd: 1.3, skills: ['Nham Cầu', 'Nham Trụ', 'Nham Chấn'] },
   m13: { name: 'Thiết Vệ',      title: 'Tướng quỷ Thành Đổ', weapon: 'spear', color: '#b8c4d8', body: '#3e4658', dark: '#22283a', eye: '#ffef9a', w: 48, h: 80, hp: 38, spd: 1.5, skills: ['Thiết Thương', 'Phi Thiết Thương', 'Thiết Thương Trận'] },
   m14: { name: 'Ngục Môn Tướng', title: 'Kẻ gác Cổng Địa Ngục', weapon: 'sword', color: '#ff6b9a', body: '#4a1a3a', dark: '#28101f', eye: '#ffd166', w: 54, h: 84, hp: 42, spd: 1.7, skills: ['Ngục Ảnh Trảm', 'Ngục Kiếm Vũ', 'Ngục Giáng Thương'] },
-  wrath:   { name: 'Phẫn Nộ',    title: 'Đại Tội · Đại kiếm',       weapon: 'glaive',  color: '#ff5a3d', body: '#7a1e14', dark: '#3a0e0a', eye: '#ffd166', w: 58, h: 86, hp: 32, spd: 1.8, skills: ['Nộ Diễm Trảm', 'Cuồng Nộ Xung', 'Huyết Đao Luân', 'Phẫn Hỏa Trụ'] },
-  pride:   { name: 'Kiêu Ngạo',  title: 'Đại Tội · Lưỡi hái',  weapon: 'axe',     color: '#ffd166', body: '#4a3470', dark: '#261a3e', eye: '#fff0a0', w: 56, h: 84, hp: 34, spd: 1.5, skills: ['Phi Liêm Hồi Toàn', 'Vương Giả Giáng Lâm', 'Tử Thần Trảm', 'Vạn Liêm Tề Giáng'] },
-  greed:   { name: 'Tham Lam',   title: 'Đại Tội · Quyền trượng vàng', weapon: 'club',    color: '#e8c14a', body: '#6a5420', dark: '#34280e', eye: '#fff4b0', w: 52, h: 78, hp: 36, spd: 1.7, skills: ['Liên Hoàn Côn', 'Kim Tệ Vũ', 'Đạo Ảnh', 'Trấn Địa Côn'] },
-  glutton: { name: 'Tham Ăn',    title: 'Đại Tội · Miệng vực', weapon: 'maw', color: '#b4d455', body: '#5a6a22', dark: '#2e3610', eye: '#f4ffb0', w: 60, h: 80, hp: 38, spd: 1.2, skills: ['Đại Khẩu Ngoạm', 'Nuốt Chửng', 'Axit Bọt', 'Bụng Chấn'] },
-  lust:    { name: 'Dục Vọng',   title: 'Đại Tội · Đinh ba',   weapon: 'trident', color: '#ff7ac8', body: '#6a2456', dark: '#34102a', eye: '#ffe0f4', w: 46, h: 82, hp: 38, spd: 2.0, skills: ['Mị Tâm Xoa', 'Mị Ảnh', 'Phi Xoa Đoạt Hồn', 'Huyết Xoa Trận'] },
-  envy:    { name: 'Đố Kị',      title: 'Đại Tội · Cung gai',  weapon: 'bow',     color: '#4fd18b', body: '#1e5a3a', dark: '#0e2e1c', eye: '#c0ffe0', w: 54, h: 82, hp: 40, spd: 1.6, skills: ['Lục Nhãn Tiễn', 'Đố Kị Tiễn Vũ', 'Hắc Ảnh Giáng', 'Xuyên Tâm Độc Tiễn'] },
-  sloth:   { name: 'Lười Biếng', title: 'Đại Tội · Lạc đà quỷ', weapon: 'mstaff', color: '#6fb6ff', body: '#1e3a5e', dark: '#0e1e34', eye: '#d8ecff', w: 84, h: 96, hp: 42, spd: 1.1, skills: ['Mộng Du Cầu', 'Triệu Quỷ Ngủ Say', 'Thủy Diễm Trụ', 'Lạc Đà Xung Phong'] },
+  wrath:   { move: 'stomp', name: 'Phẫn Nộ',    title: 'Đại Tội · Đại kiếm',       weapon: 'glaive',  color: '#ff5a3d', body: '#7a1e14', dark: '#3a0e0a', eye: '#ffd166', w: 58, h: 86, hp: 32, spd: 1.8, skills: ['Nộ Diễm Trảm', 'Cuồng Nộ Xung', 'Hỏa Ngục Kiếm Vũ', 'Bạo Nộ'] },
+  pride:   { name: 'Kiêu Ngạo',  title: 'Đại Tội · Lưỡi hái',  weapon: 'axe',     color: '#ffd166', body: '#4a3470', dark: '#261a3e', eye: '#fff0a0', w: 56, h: 84, hp: 34, spd: 1.5, skills: ['Tử Thần Liêm', 'Vương Tọa Giáng Lâm', 'Gương Kiêu Hãnh', 'Phán Quyết Vương Giả'] },
+  greed:   { name: 'Tham Lam',   title: 'Đại Tội · Quyền trượng vàng', weapon: 'club',    color: '#e8c14a', body: '#6a5420', dark: '#34280e', eye: '#fff4b0', w: 52, h: 78, hp: 36, spd: 1.7, skills: ['Liên Hoàn Côn', 'Kim Tệ Vũ', 'Rương Bẫy', 'Đồng Vàng Khổng Lồ'] },
+  glutton: { name: 'Tham Ăn',    title: 'Đại Tội · Miệng vực', weapon: 'maw', color: '#b4d455', body: '#5a6a22', dark: '#2e3610', eye: '#f4ffb0', w: 60, h: 80, hp: 38, spd: 1.2, skills: ['Đại Khẩu Ngoạm', 'Hút Nuốt', 'Ợ Axit', 'Bụng Đất Rung'] },
+  lust:    { hover: 26, name: 'Dục Vọng',   title: 'Đại Tội · Đinh ba',   weapon: 'trident', color: '#ff7ac8', body: '#6a2456', dark: '#34102a', eye: '#ffe0f4', w: 46, h: 82, hp: 38, spd: 2.0, skills: ['Nụ Hôn Mê Hoặc', 'Vũ Điệu Hoa Hồng', 'Mị Ảnh Vũ', 'Trái Tim Vỡ'] },
+  envy:    { name: 'Đố Kị',      title: 'Đại Tội · Cung gai',  weapon: 'bow',     color: '#4fd18b', body: '#1e5a3a', dark: '#0e2e1c', eye: '#c0ffe0', w: 54, h: 82, hp: 40, spd: 1.6, skills: ['Lục Nhãn Tiễn', 'Bóng Đố Kị', 'Vạn Nhãn Tiễn Vũ', 'Xuyên Tâm Độc Tiễn'] },
+  sloth:   { name: 'Lười Biếng', title: 'Đại Tội · Lạc đà quỷ', weapon: 'mstaff', color: '#6fb6ff', body: '#1e3a5e', dark: '#0e1e34', eye: '#d8ecff', w: 84, h: 96, hp: 42, spd: 1.1, skills: ['Mộng Du Cầu', 'Ngáp Dài', 'Bong Bóng Mộng', 'Lạc Đà Xung Phong'] },
   demon: { name: 'Quỷ Vương', title: 'Chúa tể bóng tối', color: '#ff4d4d', body: '#5a1622', dark: '#2a0a10', eye: '#ffdd55', w: 64, h: 96, hp: 70, spd: 1.4,
            skills: ['Hỏa Ngục Cầu', 'Ma Ảnh Trảm', 'Địa Ngục Hỏa Trụ', 'Bách Quỷ Dạ Hành'],
            skills2: ['Hắc Dực Phong Bạo', 'Thiên Ma Bổ Nhào', 'Ma Diễm Luân', 'Hủy Diệt Chi Nhãn'] },
@@ -1148,7 +1157,7 @@ function buildWorld(n) {
   const lv = heroLv(cls);
   const sx = 4 * T;
   player = { cls, x: sx, y: 9 * T + 2, w: 26, h: 38, vx: 0, vy: 0, ground: false, face: 1, sx, sy: 9 * T + 2, run: 0,
-    maxHearts: maxHearts(), hearts: maxHearts(), inv: 60, hurtCount: 0, parryWin: 0, parryCd: 0, airJumps: 0, regen: 0, kills: 0, cds: [0, 0, 0, 0], atkCd: 0, atk: 0, atkId: 0, atkEmp: false, level: lv, xp: heroXp(cls), toast: null, pulled: 0, holy: false, holyUsed: false, holyDrain: 0, gcharge: 0, rear: 0, qi: 0, qiGot: false, leap: null, atkKind: '', dropT: 0, coyote: 0, airT: 0, squash: 0, jumping: false,
+    maxHearts: maxHearts(), hearts: maxHearts(), inv: 60, hurtCount: 0, parryWin: 0, parryCd: 0, airJumps: 0, regen: 0, kills: 0, cds: [0, 0, 0, 0], atkCd: 0, atk: 0, atkId: 0, atkEmp: false, level: lv, xp: heroXp(cls), toast: null, pulled: 0, holy: false, holyUsed: false, holyDrain: 0, gcharge: 0, rear: 0, qi: 0, qiGot: false, leap: null, atkKind: '', regressed: false, hdash: 0, fury: null, void: null, charm: 0, slowT: 0, dropT: 0, coyote: 0, airT: 0, squash: 0, jumping: false,
     dash: 0, thrust: 0, thrustId: 0, thrustHit: false, thrustTornado: false, stack: 0, stackTimer: 0,
     buff: 0, empower: false, shield: 0, spin: 0, spinAng: 0, plant: 0,
     target: null, volley: null, phase: 0, crystal: null, charge: 0, trans: 0, reflect: 0,
@@ -1167,7 +1176,7 @@ const center = o => ({ x: o.x + o.w / 2, y: o.y + o.h / 2 });
 const onScreen = e => e.x + e.w > camX && e.x < camX + W;
 const wallHit = o => solids.some(s => !s.top && hit(o, s));
 const skillsOf = p => (p.cls === 'king' && p.trans > 0) ? CLASSES.king.tskills : (p.cls === 'giong' && p.holy) ? CLASSES.giong.tskills : CLASSES[p.cls].skills;
-const invulnerable = () => { const p = player; return p.inv > 0 || !!p.leap || !!p.mUlt || !!p.wUlt || p.dash > 0 || p.shield > 0 || p.phase > 0 || p.iron > 0 || !!p.skyfall || !!p.maul || !!p.killSeq || !!ult; };
+const invulnerable = () => { const p = player; return p.inv > 0 || !!p.leap || p.hdash > 0 || !!p.void || !!p.mUlt || !!p.wUlt || p.dash > 0 || p.shield > 0 || p.phase > 0 || p.iron > 0 || !!p.skyfall || !!p.maul || !!p.killSeq || !!ult; };
 
 function updateHud() {
   if (!player) return;
@@ -1184,7 +1193,7 @@ function groundY(x, fromY) {
 }
 function haz(o) { const h = Object.assign({ isHaz: true, vx: 0, vy: 0, g: 0, life: 60, delay: 0, blockable: false, solidStop: false, once: true, boss: curBoss }, o); hazards.push(h); return h; }
 // Đòn của boss: đạn nhỏ trừ 1 tim, đòn nặng trừ 2 tim, tia hủy diệt của Quỷ Vương trừ 3 tim
-const LIGHT_HAZ = new Set(['dart', 'fireball', 'coin', 'acid', 'arrow', 'feather', 'morb', 'spear', 'fire', 'fallarrow']);
+const LIGHT_HAZ = new Set(['heart', 'rose', 'pool', 'cloud', 'bubble', 'yawn', 'dart', 'fireball', 'coin', 'acid', 'arrow', 'feather', 'morb', 'spear', 'fire', 'fallarrow']);
 const hazDmg = h => !h.boss ? 1 : h.type === 'beam' ? 3 : (LIGHT_HAZ.has(h.type) && !h.big) ? 1 : 2;
 
 function gainXp(n, x, y) {
@@ -1207,6 +1216,9 @@ function hurt(src) {
   if (src && p.hidden) return 'blocked';
   if (src && p.parryWin > 0 && p.inv <= 0) { doParry(src); return 'blocked'; }
   if (invulnerable()) { if (p.reflect > 0 && src) reflectHit(src); return; }
+  if (cls === 'hound' && p.regressed && src && Math.random() < (rank() >= 5 ? .2 : .1)) {
+    p.inv = 30; popups.push({ text: 'NÉ!', x: center(p).x, y: p.y - 10, t: 40, color: '#ff5a6a' }); trail.push({ x: p.x - p.face * 14, y: p.y, face: p.face, life: 12 }); if (src.isHaz && src.once) src.life = 0; return 'blocked';
+  }
   if (cls === 'warrior' && src && Math.random() < (rank() >= 5 ? 0.4 : 0.25)) {
     p.inv = 40; popups.push({ text: 'CHẶN!', x: center(p).x, y: p.y - 10, t: 40, color: '#ffb347' });
     burst(center(p).x, center(p).y, '#ffb347', 12, 6); if (src.isHaz && src.once) src.life = 0; return 'blocked';
@@ -1220,6 +1232,7 @@ function hurt(src) {
   p.charge = 0; p.thrust = 0; shake = Math.max(shake, 5 + dmgH * 3);
   updateHud();
   if (p.hearts <= 0 && wukongRevive()) return;
+  if (p.hearts <= 0 && houndRegress()) return;
   if (p.hearts <= 0 && giongAwaken()) return;
   if (p.hearts <= 0 && world.training) { p.hearts = p.maxHearts; p.holyUsed = false; p.toast = { text: 'Sân tập: hồi đầy tim', color: '#9ff0d8', t: 70 }; updateHud(); return; }
   if (p.hearts <= 0) gameOver();
@@ -1228,7 +1241,7 @@ function fallDown() {
   const p = player;
   p.hearts--; p.hurtCount++; updateHud();
   if (p.hearts <= 0 && world.training) { p.hearts = p.maxHearts; p.holyUsed = false; updateHud(); }
-  else if (p.hearts <= 0 && !wukongRevive() && !giongAwaken()) { gameOver(); return; }
+  else if (p.hearts <= 0 && !wukongRevive() && !houndRegress() && !giongAwaken()) { gameOver(); return; }
   p.x = p.sx; p.y = p.sy; p.vx = p.vy = 0; p.inv = 80; p.dash = p.phase = p.charge = p.barrage = 0; p.leap = null; p.skyfall = null; p.maul = null; p.killSeq = null; p.cloud = 0;
 }
 let hitStop = 0, flashT = 0, fxList = [];
@@ -1262,6 +1275,7 @@ const ULT_FX = {
   wukong:  () => { petalStorm('gold', 50); petalStorm('leaf', 20); },
   pirate:  () => { const pc = center(player); for (let i = 0; i < 6; i++) setTimeout(() => { if (state !== 'play') return; const tgt = enemies.filter(e => e.alive && onScreen(e))[i];
       strike(tgt ? center(tgt).x : camX + 80 + Math.random() * (W - 160), GROUND_Y, i % 2 ? '#ff7a7a' : '#d8b8ff'); }, 450 + i * 120); },
+  hound:   () => { petalStorm('blood', 60); },
   giong:   () => { if (player.holy) { petalStorm('gold', 60); fxList.push({ type: 'rays', x: center(player).x, col: '255,224,120', t: 60, max: 60 }); } else petalStorm('leaf', 70); },
 };
 function startCutin() {
@@ -1382,7 +1396,7 @@ function startUlt(color, dmg, name, king) {
 function endTrans() { const p = player; p.trans = 0; p.reflect = 0; p.cds[3] = CLASSES.king.skills[3].cd; }
 
 // ======================= ĐÁNH THƯỜNG =======================
-const MELEE = { giong: { reach: 60, dmg: 2 }, ninja: { reach: 42, dmg: 1 }, wukong: { reach: 64, dmg: 2 }, pirate: { reach: 52, dmg: 2 }, samurai: { reach: 46, dmg: 1 }, warrior: { reach: 56, dmg: 2 }, king: { reach: 56, dmg: 2 }, brawler: { reach: 42, dmg: 2 }, beast: { reach: 48, dmg: 1 } };
+const MELEE = { hound: { reach: 58, dmg: 2 }, giong: { reach: 60, dmg: 2 }, ninja: { reach: 42, dmg: 1 }, wukong: { reach: 64, dmg: 2 }, pirate: { reach: 52, dmg: 2 }, samurai: { reach: 46, dmg: 1 }, warrior: { reach: 56, dmg: 2 }, king: { reach: 56, dmg: 2 }, brawler: { reach: 42, dmg: 2 }, beast: { reach: 48, dmg: 1 } };
 function basicAttack() {
   const p = player, C = CLASSES[cls];
   if (p.parryCd <= 0) { p.parryWin = 10; p.parryCd = 34; }
@@ -1407,6 +1421,7 @@ function basicAttack() {
   }
   if (cls === 'beast') { p.atk = 10; p.atkId = newId(); p.atkEmp = false; p.atkMul = 1; return; }
   if (cls === 'giong') { p.atk = 14; p.atkId = newId(); p.atkEmp = false; p.atkMul = 1; return; }
+  if (cls === 'hound') { p.atk = 12; p.atkId = newId(); p.atkEmp = false; p.atkMul = 1; return; }
   if (['samurai', 'warrior', 'king', 'ninja', 'wukong', 'pirate'].includes(cls)) {
     p.atk = 14; p.atkId = newId(); p.atkEmp = false; p.atkMul = 1;
     if (cls === 'ninja' && p.clone) { p.clone.atk = 14; p.clone.atkId = newId(); }
@@ -1556,6 +1571,7 @@ const SKILL_FN = {
       return 'custom'; },
   ],
 };
+function bleed(e, t = 180) { if (!e || !e.alive) return; e.bleed = Math.max(e.bleed || 0, t); }
 function arcHit(reach, dmg, color) {
   const p = player, pc = center(p);
   for (const e of enemies) if (e.alive) { const c = center(e), dx = (c.x - pc.x) * p.face, dy = c.y - pc.y;
@@ -1587,6 +1603,25 @@ function giongAwaken() {
   p.toast = { text: 'HÓA THÁNH! Ngựa sắt, gậy sắt, đổi toàn bộ chiêu', color: '#ffd84d', t: 120 };
   updateHud(); return true;
 }
+function houndRegress() {
+  const p = player;
+  if (cls !== 'hound' || p.regressed) return false;
+  p.regressed = true; p.hearts = rank() >= 5 ? p.maxHearts : Math.ceil(p.maxHearts / 2); p.inv = 120; p.cds[3] = 0;
+  const pc = center(p); burst(pc.x, pc.y, '#e0303c', 40, 10); burst(pc.x, pc.y, '#14060a', 30, 8); rings.push({ x: pc.x, y: pc.y, r: 10, max: 150, t: 24, color: '#e0303c' });
+  flashT = 8; flashCol = '120,0,20'; shake = 14; hitStop = 12; petalStorm('blood', 50);
+  p.toast = { text: 'HỒI QUY! Nhanh hơn, né đòn, mở khóa Nanh Tối Cao', color: '#ff5a6a', t: 140 }; updateHud(); return true;
+}
+function houndTarget(range = 9999) { if (boss && boss.alive && bossStarted && !boss.transforming) return boss; const pc = center(player); let best = null, bd = range; for (const e of enemies) if (e.alive && onScreen(e) && !(e.boss && (e.float || e.transforming))) { const d = Math.abs(center(e).x - pc.x) * (e.boss ? .5 : 1); if (d < bd) { bd = d; best = e; } } return best; }
+SKILL_FN.hound = [
+  () => { const p = player, pc = center(p), t3 = tier(0) >= 3, reach = t3 ? 110 : 90; p.atk = 12; p.atkId = newId();
+    for (const e of enemies) if (e.alive) { const c = center(e), dx = (c.x - pc.x) * p.face; if (dx > -16 && dx < reach + e.w / 2 && Math.abs(c.y - pc.y) < 60) { damage(e, 3 + (t3 ? 1 : 0), '#e0303c'); bleed(e, 240); } }
+    fxList.push({ type: 'fang', x: pc.x + p.face * 30, y: pc.y, face: p.face, r: reach, t: 16, max: 16 }); shake = 4; },
+  () => { const p = player; if (p.hdash > 0) return false; p.hdash = tier(1) >= 3 ? 16 : 12; p.dashHits = new Set(); p.inv = Math.max(p.inv, 26); p.vy = 0; },
+  () => { const p = player; if (p.fury) return false; p.fury = { t: 48, n: tier(2) >= 3 ? 26 : 18 }; },
+  () => { const p = player; if (!p.regressed) { p.toast = { text: 'Nanh Tối Cao bị khóa: cần kích hoạt Hồi Quy', color: '#ff8a8a', t: 70 }; return false; }
+    const tg = houndTarget(); if (!tg) return false;
+    p.cds[3] = 0; p.void = { t: 0, tg }; return 'custom'; },
+];
 SKILL_FN.giong = [
   () => { const p = player, pc = center(p); p.atk = 14; p.atkId = newId(); p.atkKind = 'swing';
     const emp = p.qi >= 5; if (emp) { p.qi = 0; popups.push({ text: 'KHÍ THÁNH!', x: pc.x, y: p.y - 22, t: 40, color: '#ffd84d' }); burst(pc.x, pc.y, '#ffd84d', 24, 8); shake = 6; }
@@ -1626,6 +1661,7 @@ const SKILL_DUR = {
   pirate:  [null, null, p => p.armed, null],
   king:    [null, p => p.shield, null, null],
   giong:   [null, p => p.gcharge, null, null],
+  hound:   [null, null, p => p.fury ? p.fury.t : 0, null],
 };
 // Tướng hạng S trở lên: chiêu cuối có đoạn dừng hình (thu phóng vào nhân vật → hiện tên chiêu → thi triển)
 let ultCine = null;
@@ -1633,7 +1669,8 @@ const CINE_LEN = 64;
 const cineZoom = t => t < 14 ? 1 + .9 * (1 - Math.pow(1 - t / 14, 3)) : t < 48 ? 1.9 + (t - 14) / 34 * .12 : t < 60 ? 2.02 - 1.02 * (1 - Math.pow(1 - (t - 48) / 12, 2)) : 1;
 function useSkill(i) {
   const p = player;
-  if (p.level < SKILL_LV[i] || p.cds[i] > 0 || p.leap || p.mUlt || p.wUlt || ultCine) return;
+  if (p.level < SKILL_LV[i] || p.cds[i] > 0 || p.leap || p.mUlt || p.wUlt || p.void || ultCine) return;
+  if (cls === 'hound' && i === 3 && !p.regressed) { SKILL_FN.hound[3](); return; }
   if (i === 3 && RARITY[cls] === 'leg') {
     if ((cls === 'king' && p.trans > 0 && ult) || (cls === 'giong' && (p.gcharge > 0 || p.rear > 0))) return;
     ultCine = { t: 0, i, name: skillsOf(p)[3].name, color: (p.holy || p.trans > 0) ? '#ffd84d' : CLASSES[cls].color }; return;
@@ -1676,7 +1713,7 @@ function startBossFight(mini) {
   if (mini) { world.gate2 = { x: world.arenaR - T, y: 0, w: T, h: GROUND_Y, top: false, gate: true }; solids.push(world.gate2); }
   boss = { boss: true, id, x: world.arenaR - T - D.w - 80, y: GROUND_Y - D.h, w: D.w, h: D.h, hp: D.hp, maxHp: D.hp, alive: true, face: -1,
     vx: 0, vy: 0, ground: true, state: 'intro', timer: 50, skill: -1, last: -1, at: 0, flash: 0, phase: 1, alpha: 1, warn: false, float: false,
-    hitIds: new Set(), rcd: 0, xp: mini ? 20 : 40, stun: 0, lift: 0, label: null, t: 0, mini: !!mini, stunT: 0 };
+    hitIds: new Set(), rcd: 0, xp: mini ? 20 : 40, stun: 0, lift: 0, label: null, t: 0, mini: !!mini, stunT: 0, fly: !!D.hover, hoverH: D.hover, k: {} };
   enemies.push(boss);
   showDialog(mini ? MINI_LINES[stageNum] : STORY[stageNum].boss);
 }
@@ -1804,14 +1841,95 @@ const SIN_AI = {
   tideWave: (b, t) => { b.vx = 0; if (t === 12) haz({ type: 'tide', x: bossFront(b, 50), y: GROUND_Y - 90, w: 50, h: 90, vx: b.face * 5.5, life: 170, blockable: true, solidStop: true, once: false, color: '#6fb6ff' });
     return t >= 40; },
 };
+const S2 = {
+  // ---------- Phẫn Nộ ----------
+  wrathSweep: (b, t) => { const done = SIN_AI.glaiveSweep(b, t); if (t === 6 || t === 26) for (let i = 1; i <= 3; i++) haz({ type: 'fire', x: bossFront(b, 0) + b.face * (i * 34) - 10, y: GROUND_Y - 20, w: 20, h: 20, vx: 0, vy: 0, life: 110, once: true, color: '#ff5a3d' }); return done; },
+  wrathCharge: (b, t) => { if (t < 20) { b.vx = 0; b.warn = true; if (t % 4 === 0) dust(center(b).x - b.face * 20, b.y + b.h, 3, -b.face); return false; }
+    b.warn = false; if (t < 50) { b.vx = b.face * 11; if (t % 3 === 0) haz({ type: 'fire', x: center(b).x - 10, y: GROUND_Y - 20, w: 20, h: 20, vx: 0, vy: 0, life: 90, once: true, color: '#ff5a3d' }); if (b.atWall) b.vx = 0; return false; }
+    b.vx = 0; if (t === 52) { zone(b, 110, -20, b.h + 20, 10, 'slash'); shake = 10; } return t >= 70; },
+  wrathPlunge: (b, t) => { const K = b.k;
+    if (t === 0) { b.vy = -15; b.vx = (center(player).x - center(b).x) / 40; K.air = true; return false; }
+    if (K.air && b.ground && t > 6) { K.air = false; K.land = t; b.vx = 0; slam(b, 6); for (let i = 1; i <= 5; i++) for (const sd of [-1, 1]) haz({ type: 'pillar', x: center(b).x + sd * i * 70 - 22, y: GROUND_Y - 220, w: 44, h: 220, delay: 10 + i * 9, life: 26, once: false, color: '#ff4d1d' }); }
+    return K.land !== undefined && t > K.land + 70; },
+  wrathRage: (b, t) => { b.vx = 0; if (t < 40) { shake = Math.max(shake, 6); b.warn = true; if (t % 3 === 0) particles.push({ x: center(b).x + (Math.random() - .5) * 60, y: b.y + b.h, vx: 0, vy: -5, life: 26, color: '#ff2a1a' }); return false; }
+    if (t === 40) { b.warn = false; b.enraged = true; rings.push({ x: center(b).x, y: center(b).y, r: 10, max: 220, t: 24, color: '#ff2a1a' }); flashT = 6; flashCol = '255,60,30'; b.label = { text: 'BẠO NỘ!', t: 60 }; }
+    if (t >= 44 && t <= 84 && t % 5 === 0) haz({ type: 'meteor', x: Math.max(world.arenaL + T * 2, Math.min(world.arenaR - T * 3, center(player).x + (Math.random() - .5) * 360)), y: -60, w: 28, h: 28, vy: 3, g: .3, life: 240, groundKill: true, color: '#ff6b3d' });
+    return t >= 110; },
+  // ---------- Kiêu Ngạo ----------
+  prideScythe: (b, t) => { const d = SIN_AI.axeThrow(b, t); if (t === 4) { const h = hazards[hazards.length - 1]; if (h && h.type === 'axe') h.scythe = true; } return d; },
+  prideThrone: (b, t) => { const K = b.k;
+    if (t === 0) { b.float = true; K.tx = center(player).x; }
+    if (t < 22) { b.vx = 0; b.alpha = 1 - t / 22; b.y -= 6; return false; }
+    if (t === 22) { b.x = clampBossX(K.tx - b.w / 2, b); b.y = -b.h - 60; haz({ type: 'mark', x: center(b).x - 60, y: GROUND_Y - 6, w: 120, h: 6, life: 30, color: '#ffd166' }); }
+    if (t < 52) { b.alpha = Math.min(1, (t - 22) / 10); return false; }
+    if (!K.down) { b.float = false; b.vy = 22; K.down = true; }
+    if (b.ground && !K.landed) { K.landed = t; slam(b, 7); rings.push({ x: center(b).x, y: GROUND_Y, r: 10, max: 180, t: 22, color: '#ffd166' }); for (let i = 0; i < 12; i++) particles.push({ x: center(b).x, y: GROUND_Y - 10, vx: (Math.random() - .5) * 10, vy: -Math.random() * 7, life: 30, color: '#ffd166' }); }
+    return K.landed !== undefined && t > K.landed + 30; },
+  prideMirror: (b, t) => { b.vx = 0;
+    if (t === 0 || t === 34) { const fromLeft = t === 0 ? center(player).x > center(b).x : center(player).x <= center(b).x, x0 = fromLeft ? world.arenaL + T : world.arenaR - T - b.w;
+      haz({ type: 'mark', x: x0 - 10, y: GROUND_Y - 6, w: b.w + 20, h: 6, life: 24, color: '#ffd166' });
+      haz({ type: 'mirror', id: b.id, x: x0, y: GROUND_Y - b.h, w: b.w, h: b.h, vx: fromLeft ? 11 : -11, face: fromLeft ? 1 : -1, delay: 24, life: 120, once: true, color: '#ffd166' }); }
+    return t >= 110; },
+  prideJudgment: (b, t) => { b.vx = 0; b.warn = t < 30;
+    if (t === 0) { const L = world.arenaL + T * 2, Wd = world.arenaR - world.arenaL - T * 4, off = Math.random() * 60; for (let i = 0; i < 8; i++) { const x = L + off + i * (Wd / 8);
+      haz({ type: 'lightcol', x: x - 28, y: 0, w: 56, h: GROUND_Y, delay: 30 + i * 8, life: 18, once: false, color: '#ffd166' }); } }
+    return t >= 130; },
+  // ---------- Tham Lam ----------
+  greedChests: (b, t) => { b.vx = 0; if (t === 8) for (let i = -1; i <= 1; i++) { const c = center(b), tx = center(player).x + i * 120, tf = 34;
+      haz({ type: 'chest', x: c.x - 16, y: b.y, w: 32, h: 26, vx: (tx - c.x) / tf, vy: -9, g: .5, fuse: 90 + (i + 1) * 12, life: 400, once: false, harmless: true, color: '#e8c14a' }); }
+    return t >= 40; },
+  greedCoin: (b, t) => { b.vx = 0; b.warn = t < 24; if (t === 24) { const c = center(b); haz({ type: 'bigcoin', x: c.x - 34 + b.face * 40, y: GROUND_Y - 68, w: 68, h: 68, vx: b.face * 7, life: 260, once: false, bounces: 1, color: '#ffd84d' }); shake = 6; } return t >= 60; },
+  // ---------- Tham Ăn ----------
+  gluttonInhale: (b, t) => { b.vx = 0; const p = player, c = center(b), pc = center(p);
+    if (t < 80) { if (!invulnerable() && Math.abs(pc.x - c.x) < 420) { p.x += Math.sign(c.x - pc.x) * 2.4; }
+      for (let k = 0; k < 2; k++) { const a = (Math.random() - .5) * 1.2, d = 120 + Math.random() * 200; particles.push({ x: c.x + b.face * d * Math.cos(a), y: c.y + d * Math.sin(a) * .5, vx: -b.face * 7, vy: -Math.sin(a) * 3, life: 18, color: Math.random() < .5 ? '#c8f070' : '#ffffff' }); } }
+    if (t === 80) { zone(b, 90, b.h * .2, b.h * .7, 10, 'bite'); shake = 8; } return t >= 96; },
+  gluttonAcid: (b, t) => { const d = SIN_AI.acidSpit(b, t); for (const h of hazards) if (h.type === 'acid') h.pool = true; return d; },
+  gluttonBounce: (b, t) => { const K = b.k; if (t === 0 || t === 40 || t === 80) { b.vy = -12; b.vx = Math.sign(center(player).x - center(b).x) * 4; K.air = true; }
+    if (K.air && b.ground && t % 40 > 4) { K.air = false; b.vx = 0; slam(b, 5 + t / 40); } return t >= 122; },
+  // ---------- Dục Vọng ----------
+  lustKiss: (b, t) => { b.vx = 0; if (t === 6 || t === 18 || t === 30) { const c = center(b), v = aimAt(c, 3.5);
+      haz({ type: 'heart', home: true, x: c.x - 10, y: c.y - 10, w: 20, h: 18, vx: v.vx, vy: v.vy - 1, life: 220, once: true, blockable: true, color: '#ff7ac8', onHit: () => { player.charm = 120; player.toast = { text: 'Bị mê hoặc! Điều khiển bị đảo ngược', color: '#ff7ac8', t: 80 }; } }); }
+    return t >= 44; },
+  lustRoses: (b, t) => { if (t === 0) b.float = true; if (t < 24) { b.vx = 0; b.y += (GROUND_Y - 280 - b.y) * .15; }
+    if (t >= 20 && t < 80 && t % 4 === 0) { const x = world.arenaL + T * 2 + Math.random() * (world.arenaR - world.arenaL - T * 4); haz({ type: 'rose', x: x - 8, y: -30, w: 16, h: 16, vy: 2, g: .12, sway: Math.random() * 6, life: 260, groundKill: true, color: '#ff4a8a' }); }
+    if (t > 84) b.float = false; return t >= 100; },
+  lustDance: (b, t) => { const k = t % 34; b.vx = 0; if (t >= 102) { b.alpha = 1; return true; }
+    if (k === 0) { b.alpha = .2; trail.push({ boss: b, x: b.x, y: b.y, face: b.face, life: 10 }); for (let i = 0; i < 6; i++) popups.push({ text: '♥', x: center(b).x + (Math.random() - .5) * 40, y: center(b).y, t: 30, color: '#ff7ac8' }); }
+    if (k === 8) { teleportBehind(b, 70); b.alpha = 1; }
+    if (k === 20) { zone(b, 100, b.h * .2, b.h * .6, 8, 'slash'); haz({ type: 'erupt', x: bossFront(b, 60) - 18, y: GROUND_Y - 60, w: 36, h: 60, delay: 4, life: 20, once: false, color: '#ff7ac8' }); }
+    return false; },
+  lustHeart: (b, t) => { b.vx = 0; b.warn = t < 40; const c = center(b);
+    if (t < 40 && t % 3 === 0) particles.push({ x: c.x + (Math.random() - .5) * 120, y: c.y + (Math.random() - .5) * 80, vx: 0, vy: 0, life: 14, color: '#ff7ac8' });
+    if (t === 40) { for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; haz({ type: 'heart', x: c.x - 10, y: c.y - 10, w: 20, h: 18, vx: Math.cos(a) * 5.5, vy: Math.sin(a) * 5.5, life: 120, once: true, blockable: true, solidStop: true, color: '#ff4a8a' }); }
+      rings.push({ x: c.x, y: c.y, r: 10, max: 160, t: 20, color: '#ff7ac8' }); shake = 8; }
+    return t >= 60; },
+  // ---------- Đố Kị ----------
+  envyShadow: (b, t) => { b.vx = 0; if (t === 12) { const e = makeEnemy('shadow', Math.floor((center(b).x - b.face * 60) / T), 9, Math.max(1, world.d)); e.mimic = cls; e.ttl = 480; enemies.push(e); burst(center(e).x, center(e).y, '#4a2a6a', 20, 6); save.seen = save.seen || {}; save.seen['e:shadow'] = true; } return t >= 30; },
+  envyEyes: (b, t) => { b.vx = 0; if (t === 0) for (let i = 0; i < 7; i++) haz({ type: 'eye', x: world.arenaL + T * 2 + i * ((world.arenaR - world.arenaL - T * 4) / 6) - 14, y: 40 + (i % 2) * 30, w: 28, h: 16, delay: 0, fireAt: 24 + i * 8, life: 90, once: false, harmless: true, color: '#4fd18b' }); return t >= 100; },
+  envyPoison: (b, t) => { const d = SIN_AI.bigArrow(b, t); if (t === 22) { const h = hazards[hazards.length - 1]; if (h && h.type === 'arrow') h.poison = true; } return d; },
+  // ---------- Lười Biếng ----------
+  slothYawn: (b, t) => { b.vx = 0; if (t < 20) { if (t % 6 === 0) popups.push({ text: 'Z', x: center(b).x + 14, y: b.y - 4, t: 40, color: '#bfe0ff' }); return false; }
+    if (t === 20) for (const sd of [-1, 1]) haz({ type: 'yawn', x: center(b).x - 30 + sd * 30, y: GROUND_Y - 80, w: 60, h: 80, vx: sd * 3.2, life: 200, once: true, color: '#9fc8ff', onHit: () => { player.slowT = 200; player.toast = { text: 'Buồn ngủ quá... (bị làm chậm)', color: '#9fc8ff', t: 70 }; } });
+    return t >= 50; },
+  slothBubbles: (b, t) => { b.vx = 0; if (t % 14 === 0 && t < 84) { const c = center(b); haz({ type: 'bubble', home: true, x: c.x - 14, y: b.y - 10, w: 28, h: 28, vx: (Math.random() - .5) * 2, vy: -1.5, life: 260, once: true, color: '#bfe0ff', onHit: () => { player.slowT = 120; } }); }
+    if (t % 20 === 0 && b.hp < b.maxHp) { b.hp = Math.min(b.maxHp, b.hp + .8); popups.push({ text: '+♥', x: center(b).x, y: b.y - 10, t: 30, color: '#9ff0b0' }); } if (t % 8 === 0) popups.push({ text: 'z', x: center(b).x + 12, y: b.y - 4, t: 30, color: '#bfe0ff' });
+    return t >= 96; },
+  slothCharge: (b, t) => { if (t < 18) { b.vx = 0; b.warn = true; return false; } b.warn = false;
+    if (t < 56) { b.vx = b.face * 9; if (t % 2 === 0) dust(center(b).x - b.face * 30, b.y + b.h, 3, -b.face); if (b.atWall) b.vx = 0; return false; }
+    b.vx = 0; if (t === 58) for (let i = -1; i <= 1; i++) { const c = center(b); haz({ type: 'acid', x: c.x + b.face * 40, y: b.y + 20, w: 14, h: 14, vx: b.face * (4 + i), vy: -4 + i, g: .3, life: 160, blockable: true, groundKill: true, color: '#c8b088' }); }
+    return t >= 76; },
+};
 Object.assign(BOSS_AI, {
-  wrath:   [SIN_AI.glaiveSweep, BOSS_AI.fist[0], BOSS_AI.whip[2], BOSS_AI.demon[2]],
-  pride:   [SIN_AI.axeThrow, BOSS_AI.fist[2], SIN_AI.axeCleave, BOSS_AI.sword[2]],
-  greed:   [SIN_AI.clubCombo, SIN_AI.coinRain, BOSS_AI.sword[1], BOSS_AI.fist[2]],
-  glutton: [SIN_AI.biteLunge, BOSS_AI.whip[1], SIN_AI.acidSpit, BOSS_AI.fist[2]],
-  lust:    [BOSS_AI.spear[0], BOSS_AI.sword[1], BOSS_AI.spear[1], BOSS_AI.spear[3]],
-  envy:    [SIN_AI.arrowVolley, SIN_AI.arrowRain, BOSS_AI.fist[2], SIN_AI.bigArrow],
-  sloth:   [SIN_AI.magicOrbs, BOSS_AI.demon[3], BOSS_AI.demon[2], BOSS_AI.fist[0]],
+  wrath:   [S2.wrathSweep, S2.wrathCharge, S2.wrathPlunge, S2.wrathRage],
+  pride:   [S2.prideScythe, S2.prideThrone, S2.prideMirror, S2.prideJudgment],
+  greed:   [SIN_AI.clubCombo, SIN_AI.coinRain, S2.greedChests, S2.greedCoin],
+  glutton: [SIN_AI.biteLunge, S2.gluttonInhale, S2.gluttonAcid, S2.gluttonBounce],
+  lust:    [S2.lustKiss, S2.lustRoses, S2.lustDance, S2.lustHeart],
+  envy:    [SIN_AI.arrowVolley, S2.envyShadow, S2.envyEyes, S2.envyPoison],
+  sloth:   [SIN_AI.magicOrbs, S2.slothYawn, S2.slothBubbles, S2.slothCharge],
+});
+Object.assign(BOSS_AI, {
   // ----- Quỷ Vương dạng 2 (có cánh): bộ kỹ năng hoàn toàn mới -----
   demon2: [
     (b, t) => { // Hắc Dực Phong Bạo: bay cao, vỗ cánh bắn lông vũ sắc
@@ -1846,6 +1964,33 @@ Object.assign(BOSS_AI, {
   m13: [BOSS_AI.spear[0], BOSS_AI.spear[1], BOSS_AI.spear[3]],
   m14: [BOSS_AI.demon[1], BOSS_AI.sword[2], BOSS_AI.spear[2]],
 });
+function bossMove(b, dx) {
+  const t = (b.t = (b.t || 0) + 1), D = BOSS_DEFS[b.id];
+  switch (b.id) {
+    case 'wrath': if (b.vx && b.ground && t % 22 === 0) { shake = Math.max(shake, 2); dust(center(b).x, b.y + b.h, 4); haz({ type: 'fire', x: center(b).x - 8, y: b.y + b.h - 16, w: 16, h: 16, vx: 0, vy: 0, life: 50, once: true, color: '#ff5a3d', harmless: true }); } break;
+    case 'pride': b.vx *= .6; if (t % 140 === 0 && Math.abs(dx) > 200) { burst(center(b).x, center(b).y, D.color, 14, 5); b.x = clampBossX(b.x + Math.sign(dx) * 160, b); burst(center(b).x, center(b).y, D.color, 14, 5); } break;
+    case 'greed': if (b.vx && t % 18 === 0) particles.push({ x: center(b).x, y: b.y + b.h - 6, vx: (Math.random() - .5) * 2, vy: -2, life: 30, color: '#ffd84d' }); break;
+    case 'glutton': if (b.ground && b.vx && t % 34 === 0) { b.vy = -6; } if (b.ground && b.vy === 0 && t % 34 === 6) { shake = Math.max(shake, 2); dust(center(b).x, b.y + b.h, 5); } break;
+    case 'lust': b.vx *= .8; break;
+    case 'envy': { const d = Math.abs(dx); b.vx = d < 230 ? -Math.sign(dx) * D.spd * 1.2 : d > 340 ? Math.sign(dx) * D.spd : 0; break; }
+    case 'sloth': b.vx *= .55; break;
+    case 'fist': if (b.ground && t % 20 === 0) b.vy = -3.5; break;
+    case 'sword': b.vx = 0; if (t % 70 === 0 && Math.abs(dx) > 140) { const old = b.x; b.x = clampBossX(b.x + Math.sign(dx) * 120, b); trail.push({ boss: b, x: old, y: b.y, face: b.face, life: 10 }); burst(center(b).x, center(b).y, D.color, 10, 4); } break;
+    case 'whip': b.vx += Math.sin(t / 10) * .9; break;
+  }
+}
+// Hiệu ứng nền riêng của từng boss
+function bossAmbient(b) {
+  if (!b.alive || b.alpha < .3 || Math.random() > .35) return;
+  const c = center(b), r = (a = 1) => (Math.random() - .5) * a;
+  const fx = { wrath: ['#ff6a2a', -2], pride: ['#ffd166', -.6], greed: ['#ffd84d', 1.2], glutton: ['#c8f070', 1.5], lust: ['#ff7ac8', -1], envy: ['#4fd18b', -.8], sloth: ['#bfe0ff', -.7],
+    fist: ['#ffb070', -1.5], sword: ['#b69cff', -.6], whip: ['#8fdc6f', -.6], spear: ['#8fc0ff', -.8], demon: ['#ff4d4d', -1.4] }[b.id];
+  if (!fx) return;
+  particles.push({ x: c.x + r(b.w), y: b.y + b.h * (fx[1] > 0 ? .5 : .9) + r(10), vx: r(.6), vy: fx[1] - Math.random() * .6, life: 26, color: fx[0] });
+  if (b.id === 'sloth' && Math.random() < .08) popups.push({ text: 'z', x: c.x + 10, y: b.y - 6, t: 40, color: '#bfe0ff' });
+  if (b.id === 'lust' && Math.random() < .08) popups.push({ text: '♥', x: c.x + r(30), y: b.y, t: 34, color: '#ff7ac8' });
+  if (b.enraged && Math.random() < .5) particles.push({ x: c.x + r(b.w * 1.4), y: b.y + b.h, vx: 0, vy: -3 - Math.random() * 2, life: 20, color: Math.random() < .5 ? '#ff2a1a' : '#ffb070' });
+}
 const bossAI = b => (b.id === 'demon' && b.phase === 2) ? BOSS_AI.demon2 : BOSS_AI[b.id];
 function updateBoss(b) {
   if (b.transforming) return;
@@ -1859,7 +2004,8 @@ function updateBoss(b) {
   else if (b.state === 'idle') {
     b.face = pc.x < c.x ? -1 : 1;
     const dx = pc.x - c.x;
-    b.vx = Math.abs(dx) > 110 ? Math.sign(dx) * D.spd * (b.phase === 2 ? 1.4 : 1) : 0;
+    b.vx = Math.abs(dx) > 110 ? Math.sign(dx) * D.spd * (b.phase === 2 ? 1.4 : 1) * (b.enraged ? 1.4 : 1) : 0;
+    bossMove(b, dx);
     if (--b.timer <= 0) {
       const nSk = bossAI(b).length; let i; do { i = Math.floor(Math.random() * nSk); } while (i === b.last && nSk > 1);
       b.last = i; b.skill = i; b.state = 'tele'; b.vx = 0;
@@ -1873,11 +2019,12 @@ function updateBoss(b) {
   } else if (b.state === 'act') {
     curBoss = b; const done = bossAI(b)[b.skill](b, b.at); curBoss = null;
     b.at++;
-    if (done) { b.state = 'idle'; b.timer = Math.round((80 - Math.min(20, (STAGES[stageNum].d - 4) * 2)) * ph); b.vx = 0; b.alpha = 1; b.warn = false; b.float = false; }
+    if (done) { b.k = {}; b.state = 'idle'; b.timer = Math.round((80 - Math.min(20, (STAGES[stageNum].d - 4) * 2)) * ph * (b.enraged ? .7 : 1)); b.vx = 0; b.alpha = 1; b.warn = false; b.float = false; }
   }
-  if (b.fly && !b.float) { b.vy = 0; b.y += (GROUND_Y - b.h - 64 + Math.sin(Date.now() / 400) * 12 - b.y) * .08; }
+  if (b.fly && !b.float) { b.vy = 0; b.y += (GROUND_Y - b.h - (b.hoverH || 64) + Math.sin(Date.now() / 400) * 12 - b.y) * .08; }
   else if (!b.float) b.vy += .75;
   b.x += b.vx; if (!b.fly || b.float) b.y += b.vy;
+  bossAmbient(b);
   b.atWall = false;
   if (b.x < world.arenaL + T) { b.x = world.arenaL + T; b.atWall = true; }
   if (b.x + b.w > world.arenaR - T) { b.x = world.arenaR - T - b.w; b.atWall = true; }
@@ -2040,9 +2187,9 @@ function update() {
     if (Math.random() < .5) particles.push({ x: p.x + Math.random() * p.w, y: p.y + p.h, vx: 0, vy: .5, life: 20, color: '#b69cff' });
     if (p.phase === 0) { p.inv = 30; jumpBuf = 0; }
   } else {
-    const maxV = (p.buff > 0 || p.trans > 0 ? 6.6 : 5) * (p.frenzy > 0 ? 1.35 : 1) * (cls === 'samurai' ? (rank() >= 5 ? 1.25 : 1.15) : 1);
+    const maxV = (p.buff > 0 || p.trans > 0 ? 6.6 : 5) * (p.frenzy > 0 ? 1.35 : 1) * (cls === 'hound' && p.regressed ? 1.3 : 1) * (p.slowT > 0 ? .55 : 1) * (cls === 'samurai' ? (rank() >= 5 ? 1.25 : 1.15) : 1);
     // --- chạy ngang: tiến dần tới tốc độ mục tiêu, dừng gọn, đổi hướng nhanh ---
-    const dirIn = rooted ? 0 : (keys.right ? 1 : 0) - (keys.left ? 1 : 0);
+    const dirIn = rooted ? 0 : ((keys.right ? 1 : 0) - (keys.left ? 1 : 0)) * (p.charm > 0 ? -1 : 1);
     if (dirIn && p.thrust <= 0) p.face = dirIn;
     const target = dirIn * maxV;
     const turning = dirIn && Math.sign(p.vx) === -dirIn;
@@ -2076,10 +2223,28 @@ function update() {
     p.airT = p.ground ? 0 : (p.airT || 0) + 1;
   }
   if (p.squash > 0) p.squash--;
+  if (p.charm > 0) p.charm--; if (p.slowT > 0) p.slowT--;
   if (world.training) {
     world.tick++;
     if (world.tick % 150 === 0) haz({ type: 'dart', x: Math.min((world.cols - 2) * T - 20, camX + W + 40), y: p.y + 10, w: 18, h: 8, vx: -6.5, vy: 0, life: 260, blockable: true, solidStop: true, color: '#c9cfe6' });
     if (trainLog.length && trainLog[0].t < world.tick - 300) trainLog = trainLog.filter(q => q.t >= world.tick - 300);
+  }
+  if (cls === 'hound') {
+    if (p.hdash > 0) { p.hdash--; p.vx = p.face * 15; p.vy = 0; trail.push({ x: p.x, y: p.y, face: p.face, life: 12 });
+      for (const e of enemies) if (e.alive && !p.dashHits.has(e) && hit({ x: p.x - 10, y: p.y - 6, w: p.w + 20, h: p.h + 12 }, e)) { p.dashHits.add(e); damage(e, 3, '#e0303c'); bleed(e, 200); fxList.push({ type: 'fang', x: center(e).x, y: center(e).y, face: p.face, r: 50, t: 12, max: 12 }); }
+      if (p.ground) dust(p.x + 13 - p.face * 10, p.y + p.h, 2, -p.face); }
+    if (p.fury) { const F = p.fury; F.t--; p.vx *= .5; const pc = center(p), every = Math.max(1, Math.floor(48 / F.n));
+      if (F.t % every === 0) { const a = (Math.random() - .5) * 1.4, x0 = pc.x + p.face * (40 + Math.random() * 190), y0 = pc.y + (Math.random() - .5) * 70;
+        fxList.push({ type: 'hslash', x: x0, y: y0, a, t: 12, max: 12 });
+        for (const e of enemies) if (e.alive && Math.abs(center(e).x - x0) < 60 + e.w / 2 && Math.abs(center(e).y - y0) < 60) { damage(e, 1, '#e0303c'); if (Math.random() < .3) bleed(e, 150); } }
+      if (F.t <= 0) p.fury = null; }
+    if (p.void) { const V = p.void; V.t++; p.vx = 0; hitStop = 0;
+      if (V.t === 1) { flashT = 6; flashCol = '20,0,8'; }
+      if (V.t === 26) { const e = V.tg, c = center(e);
+        if (e.alive) { fxList.push({ type: 'disint', x: e.x, y: e.y, w: e.w, h: e.h, col: e.boss ? BOSS_DEFS[e.id].color : '#e0303c', seed: Math.random() * 99, t: 70, max: 70 });
+          e.hitIds && e.hitIds.clear(); e.transforming = false; if (e.boss) { e.state = 'idle'; e.float = false; e.alpha = 1; e.stunT = 0; } damage(e, (e.hp + 9999) / lvDmgMul(player.level), '#ff2a3a'); const pp = popups.filter(u => u.dmgPop).pop(); if (pp) { pp.text = 'KẾT LIỄU'; pp.color = '#ff2a3a'; pp.big = true; pp.t = 60; } }
+        fxList.push({ type: 'voidcut', x: c.x, y: c.y, t: 60, max: 60 }); shake = 26; hitStop = 18; flashT = 10; flashCol = '255,30,50'; p.cds[3] = Math.round(skillCd(3) * (tier(3) >= 3 ? .5 : 1)); }
+      if (V.t >= 40) p.void = null; }
   }
   if (cls === 'giong') {
     if (p.leap) { const L = p.leap; L.t++;
@@ -2229,7 +2394,7 @@ function update() {
       if (hitAny && !p.qiGot) { p.qiGot = true; if (p.qi < 5) { p.qi++; if (p.qi === 5) popups.push({ text: 'KHÍ THÁNH ĐẦY!', x: center(p).x, y: p.y - 22, t: 44, color: '#ffd84d' }); } }
     }
     if (MELEE[cls] && cls !== 'giong' && p.atk <= 11 && p.atk >= 3) {
-      const M = MELEE[cls], reach = M.reach, dmg = (cls === 'warrior' && p.atkEmp ? 3 : M.dmg) * (p.atkMul || 1);
+      const M = MELEE[cls], reach = M.reach, bleedHit = cls === 'hound', dmg = (cls === 'warrior' && p.atkEmp ? 3 : M.dmg) * (p.atkMul || 1);
       const box = { x: p.face > 0 ? p.x + p.w - 4 : p.x - reach + 4, y: p.y - 8, w: reach, h: p.h + 14 };
       const pb = cls === 'pirate' && p.hearts <= 2 ? (rank() >= 5 ? 2 : 1) : 0;
       for (const e of enemies) if (e.alive && !e.hitIds.has(p.atkId) && hit(box, e)) {
@@ -2237,6 +2402,7 @@ function update() {
         let d = dmg + bonusDmg() + pb;
         if (cls === 'ninja' && Math.sign(center(e).x - center(p).x) === faceOf(e)) { d *= rank() >= 5 ? 3 : 2; popups.push({ text: 'ÁM KÍCH!', x: center(e).x, y: e.y - 16, t: 34, color: '#9aa8ff' }); }
         damage(e, d, CLASSES[cls].color); if (cls === 'samurai') p.cds[1] = Math.max(0, p.cds[1] - 20);
+        if (bleedHit && Math.random() < .3) bleed(e, 150);
       }
     }
   }
@@ -2281,6 +2447,7 @@ function update() {
 
   for (const e of enemies) {
     if (!e.alive) continue;
+    if (e.bleed > 0) { e.bleed--; if (e.bleed % 30 === 0) damage(e, .5, '#c8102e'); if (Math.random() < .3) particles.push({ x: e.x + Math.random() * e.w, y: e.y + e.h * .4, vx: 0, vy: 1.5, life: 18, color: '#b0101e' }); if (!e.alive) continue; }
     if (e.boss) updateBoss(e); else updateEnemy(e, pc);
     if (!e.alive) continue;
     if (e.boss && (e.alpha < .5 || e.float || e.transforming)) continue;
@@ -2330,7 +2497,10 @@ function updateEnemy(e, pc) {
   }
   if (stunned) { e.wind = 0; return; }
   // Đòn cận chiến: vung lên (báo trước) rồi chém một nhát ngắn trước mặt
-  if (e.kind === 'e' || e.kind === 'E' || e.kind === 'g') {
+  if (e.kind === 'shadow') { if (--e.ttl <= 0) { e.alive = false; burst(center(e).x, center(e).y, '#4a2a6a', 16, 5); return; }
+    if (!e.wind) { e.vx = Math.abs(dx) > 30 ? Math.sign(dx) * e.baseSpd * e.sp : 0; e.face = dx < 0 ? -1 : 1; } else e.vx = 0;
+    e.vy += .6; e.x += e.vx; e.y += e.vy; const gy = groundY(center(e).x, e.y + e.h - 20); if (e.y + e.h >= gy) { e.y = gy - e.h; e.vy = 0; } }
+  if (e.kind === 'e' || e.kind === 'E' || e.kind === 'g' || e.kind === 'shadow') {
     if (e.mcd > 0) e.mcd--;
     if (e.wind > 0) {
       e.wind--;
@@ -2408,14 +2578,29 @@ function updateHazards(p, pc) {
       h.rot = (h.rot || 0) + .45;
     } else if (h.type === 'fring') {
       h.r += 5.5; if (h.r > 900) h.life = 0;
+    } else if (h.type === 'chest') {
+      h.vy += h.g; h.x += h.vx; h.y += h.vy; const gy = groundY(h.x + h.w / 2, h.y); if (h.y + h.h >= gy) { h.y = gy - h.h; h.vy = 0; h.vx = 0; }
+      if (--h.fuse <= 0) { h.life = 0; const cx = h.x + h.w / 2; for (const sd of [-1, 1]) haz({ type: 'shock', x: cx - 15, y: GROUND_Y - 30, w: 30, h: 30, vx: sd * 6.5, life: 60, blockable: true, solidStop: true, color: '#e8c14a', boss: h.boss });
+        haz({ type: 'erupt', x: cx - 30, y: h.y - 34, w: 60, h: 60, delay: 0, life: 12, once: true, color: '#e8c14a', boss: h.boss }); for (let i = 0; i < 14; i++) particles.push({ x: cx, y: h.y, vx: (Math.random() - .5) * 8, vy: -Math.random() * 7, life: 30, color: '#ffd84d' }); shake = Math.max(shake, 6); }
+    } else if (h.type === 'bigcoin') {
+      h.x += h.vx; h.rot = (h.rot || 0) + h.vx * .03;
+      if ((h.x < world.arenaL + T && h.vx < 0) || (h.x + h.w > world.arenaR - T && h.vx > 0)) { if (h.bounces-- > 0) { h.vx = -h.vx; shake = Math.max(shake, 6); } else h.life = 0; }
+      if (Math.random() < .5) particles.push({ x: h.x + h.w / 2, y: h.y + h.h, vx: -h.vx * .2, vy: -Math.random() * 2, life: 16, color: '#ffd84d' });
+    } else if (h.type === 'eye') {
+      if (--h.fireAt === 0) { const c = { x: h.x + h.w / 2, y: h.y + h.h / 2 }, v = aimAt(c, 9); haz({ type: 'arrow', x: c.x - 10, y: c.y - 3, w: 20, h: 6, vx: v.vx, vy: v.vy, life: 110, blockable: true, solidStop: true, color: '#4fd18b', boss: h.boss }); }
+    } else if (h.type === 'mirror') {
+      h.x += h.vx; if (Math.random() < .6) particles.push({ x: h.x + h.w / 2, y: h.y + Math.random() * h.h, vx: -h.vx * .1, vy: 0, life: 16, color: '#ffd166' });
     } else {
       if (h.home) { const dx = pc.x - (h.x + h.w / 2), dy = pc.y - (h.y + h.h / 2), d = Math.hypot(dx, dy) || 1; h.vx += (dx / d * 3.2 - h.vx) * .04; h.vy += (dy / d * 3.2 - h.vy) * .04; }
       h.vy += h.g; h.x += h.vx; h.y += h.vy;
       if (h.type === 'dart') h.rot = (h.rot || 0) + .4;
+      if (h.type === 'rose') { h.sway += .08; h.x += Math.sin(h.sway) * 1.4; h.rot = (h.rot || 0) + .15; }
+      if (h.poison && h.life % 5 === 0) haz({ type: 'cloud', x: h.x + h.w / 2 - 22, y: h.y - 16, w: 44, h: 36, life: 150, once: false, color: '#6ad18b', boss: h.boss });
       if (h.solidStop && wallHit(h)) { h.life = 0; burst(h.x + h.w / 2, h.y + h.h / 2, h.color || '#c9cfe6', 6); continue; }
       if (h.groundKill && h.y + h.h >= groundY(h.x + h.w / 2, h.y - 2) && h.vy > 0) {
         h.life = 0; burst(h.x + h.w / 2, h.y + h.h, h.color || '#ff8f3d', 12, 6);
         if (h.type === 'meteor') rings.push({ x: h.x + 14, y: h.y + 20, r: 6, max: 50, t: 14, color: '#ff6b3d' });
+        if (h.pool) haz({ type: 'pool', x: h.x + h.w / 2 - 30, y: groundY(h.x + h.w / 2, h.y - 2) - 10, w: 60, h: 12, life: 260, once: false, color: '#b4d455', boss: h.boss });
         continue;
       }
       if (h.type === 'fire' || h.type === 'fireball' || h.type === 'meteor') if (Math.random() < .6) particles.push({ x: h.x + h.w / 2, y: h.y + h.h / 2, vx: 0, vy: -.5, life: 14, color: Math.random() < .5 ? '#ffd166' : '#ff6b3d' });
@@ -2644,6 +2829,30 @@ function drawBg() {
   hills(camX * .45, TH.hill2, 24, 385);
 }
 
+function drawHound(p) {
+  const t = Date.now() / 1000, wave = Math.sin(t * 5);
+  const P = (pts, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); ctx.fill(); };
+  const E = (x, y, rx, ry, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.fill(); };
+  const R = (x, y, w, h, r, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill(); };
+  const skin = '#e8c0a0', ink = '#1a1a2a';
+  if (p.regressed) glow(0, 18, 30, '224,48,60', .25 + Math.sin(t * 6) * .08);
+  const rk = p.ground && Math.abs(p.vx || 0) > .6 ? Math.sin((p.run || 0) * 3) : 0, gs = rk * 3, a1 = p.ground === false ? -3 : -Math.max(0, rk) * 2.5, a2 = p.ground === false ? -1 : -Math.max(0, -rk) * 2.5;
+  ctx.fillStyle = '#14060a'; ctx.beginPath(); ctx.moveTo(-7, 9); ctx.quadraticCurveTo(-17 - wave, 24, -15 - wave * 1.5, 36); ctx.lineTo(-11, 32); ctx.lineTo(-9, 37); ctx.lineTo(-5, 31); ctx.lineTo(-2, 13); ctx.fill();
+  ctx.strokeStyle = '#e0303c'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-7, 9); ctx.quadraticCurveTo(-17 - wave, 24, -15 - wave * 1.5, 36); ctx.stroke();
+  P([[-8, 21], [8, 21], [9, 31], [-9, 31]], '#1c1418');
+  R(-9 + gs, 30 + a1, 8, 8, 2, '#0e0a0c'); R(2 - gs, 30 + a2, 9, 8, 2, '#0e0a0c'); ctx.fillStyle = '#e0303c'; ctx.fillRect(-9 + gs, 30 + a1, 8, 1.5); ctx.fillRect(2 - gs, 30 + a2, 9, 1.5);
+  R(-10, 9, 20, 14, 4, '#1c1418'); P([[-3, 9], [4, 9], [1, 18]], '#2a0a10'); ctx.fillStyle = '#e0303c'; ctx.fillRect(-10, 19, 20, 2.5); ctx.fillRect(-1, 10, 1.5, 9);
+  E(-9, 11, 5, 4, '#2a2028'); E(9, 11, 5.5, 4.2, '#2a2028');
+  P([[6, 8], [8, 6], [11, 8], [12, 11], [9, 12], [7, 11]], '#e0303c'); P([[8, 7], [9, 5], [10, 7]], '#e0303c');
+  E(0, 5, 7.5, 7.5, skin); E(2, 7, 5.5, 5.5, 'rgba(0,0,0,.08)');
+  ctx.fillStyle = '#0e0a0c'; ctx.beginPath(); ctx.arc(-1, 3, 8, Math.PI * .9, Math.PI * 1.95); ctx.lineTo(4, 1); ctx.fill(); ctx.fillRect(-8, 2, 3.5, 7);
+  ctx.beginPath(); ctx.moveTo(-5, -4); ctx.quadraticCurveTo(-12, -6 + wave, -16, 2 + wave); ctx.lineTo(-13, 3); ctx.quadraticCurveTo(-10, -2, -4, -2); ctx.fill();
+  P([[-3, -4], [0, -9], [2, -4]], '#0e0a0c');
+  ctx.save(); ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = p.regressed ? 8 : 4; ctx.fillStyle = '#ff2a3a'; ctx.fillRect(3, 4.5, 3, 2); ctx.restore(); line(2, 3, 6.5, 2, ink, 1.5); line(2, 10.5, 5.5, 10.3, '#8a4a3a', 1);
+  E(9, 16, 3, 3, skin);
+  if (p.atk <= 0 && !p.fury && !(p.hdash > 0)) { ctx.save(); ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = p.regressed ? 14 : 8; line(4, 19, 9, 15, '#2a1a14', 3.5); line(9, 15, 31, -2, '#14060a', 3.4); line(10, 14, 31, -2, '#e0303c', 1.2); ctx.restore(); line(7, 13, 11, 17, '#e0303c', 2); }
+  else if (p.hdash > 0 || p.fury) { ctx.save(); ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = 12; line(9, 15, 36, 15, '#14060a', 3.4); line(10, 15, 36, 15, '#e0303c', 1.2); ctx.restore(); }
+}
 function drawGiong(p) {
   const t = Date.now() / 1000, sw = Math.sin(t * 5);
   const P = (pts, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); ctx.fill(); };
@@ -2906,6 +3115,8 @@ function drawHero(p, alpha) {
 
   } else if (c === 'giong') {
     drawGiong(p);
+  } else if (c === 'hound') {
+    drawHound(p);
   }
   ctx.restore();
 }
@@ -2934,7 +3145,7 @@ function drawSlash(p) {
     ctx.save(); ctx.translate(p.x + p.w / 2, p.y + (p.holy ? 2 : 17)); ctx.scale(p.face, 1); ctx.globalAlpha = .85 * ext; ctx.lineCap = 'round'; ctx.shadowColor = col; ctx.shadowBlur = 14;
     line(20, 0, 20 + 76 * ext, 0, col, p.holy ? 9 : 6); line(24, 0, 20 + 70 * ext, 0, '#ffffff', 2); ctx.restore(); return;
   }
-  if (p.atk <= 0 || !['samurai', 'warrior', 'king', 'ninja', 'wukong', 'pirate'].includes(cls)) return;
+  if (p.atk <= 0 || !['samurai', 'warrior', 'king', 'ninja', 'wukong', 'pirate', 'hound'].includes(cls)) return;
   const reach = MELEE[cls].reach;
   const color = cls === 'warrior' ? (p.atkEmp ? '#ffd166' : '#ffb347') : cls === 'king' ? '#ffd84d' : cls === 'ninja' ? '#b8c4ff' : cls === 'wukong' ? '#ffc53d' : cls === 'pirate' ? (p.armed > 0 ? '#ff3b3b' : '#e8e0d0') : '#dcefff';
   const prog = 1 - p.atk / 14;
@@ -3047,6 +3258,29 @@ function drawFxList() {
       drawHero({ ...heroStub('ninja', f.sx - 13, f.y - 19, f.sx < f.x ? 1 : -1) }, .35 + .4 * k);
       ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.ang); ctx.globalAlpha = k; ctx.shadowColor = '#9aa8ff'; ctx.shadowBlur = 14; ctx.lineCap = 'round';
       line(-50, 0, 50, 0, '#dfe4ff', 4); line(-40, 3, 40, 3, '#6a5acd', 2); ctx.restore();
+    } else if (f.type === 'fang') {
+      const pr = 1 - k; ctx.save(); ctx.translate(f.x, f.y); ctx.scale(f.face, 1); ctx.globalAlpha = k; ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = 16;
+      for (const sd of [-1, 1]) { ctx.fillStyle = '#14060a'; ctx.beginPath(); ctx.moveTo(-f.r * .3, sd * 30); ctx.quadraticCurveTo(f.r * .4 * (.6 + pr * .4), sd * 34, f.r * .6, sd * 6); ctx.quadraticCurveTo(f.r * .3, sd * 22, -f.r * .3, sd * 22); ctx.fill();
+        ctx.fillStyle = '#e0303c'; ctx.beginPath(); ctx.moveTo(-f.r * .25, sd * 27); ctx.quadraticCurveTo(f.r * .35, sd * 30, f.r * .55, sd * 8); ctx.quadraticCurveTo(f.r * .3, sd * 22, -f.r * .25, sd * 24); ctx.fill(); }
+      ctx.restore();
+    } else if (f.type === 'hslash') {
+      ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.a); ctx.globalAlpha = k; ctx.lineCap = 'round'; ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = 12;
+      const L = 60 + (1 - k) * 40; line(-L, 0, L, 0, '#14060a', 7); line(-L, 0, L, 0, '#e0303c', 3); line(-L * .7, 0, L * .7, 0, '#ffd0d4', 1); ctx.restore();
+    } else if (f.type === 'voidcut') {
+      const pr = 1 - k; ctx.save(); ctx.globalAlpha = Math.min(1, k * 2);
+      ctx.fillStyle = 'rgba(10,0,6,.55)'; ctx.fillRect(camX - 50, 0, W + 100, H);
+      ctx.strokeStyle = '#ff2a3a'; ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = 24; ctx.lineWidth = 3 + 6 * k;
+      ctx.beginPath(); ctx.moveTo(camX - 40, f.y + 60); ctx.lineTo(camX + W + 40, f.y - 60); ctx.stroke(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.strokeStyle = 'rgba(224,48,60,.8)'; ctx.lineWidth = 2; ctx.shadowBlur = 8;
+      for (let i = 0; i < 14; i++) { const a = i * 2.2 + .3, r0 = 30 + pr * 60, r1 = r0 + 90 + (i % 4) * 50; ctx.beginPath(); ctx.moveTo(f.x + Math.cos(a) * r0, f.y + Math.sin(a) * r0);
+        ctx.lineTo(f.x + Math.cos(a + .15) * (r0 + r1) / 2, f.y + Math.sin(a + .15) * (r0 + r1) / 2); ctx.lineTo(f.x + Math.cos(a) * r1, f.y + Math.sin(a) * r1); ctx.stroke(); }
+      ctx.restore();
+    } else if (f.type === 'disint') {
+      const pr = 1 - k; ctx.save(); let sd = f.seed;
+      for (let i = 0; i < 46; i++) { sd = (sd * 9301 + 49297) % 233280; const rx = sd / 233280; sd = (sd * 9301 + 49297) % 233280; const ry = sd / 233280;
+        const x = f.x + rx * f.w + (rx - .5) * pr * 160, y = f.y + ry * f.h - pr * pr * 120 * (ry + .3), z = 3 + (i % 4) * 2;
+        ctx.globalAlpha = k; ctx.fillStyle = i % 3 === 0 ? '#14060a' : i % 3 === 1 ? f.col : '#ff2a3a'; ctx.fillRect(x, y, z, z); }
+      ctx.restore();
     } else if (f.type === 'spark') {
       ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.a); ctx.globalAlpha = k; ctx.strokeStyle = f.col; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.shadowColor = f.col; ctx.shadowBlur = 8;
       const L = 6 + (1 - k) * 14; for (let i = 0; i < 4; i++) { ctx.rotate(Math.PI / 2); ctx.beginPath(); ctx.moveTo(3, 0); ctx.lineTo(L, 0); ctx.stroke(); }
@@ -3243,8 +3477,30 @@ function drawHazard(h) {
     case 'mark': warn(h.x, h.w); break;
     case 'axe':
       ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(h.rot || 0); glow(0, 0, 26, rgb, .35);
+      if (h.scythe) { line(-16, 0, 16, 0, '#261a3e', 3); ctx.fillStyle = '#e8e0ff'; ctx.beginPath(); ctx.moveTo(14, -2); ctx.quadraticCurveTo(30, -26, 4, -30); ctx.quadraticCurveTo(22, -20, 12, 2); ctx.fill(); ctx.restore(); break; }
       line(-14, 0, 14, 0, '#6b4a2a', 4); ctx.fillStyle = '#d8dcea'; ctx.beginPath(); ctx.moveTo(8, -14); ctx.quadraticCurveTo(22, 0, 8, 14); ctx.lineTo(4, 0); ctx.fill();
       ctx.beginPath(); ctx.moveTo(-8, -12); ctx.quadraticCurveTo(-20, 0, -8, 12); ctx.lineTo(-4, 0); ctx.fill(); ctx.restore(); break;
+    case 'mirror': { ctx.save(); ctx.filter = 'brightness(1.6) sepia(1) saturate(2)'; drawBossBody({ id: h.id, x: h.x, y: h.y, w: h.w, h: h.h, face: h.face, phase: 1, state: 'idle' }, .55); ctx.filter = 'none'; ctx.restore(); break; }
+    case 'lightcol': {
+      if (h.delay > 0) { const a = .3 + Math.sin(Date.now() / 50) * .2; ctx.fillStyle = `rgba(255,209,102,${a * .25})`; ctx.fillRect(h.x, 0, h.w, GROUND_Y); ctx.fillStyle = `rgba(255,209,102,${a})`; ctx.fillRect(h.x, GROUND_Y - 4, h.w, 4); break; }
+      ctx.save(); ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 30; const g = ctx.createLinearGradient(h.x, 0, h.x + h.w, 0); g.addColorStop(0, 'rgba(255,209,102,0)'); g.addColorStop(.5, 'rgba(255,248,210,.95)'); g.addColorStop(1, 'rgba(255,209,102,0)');
+      ctx.fillStyle = g; ctx.fillRect(h.x, 0, h.w, GROUND_Y); ctx.restore(); break; }
+    case 'chest': {
+      const sh = h.fuse < 40 ? Math.sin(Date.now() / 25) * 2 : 0; ctx.save(); ctx.translate(h.x + h.w / 2 + sh, h.y + h.h);
+      ctx.fillStyle = '#6a4020'; ctx.fillRect(-16, -22, 32, 22); ctx.fillStyle = '#8a5a2a'; ctx.fillRect(-16, -26, 32, 8); ctx.fillStyle = '#e8c14a'; ctx.fillRect(-16, -14, 32, 3); ctx.fillRect(-3, -18, 6, 8);
+      if (h.fuse < 40) { glow(0, -16, 26, '255,90,60', .5); ctx.fillStyle = '#ff3a3a'; ctx.fillRect(-9, -20, 4, 3); ctx.fillRect(5, -20, 4, 3); } ctx.restore(); break; }
+    case 'bigcoin': { ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(h.rot || 0); glow(0, 0, 50, '255,216,77', .35);
+      ctx.fillStyle = '#c8901a'; ctx.beginPath(); ctx.arc(0, 0, 34, 0, 7); ctx.fill(); ctx.fillStyle = '#ffd84d'; ctx.beginPath(); ctx.arc(0, 0, 28, 0, 7); ctx.fill();
+      ctx.fillStyle = '#c8901a'; ctx.font = '900 30px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('$', 0, 11); ctx.textAlign = 'left'; ctx.restore(); break; }
+    case 'heart': { ctx.save(); ctx.translate(c.x, c.y); glow(0, 0, 18, '255,122,200', .6); ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, 7); ctx.bezierCurveTo(-12, -2, -6, -11, 0, -4); ctx.bezierCurveTo(6, -11, 12, -2, 0, 7); ctx.fill(); ctx.restore(); break; }
+    case 'rose': { ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(h.rot || 0); ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(0, 0, 9, 4, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#ffd0e4'; ctx.beginPath(); ctx.ellipse(3, 0, 3, 1.4, 0, 0, 7); ctx.fill(); ctx.restore(); break; }
+    case 'pool': { ctx.save(); ctx.globalAlpha = Math.min(1, h.life / 40) * .85; glow(c.x, c.y, 34, '180,212,85', .4); ctx.fillStyle = '#9ac83a'; ctx.beginPath(); ctx.ellipse(c.x, h.y + h.h - 3, h.w / 2, 5, 0, 0, 7); ctx.fill();
+      if (Math.random() < .2) particles.push({ x: h.x + Math.random() * h.w, y: h.y + 4, vx: 0, vy: -1, life: 14, color: '#c8f070' }); ctx.restore(); break; }
+    case 'cloud': { ctx.save(); ctx.globalAlpha = Math.min(1, h.life / 40) * .5; ctx.fillStyle = col; for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(h.x + 10 + i * 12, c.y + Math.sin(Date.now() / 300 + i) * 3, 14, 0, 7); ctx.fill(); } ctx.restore(); break; }
+    case 'yawn': { ctx.save(); ctx.globalAlpha = Math.min(1, h.life / 30) * .6; const g = ctx.createRadialGradient(c.x, c.y, 4, c.x, c.y, 50); g.addColorStop(0, 'rgba(190,220,255,.7)'); g.addColorStop(1, 'rgba(190,220,255,0)'); ctx.fillStyle = g; ctx.fillRect(h.x - 20, h.y, h.w + 40, h.h);
+      ctx.globalAlpha = 1; ctx.fillStyle = '#e8f4ff'; ctx.font = '800 18px "Baloo 2", sans-serif'; ctx.fillText('Z', c.x - 8, c.y - 10 + Math.sin(Date.now() / 200) * 4); ctx.fillText('z', c.x + 6, c.y + 8); ctx.restore(); break; }
+    case 'bubble': { ctx.save(); glow(c.x, c.y, 22, '190,224,255', .4); ctx.strokeStyle = 'rgba(220,240,255,.9)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(c.x, c.y, 13, 0, 7); ctx.stroke(); ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.beginPath(); ctx.arc(c.x - 5, c.y - 5, 3, 0, 7); ctx.fill(); ctx.restore(); break; }
+    case 'eye': { const op = h.fireAt > 6 ? 1 : .3; ctx.save(); glow(c.x, c.y, 22, '79,209,139', .5); ctx.fillStyle = '#e8fff0'; ctx.beginPath(); ctx.ellipse(c.x, c.y, 14, 7 * op, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#0e2e1c'; ctx.beginPath(); ctx.ellipse(c.x, c.y, 3, 6 * op, 0, 0, 7); ctx.fill(); ctx.restore(); break; }
     case 'acid':
       glow(c.x, c.y, 14, '180,212,85', .7); ctx.fillStyle = '#c8f070'; ctx.beginPath(); ctx.ellipse(c.x, c.y, 6, 7, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#f4ffc0'; ctx.fillRect(c.x - 2, c.y - 3, 2, 2); break;
     case 'coin':
@@ -3301,6 +3557,9 @@ function drawEnemy(e) {
     ctx.fillStyle = '#ff5a4a'; ctx.font = '800 16px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('!', c.x, e.y - 8); ctx.textAlign = 'left'; ctx.restore(); }
   ctx.save(); ctx.translate(0, ly);
   const W_ = e.flash ? '#ffffff' : null;
+  if (e.kind === 'shadow') { ctx.save(); ctx.filter = 'brightness(.35) saturate(.2)'; glow(center(e).x, center(e).y, 30, '120,60,200', .4);
+    drawHero({ ...heroStub(e.mimic || 'warrior', e.x, e.y, e.face), atk: e.wind > 0 && e.wind < 10 ? 8 : 0 }, e.flash ? 1 : .9); ctx.filter = 'none';
+    ctx.fillStyle = '#c070ff'; ctx.fillRect(e.x + e.w / 2 + e.face * 3 - 1.5, e.y + 5, 3, 2); ctx.restore(); ctx.restore(); return; }
   if (e.kind === 'dummy') {
     const c = center(e), wb = e.wob > 0 ? Math.sin(e.wob * .9) * .14 * (e.wob / 14) : 0;
     ctx.save(); ctx.translate(c.x, e.y + e.h); ctx.rotate(wb);
@@ -3724,7 +3983,7 @@ function drawTouchHud() {
   ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
   ctx.fillStyle = 'rgba(1,10,19,.78)'; rr(px, py, 190, 30, 4); ctx.strokeStyle = '#785a28'; ctx.lineWidth = 1; ctx.strokeRect(px + .5, py + .5, 189, 29);
   ctx.fillStyle = accent; ctx.font = '800 13px "Baloo 2", sans-serif';
-  ctx.fillText(`${C.name} · Cấp ${p.level}`, px + 8, py + 13);
+  ctx.fillText(`${C.short || C.name} · Cấp ${p.level}`, px + 8, py + 13);
   let ratio = 1;
   if (p.level < MAX_LV) { const lo = LV_TOTAL[p.level], hi = LV_TOTAL[p.level + 1]; ratio = (p.xp - lo) / (hi - lo); }
   ctx.fillStyle = 'rgba(232,236,247,.18)'; rr(px + 8, py + 19, 174, 6, 3);
@@ -3748,7 +4007,7 @@ function drawHud() {
   ctx.fillStyle = 'rgba(1,10,19,.82)'; rr(px, py, 262, 96, 6); ctx.strokeStyle = '#785a28'; ctx.lineWidth = 1.5; ctx.strokeRect(px + .5, py + .5, 261, 95);
   if (p.trans > 0 || p.holy) { ctx.strokeStyle = '#ffd84d'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(px, py, 262, 96, 12) : ctx.rect(px, py, 262, 96); ctx.stroke(); }
   ctx.fillStyle = accent; ctx.font = '800 15px "Baloo 2", sans-serif';
-  ctx.fillText(`${C.name} · Cấp ${p.level}`, px + 12, py + 21);
+  ctx.fillText(`${C.short || C.name} · Cấp ${p.level}`, px + 12, py + 21);
   const bx = px + 142, by = py + 12, bw = 106;
   ctx.fillStyle = 'rgba(232,236,247,.18)'; rr(bx, by, bw, 9, 5);
   let ratio = 1, label = 'Tối đa';
@@ -3756,7 +4015,7 @@ function drawHud() {
   ctx.fillStyle = accent; rr(bx, by, Math.max(4, bw * ratio), 9, 5);
   ctx.fillStyle = '#e8ecf7'; ctx.font = '500 11px "Baloo 2", sans-serif'; ctx.textAlign = 'right'; ctx.fillText(label, bx + bw, py + 33); ctx.textAlign = 'left';
   for (let i = 0; i < 4; i++) {
-    const sx = px + 12 + i * 61, sy = py + 38, s = 50, locked = p.level < SKILL_LV[i];
+    const sx = px + 12 + i * 61, sy = py + 38, s = 50, locked = p.level < SKILL_LV[i] || (cls === 'hound' && i === 3 && !p.regressed);
     ctx.fillStyle = locked ? 'rgba(232,236,247,.06)' : 'rgba(232,236,247,.12)'; rr(sx, sy, s, s, 10);
     const ready = !locked && p.cds[i] <= 0;
     drawSkillIcon(i, sx + s / 2, sy + s / 2 - 3, locked ? 'rgba(232,236,247,.25)' : ready ? accent : 'rgba(232,236,247,.55)');
@@ -3767,7 +4026,7 @@ function drawHud() {
       if (p.cds[i] > 60) { ctx.fillStyle = '#ffffff'; ctx.font = '800 16px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(Math.ceil(p.cds[i] / 60), sx + s / 2, sy + s / 2 + 6); ctx.textAlign = 'left'; }
     }
     ctx.font = '700 11px "Baloo 2", sans-serif'; ctx.fillStyle = locked ? 'rgba(232,236,247,.45)' : '#e8ecf7';
-    if (locked) { ctx.textAlign = 'center'; ctx.fillText(`Cấp ${SKILL_LV[i]}`, sx + s / 2, sy + s - 5); ctx.textAlign = 'left'; }
+    if (locked) { ctx.textAlign = 'center'; ctx.fillText(p.level < SKILL_LV[i] ? `Cấp ${SKILL_LV[i]}` : 'Hồi quy', sx + s / 2, sy + s - 5); ctx.textAlign = 'left'; }
     else ctx.fillText(SKILL_KEYS[i], sx + s - 11, sy + s - 5);
     if (cls === 'giong' && i === 0 && !locked) for (let k = 0; k < 5; k++) { ctx.fillStyle = k < p.qi ? '#ffd84d' : 'rgba(232,236,247,.25)'; ctx.beginPath(); ctx.arc(sx + 7 + k * 7, sy + s - 8, 2.6, 0, 7); ctx.fill(); }
     if (cls === 'samurai' && i === 0 && !locked) for (let k = 0; k < 2; k++) { ctx.fillStyle = k < p.stack ? accent : 'rgba(232,236,247,.25)'; ctx.beginPath(); ctx.arc(sx + 8 + k * 9, sy + s - 8, 3, 0, 7); ctx.fill(); }
@@ -3870,6 +4129,8 @@ function draw() {
   const blink = p.inv > 0 && p.dash <= 0 && p.phase <= 0 && Math.floor(p.inv / 5) % 2;
   if (!blink && p.phase <= 0 && !(p.killSeq && p.killSeq.dash <= 0)) drawHero(p, p.hidden ? .4 : 1);
   drawSlash(p);
+  if (p.charm > 0) for (let i = 0; i < 3; i++) { const a = Date.now() / 300 + i * 2.1; ctx.fillStyle = '#ff7ac8'; ctx.font = '700 12px sans-serif'; ctx.fillText('♥', center(p).x + Math.cos(a) * 16 - 4, p.y - 8 + Math.sin(a) * 5); }
+  if (p.slowT > 0) { ctx.fillStyle = '#bfe0ff'; ctx.font = '800 13px "Baloo 2", sans-serif'; ctx.fillText('z', center(p).x + 8, p.y - 6 + Math.sin(Date.now() / 250) * 3); ctx.fillText('Z', center(p).x + 14, p.y - 16 + Math.sin(Date.now() / 250 + 1) * 3); }
   if (p.mUlt && p.mUlt.t > 24 && p.mUlt.t < 86) { const pc2 = center(p), r = 8 + Math.min(1, (p.mUlt.t - 24) / 50) * 40, oy = p.y - 40, pu = Math.sin(Date.now() / 50) * 3;
     glow(pc2.x, oy, r * 2.4 + pu, '143,184,255', .6); ctx.fillStyle = '#4f75d8'; ctx.beginPath(); ctx.arc(pc2.x, oy, r + pu * .3, 0, 7); ctx.fill();
     ctx.fillStyle = '#e6efff'; ctx.beginPath(); ctx.arc(pc2.x - r * .25, oy - r * .25, r * .35, 0, 7); ctx.fill();
@@ -3899,6 +4160,7 @@ function draw() {
     else if (q.kind === 'gold') { glow(0, 0, 8, '255,216,77', .8); ctx.fillStyle = '#fff4c0'; ctx.fillRect(-1.5, -1.5, 3, 3); }
     else if (q.kind === 'frost') { glow(0, 0, 8, '160,210,255', .8); ctx.strokeStyle = '#e8f4ff'; ctx.lineWidth = 1.2; for (let k = 0; k < 3; k++) { ctx.rotate(Math.PI / 3); ctx.beginPath(); ctx.moveTo(-4, 0); ctx.lineTo(4, 0); ctx.stroke(); } }
     else if (q.kind === 'ember') { glow(0, 0, 7, '255,140,60', .9); ctx.fillStyle = '#ffd166'; ctx.fillRect(-1.5, -1.5, 3, 3); }
+    else if (q.kind === 'blood') { ctx.fillStyle = '#b0101e'; ctx.beginPath(); ctx.ellipse(0, 0, 2.6, 4, 0, 0, 7); ctx.fill(); }
     else if (q.kind === 'shadow') { ctx.fillStyle = 'rgba(80,60,140,.8)'; ctx.beginPath(); ctx.moveTo(-6, 0); ctx.quadraticCurveTo(0, -4, 6, 0); ctx.quadraticCurveTo(0, 4, -6, 0); ctx.fill(); }
     ctx.restore(); }
   ctx.restore();
@@ -4268,7 +4530,7 @@ document.getElementById('shopClose').addEventListener('click', toMenu);
 
 // ======================= CHIÊU MỘ =======================
 function addShards(c, n) { save.gacha.shards[c] = (save.gacha.shards[c] || 0) + n; }
-const LEG_POOL = ['king', 'wukong', 'pirate', 'giong'],
+const LEG_POOL = ['king', 'wukong', 'pirate', 'giong', 'hound'],
   // Nhà vua chỉ mở khóa qua cốt truyện; chưa sở hữu thì không ra trong chiêu mộ (kể cả mảnh)
   gachaOk = c => c !== 'king' || save.unlocked.includes('king'), legPool = () => LEG_POOL.filter(gachaOk), EPIC_POOL = ['brawler', 'ninja'], RARE_POOL = ['mage', 'samurai', 'gunner'];
 const pickOf = a => a[Math.floor(Math.random() * a.length)];
@@ -4378,16 +4640,17 @@ const LIB_ENEMY = {
   c: { name: 'Lợn rừng', where: 'Từ Chương 2', desc: 'Hung hăng, thấy bạn là cào chân lấy đà.', skills: [['Húc', 'Lao thẳng tới với tốc độ cao. Chỉ gây sát thương khi đang húc, có thể nhảy qua.']] },
   m: { name: 'Pháp sư lửa', where: 'Từ Chương 2', desc: 'Đứng từ xa niệm phép, rất yếu khi bị áp sát.', skills: [['Cầu lửa', 'Ném cầu lửa theo đường cong về phía bạn, rơi xuống đất thì tắt.']] },
   g: { name: 'Hồn ma', where: 'Cuối Chương 2 trở đi', desc: 'Linh hồn lơ lửng, không bị địa hình cản trở.', skills: [['Xuyên tường', 'Bay xuyên qua tường và nền để áp sát bạn.'], ['Chạm hồn', 'Khi ở gần, hiện dấu "!" rồi vung tay chém.']] },
+  shadow: { name: 'Bóng Đố Kị', where: 'Do Đố Kị triệu hồi', desc: 'Cái bóng đen sao chép chính tướng bạn đang dùng, tự tan biến sau 8 giây.', skills: [['Chém bóng', 'Đuổi theo bạn, hiện dấu "!" rồi chém.']] },
   dummy: { name: 'Bù nhìn', where: 'Sân Đấu Tập', desc: 'Bù nhìn rơm không bao giờ gục, dùng để thử chiêu và đo sát thương.', skills: [['Đứng im', 'Không di chuyển, không tấn công.']] },
 };
 const LIB_BOSS_SK = {
-  wrath:   ['Hai nhát chém đại kiếm quét rộng trước mặt.', 'Lao húc thẳng tới, thân hắn gây sát thương khi đang lao.', 'Xoay đại kiếm thành vòng tròn nguy hiểm quanh người.', 'Gọi cột lửa phun lên tại các vị trí được đánh dấu.'],
-  pride:   ['Ném lưỡi hái bay vòng ra rồi quay về tay, trúng cả lúc đi lẫn lúc về.', 'Nhảy vọt lên rồi giáng xuống, tạo sóng chấn hai bên.', 'Hai nhát chém lưỡi hái vừa chém vừa lao tới.', 'Mưa lưỡi hái rơi từ trên trời xuống.'],
-  greed:   ['Ba đòn quyền trượng liên hoàn, mỗi đòn tiến thêm một bước.', 'Ném một loạt tiền vàng theo đường cong.', 'Dịch chuyển ra sau lưng bạn rồi đánh.', 'Nhảy lên đập đất tạo sóng chấn.'],
-  glutton: ['Lao tới ngoạm hai lần bằng cái miệng đầy răng.', 'Phóng lưỡi ra trói rồi kéo bạn lại gần.', 'Phun một loạt axit theo đường cong.', 'Nhảy lên dậm cả thân xuống, tạo sóng chấn.'],
-  lust:    ['Đâm đinh ba tầm xa.', 'Dịch chuyển ra sau lưng bạn.', 'Phóng đinh ba bay thẳng về phía bạn.', 'Hàng loạt đinh ba trồi lên khắp đấu trường.'],
-  envy:    ['Ba loạt tên tỏa ra, nhắm thẳng vào bạn.', 'Mưa tên rơi xuống các điểm được đánh dấu.', 'Nhảy lên đập xuống tạo sóng chấn.', 'Một mũi tên độc khổng lồ bắn thẳng, có ánh sáng báo trước.'],
-  sloth:   ['Gọi những quả cầu phép bay chậm đuổi theo bạn.', 'Triệu hồi quái nhỏ ra trận.', 'Cột nước phun lên từ mặt đất.', 'Lạc đà quỷ lao húc thẳng tới.'],
+  wrath:   ['Hai nhát chém đại kiếm quét rộng, để lại vệt lửa trên mặt đất.', 'Cào chân lấy đà rồi lao húc, kéo theo một vệt lửa, kết thúc bằng nhát chém hất.', 'Nhảy vọt tới cắm kiếm xuống đất, các cột lửa lần lượt phun lên lan ra hai bên.', 'Gầm lên hóa cuồng nộ (nhanh hơn, ra chiêu dồn dập hơn đến hết trận) và gọi mưa thiên thạch.'],
+  pride:   ['Ném lưỡi hái bay vòng ra rồi quay về tay, trúng cả lúc đi lẫn lúc về.', 'Biến mất rồi giáng xuống từ trên trời ngay chỗ bạn đứng (có vạch vàng báo trước), tạo sóng chấn.', 'Hai bóng gương vàng lao ngang qua đấu trường từ hai phía, phải nhảy qua.', 'Tám cột ánh sáng phán quyết lần lượt giáng xuống khắp đấu trường, chừa khe hở để né.'],
+  greed:   ['Ba đòn quyền trượng liên hoàn, mỗi đòn tiến thêm một bước.', 'Ném một loạt tiền vàng theo đường cong.', 'Ném ba chiếc rương xuống quanh bạn; rương rung lên mắt đỏ rồi nổ tung thành sóng chấn.', 'Lăn một đồng vàng khổng lồ dọc đấu trường, nảy lại một lần khi chạm tường.'],
+  glutton: ['Lao tới ngoạm hai lần bằng cái miệng đầy răng.', 'Há miệng hút mạnh, kéo bạn về phía mình rồi ngoạm.', 'Phun axit theo đường cong, rơi xuống thành vũng axit tồn tại một lúc.', 'Nhảy dậm ba lần liên tiếp về phía bạn, mỗi lần tạo sóng chấn mạnh hơn.'],
+  lust:    ['Thổi ba nụ hôn trái tim đuổi theo bạn; trúng sẽ bị mê hoặc, điều khiển trái phải bị đảo ngược 2 giây.', 'Bay lên cao, cánh hoa hồng sắc như dao rơi khắp đấu trường.', 'Ba lần ẩn hiện ra sau lưng bạn, mỗi lần chém và cho đinh ba trồi lên.', 'Tụ một trái tim khổng lồ rồi vỡ tung thành 12 mảnh bay tỏa ra mọi hướng.'],
+  envy:    ['Ba loạt tên tỏa ra, nhắm thẳng vào bạn.', 'Tạo ra một cái bóng sao chép chính tướng bạn đang dùng, đuổi theo chém bạn trong 8 giây.', 'Bảy con mắt mở ra trên bầu trời, lần lượt bắn tên xuống chỗ bạn.', 'Mũi tên độc khổng lồ bắn thẳng, để lại một dải mây độc trên đường bay.'],
+  sloth:   ['Gọi những quả cầu phép bay chậm đuổi theo bạn.', 'Ngáp một cái thật dài, sóng buồn ngủ lan ra hai bên; trúng sẽ bị làm chậm.', 'Ngủ gật hồi máu, thả những bong bóng mộng trôi về phía bạn.', 'Lạc đà quỷ cào chân rồi lao húc, cuối đòn phun nước bọt.'],
   fist:    ['Lao tới tung cú đấm, thân hắn gây sát thương khi đang lao.', 'Đấm ra sóng quyền bay ngang.', 'Nhảy lên đập đất tạo sóng chấn hai bên.', 'Chuỗi đấm liên hoàn dồn dập phía trước.'],
   sword:   ['Chém ra vầng trăng đen bay ngang.', 'Dịch chuyển ra sau lưng bạn rồi chém.', 'Gọi mưa kiếm rơi xuống các điểm được đánh dấu.', 'Chém liên tiếp nhiều nhát, mỗi nhát tiến tới.'],
   whip:    ['Quất roi dài trước mặt.', 'Phóng roi trói rồi kéo bạn lại gần.', 'Xoay roi tạo vòng tròn nguy hiểm quanh người.', 'Gai độc trồi lên từ mặt đất.'],
@@ -4701,19 +4964,19 @@ function updateTouchUI() {
   const sk = skillsOf(p);
   for (let i = 0; i < 4; i++) {
     const b = skBtns[i]; if (!b) continue;
-    const locked = p.level < SKILL_LV[i], cd = p.cds[i], base = skillCd(i) || CLASSES[cls].skills[i].cd || 1;
+    const locked = p.level < SKILL_LV[i] || (cls === 'hound' && i === 3 && !p.regressed), cd = p.cds[i], base = skillCd(i) || CLASSES[cls].skills[i].cd || 1;
     const ratio = locked ? 0 : Math.min(1, cd / base);
     const secs = !locked && cd > 60 ? Math.ceil(cd / 60) : '';
     const pips = cls === 'samurai' && i === 0 ? p.stack : -1;
     const glowOn = (cls === 'pirate' && i < 2 && p.armed > 0) || (cls === 'wukong' && (i === 0 || i === 2) && p.cloud > 0) || (cls === 'brawler' && i === 0 && p.fistEmp > 0) || (cls === 'warrior' && i === 0 && p.empower) || (cls === 'samurai' && i === 0 && p.stack >= 2) || (cls === 'king' && p.trans > 0) || (cls === 'giong' && i === 0 && p.qi >= 5);
-    const key = [locked, sk[i].icon, Math.round(ratio * 40), secs, pips, glowOn, cls === 'giong' && i === 0 ? p.qi : 0].join('|');
+    const key = [locked, p.regressed, sk[i].icon, Math.round(ratio * 40), secs, pips, glowOn, cls === 'giong' && i === 0 ? p.qi : 0].join('|');
     if (key === skCache[i]) continue;
     skCache[i] = key;
     b.classList.toggle('locked', locked);
     b.classList.toggle('ready', !locked && cd <= 0);
     b.classList.toggle('glow', !locked && glowOn);
     b.style.setProperty('--cd', ratio.toFixed(3));
-    b.innerHTML = locked ? `<span class="ic">Cấp ${SKILL_LV[i]}</span>` : (cls === 'giong' && i === 0 && p.qi > 0) ? `<span class="ic">${sk[i].icon}</span>${secs ? `<span class="cdt">${secs}</span>` : ''}<span class="num">${p.qi}/5</span>`
+    b.innerHTML = locked ? `<span class="ic">${p.level < SKILL_LV[i] ? `Cấp ${SKILL_LV[i]}` : '🔒'}</span>` : (cls === 'giong' && i === 0 && p.qi > 0) ? `<span class="ic">${sk[i].icon}</span>${secs ? `<span class="cdt">${secs}</span>` : ''}<span class="num">${p.qi}/5</span>`
       : `<span class="ic">${sk[i].icon}</span>${secs ? `<span class="cdt">${secs}</span>` : ''}<span class="num">${i + 1}</span>` +
         (pips >= 0 ? `<span class="pips"><i class="${pips > 0 ? 'on' : ''}"></i><i class="${pips > 1 ? 'on' : ''}"></i></span>` : '');
   }
