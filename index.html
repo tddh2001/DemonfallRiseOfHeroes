@@ -1157,7 +1157,7 @@ function buildWorld(n) {
   const lv = heroLv(cls);
   const sx = 4 * T;
   player = { cls, x: sx, y: 9 * T + 2, w: 26, h: 38, vx: 0, vy: 0, ground: false, face: 1, sx, sy: 9 * T + 2, run: 0,
-    maxHearts: maxHearts(), hearts: maxHearts(), inv: 60, hurtCount: 0, parryWin: 0, parryCd: 0, airJumps: 0, regen: 0, kills: 0, cds: [0, 0, 0, 0], atkCd: 0, atk: 0, atkId: 0, atkEmp: false, level: lv, xp: heroXp(cls), toast: null, pulled: 0, holy: false, holyUsed: false, holyDrain: 0, gcharge: 0, rear: 0, qi: 0, qiGot: false, leap: null, atkKind: '', regressed: false, hdash: 0, fury: null, void: null, charm: 0, slowT: 0, dropT: 0, coyote: 0, airT: 0, squash: 0, jumping: false,
+    maxHearts: maxHearts(), hearts: maxHearts(), inv: 60, hurtCount: 0, parryWin: 0, parryCd: 0, airJumps: 0, regen: 0, kills: 0, cds: [0, 0, 0, 0], atkCd: 0, atk: 0, atkId: 0, atkEmp: false, level: lv, xp: heroXp(cls), toast: null, pulled: 0, holy: false, holyUsed: false, holyDrain: 0, gcharge: 0, rear: 0, qi: 0, qiGot: false, leap: null, atkKind: '', regressed: false, hdash: 0, fury: null, void: null, charm: 0, slowT: 0, dropT: 0, coyote: 0, airT: 0, squash: 0, jumping: false, castT: 0, castI: 0,
     dash: 0, thrust: 0, thrustId: 0, thrustHit: false, thrustTornado: false, stack: 0, stackTimer: 0,
     buff: 0, empower: false, shield: 0, spin: 0, spinAng: 0, plant: 0,
     target: null, volley: null, phase: 0, crystal: null, charge: 0, trans: 0, reflect: 0,
@@ -1682,6 +1682,7 @@ function castSkill(i, cine) {
   const res = SKILL_FN[cls][i]();
   if (res === false) return;
   if (i === 3) { if (cine) { (ULT_FX[cls] || (() => {}))(); shake = Math.max(shake, 12); } else startCutin(); }
+  p.castT = 16; p.castI = i;
   if (res !== 'custom') { const dur = SKILL_DUR[cls] && SKILL_DUR[cls][i]; p.cds[i] = skillCd(i) + (dur ? Math.max(0, dur(p) || 0) : 0); }
 }
 function tickCine() { const c = ultCine; c.t++; if (c.t >= CINE_LEN) { ultCine = null; castSkill(c.i, true); } }
@@ -2223,6 +2224,7 @@ function update() {
     p.airT = p.ground ? 0 : (p.airT || 0) + 1;
   }
   if (p.squash > 0) p.squash--;
+  if (p.castT > 0) p.castT--;
   if (p.charm > 0) p.charm--; if (p.slowT > 0) p.slowT--;
   if (world.training) {
     world.tick++;
@@ -2480,6 +2482,7 @@ function bodyAttacking(e) {
   return (e.kind === 'b' && e.mode === 'swoop') || (e.kind === 'c' && e.charge > 0) || (e.kind === 'j' && !e.ground && e.vy > 1);
 }
 function updateEnemy(e, pc) {
+  if (e.castT > 0) e.castT--;
   if (e.kind === 'dummy') { if (e.homeX === undefined) e.homeX = e.x; e.x = e.homeX; e.vx = 0; e.vy = 0; e.stun = 0; e.lift = 0; if (e.wob > 0) e.wob--; return; }
   if (e.flash > 0) e.flash--; if (e.lift > 0) e.lift--; if (e.rcd > 0) e.rcd--;
   const c = center(e), dx = pc.x - c.x, dy = pc.y - c.y, sp = e.sp;
@@ -2515,7 +2518,7 @@ function updateEnemy(e, pc) {
     case 'a':
       e.face = dx < 0 ? -1 : 1;
       if (!player.hidden && Math.abs(dx) < 440 && Math.abs(dy) < 220 && --e.fire <= 0) {
-        e.fire = e.rate; const len = Math.hypot(dx, dy) || 1;
+        e.fire = e.rate; e.castT = 12; const len = Math.hypot(dx, dy) || 1;
         haz({ type: 'dart', x: c.x - 6, y: e.y + 12, w: 12, h: 12, vx: dx / len * 4.5 * sp, vy: dy / len * 4.5 * sp, life: 200, blockable: true, solidStop: true, rot: 0 });
       }
       break;
@@ -2523,7 +2526,7 @@ function updateEnemy(e, pc) {
       e.face = dx < 0 ? -1 : 1;
       if (e.cast > 0) e.cast--;
       if (!player.hidden && Math.abs(dx) < 480 && Math.abs(dy) < 260 && --e.fire <= 0) {
-        e.fire = e.rate + 30; e.cast = 20; const tf = 60;
+        e.fire = e.rate + 30; e.cast = 20; e.castT = 14; const tf = 60;
         haz({ type: 'fireball', x: c.x - 8, y: e.y, w: 16, h: 16, vx: dx / tf, vy: (dy - 10) / tf - .5 * .25 * tf, g: .25, life: 180, blockable: true, solidStop: true, groundKill: true });
       }
       break;
@@ -2849,9 +2852,18 @@ function drawHound(p) {
   ctx.beginPath(); ctx.moveTo(-5, -4); ctx.quadraticCurveTo(-12, -6 + wave, -16, 2 + wave); ctx.lineTo(-13, 3); ctx.quadraticCurveTo(-10, -2, -4, -2); ctx.fill();
   P([[-3, -4], [0, -9], [2, -4]], '#0e0a0c');
   ctx.save(); ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = p.regressed ? 8 : 4; ctx.fillStyle = '#ff2a3a'; ctx.fillRect(3, 4.5, 3, 2); ctx.restore(); line(2, 3, 6.5, 2, ink, 1.5); line(2, 10.5, 5.5, 10.3, '#8a4a3a', 1);
-  E(9, 16, 3, 3, skin);
-  if (p.atk <= 0 && !p.fury && !(p.hdash > 0)) { ctx.save(); ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = p.regressed ? 14 : 8; line(4, 19, 9, 15, '#2a1a14', 3.5); line(9, 15, 31, -2, '#14060a', 3.4); line(10, 14, 31, -2, '#e0303c', 1.2); ctx.restore(); line(7, 13, 11, 17, '#e0303c', 2); }
-  else if (p.hdash > 0 || p.fury) { ctx.save(); ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = 12; line(9, 15, 36, 15, '#14060a', 3.4); line(10, 15, 36, 15, '#e0303c', 1.2); ctx.restore(); }
+  // góc kiếm theo động tác: đứng thủ / vung chém / chém liên hoàn / lướt / thu kiếm rồi chém một đường
+  let ang = -.62, len = 28, ext = 0;
+  if (p.void) { const vt = p.void.t; if (vt < 24) { ang = 2.5 + Math.sin(vt) * .03; ext = -4; } else { ang = -.05 + Math.max(0, 30 - vt) * .02; len = 34; ext = 6; } }
+  else if (p.fury) { ang = Math.sin(Date.now() / 22) * 1.3; len = 30; ext = 4; }
+  else if (p.hdash > 0) { ang = .05; len = 32; ext = 6; }
+  else if (p.atk > 0) { const u = 1 - p.atk / 12; ang = -1.8 + u * 2.9; len = 30; ext = 3; }
+  const hx = 9 + ext, hy = 15, ex = hx + Math.cos(ang) * len, ey = hy + Math.sin(ang) * len;
+  E(hx, hy + 1, 3, 3, skin);
+  ctx.save(); ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = p.regressed || p.atk > 0 || p.fury || p.void ? 14 : 8;
+  line(hx - Math.cos(ang) * 5, hy - Math.sin(ang) * 5, hx, hy, '#2a1a14', 3.5); line(hx, hy, ex, ey, '#14060a', 3.4); line(hx + Math.cos(ang) * 2, hy + Math.sin(ang) * 2, ex, ey, '#e0303c', 1.2);
+  ctx.restore(); line(hx - Math.sin(ang) * 3, hy + Math.cos(ang) * 3, hx + Math.sin(ang) * 3, hy - Math.cos(ang) * 3, '#e0303c', 2);
+  if (p.fury || (p.void && p.void.t >= 24 && p.void.t < 34)) { ctx.save(); ctx.globalAlpha = .5; ctx.strokeStyle = '#e0303c'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(hx, hy, len, ang - .9, ang); ctx.stroke(); ctx.restore(); }
 }
 function drawGiong(p) {
   const t = Date.now() / 1000, sw = Math.sin(t * 5);
@@ -2932,6 +2944,10 @@ function drawHero(p, alpha) {
   const runK = p.ground && Math.abs(p.vx || 0) > .6 ? Math.sin((p.run || 0) * 3) : 0;
   if (runK) { ctx.translate(0, -Math.abs(runK) * 1.8); ctx.translate(0, 38); ctx.rotate(.06 * Math.min(1, Math.abs(p.vx) / 5)); ctx.translate(0, -38); }
   else if (p.ground === false && p.vy !== undefined) { ctx.translate(0, 19); ctx.rotate(p.vy < 0 ? -.07 : .05); ctx.translate(0, -19); }
+  { let lean = 0, push = 0; // lấy đà rồi lao người khi tung chiêu / đánh thường
+    if (p.castT > 0) { const u = 1 - p.castT / 16; lean = u < .3 ? -u / .3 * .14 : u < .6 ? -.14 + (u - .3) / .3 * .36 : .22 * (1 - (u - .6) / .4); push = lean * 22; }
+    else if (p.atk > 0 && MELEE[p.cls]) { lean = .12 * Math.sin((1 - p.atk / 14) * Math.PI); push = lean * 16; }
+    if (lean) { ctx.translate(push, 38); ctx.rotate(lean); ctx.translate(0, -38); } }
   if (p.squash > 0) { const k = p.squash / 7 * .12; ctx.translate(0, 38); ctx.scale(1 + k, 1 - k); ctx.translate(0, -38); }
   else if (!p.ground && p.vy !== undefined && Math.abs(p.vy) > 3) { const k = Math.min(.08, Math.abs(p.vy) / 120); ctx.translate(0, 19); ctx.scale(1 - k, 1 + k); ctx.translate(0, -19); }
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
@@ -3147,13 +3163,14 @@ function drawSlash(p) {
   }
   if (p.atk <= 0 || !['samurai', 'warrior', 'king', 'ninja', 'wukong', 'pirate', 'hound'].includes(cls)) return;
   const reach = MELEE[cls].reach;
-  const color = cls === 'warrior' ? (p.atkEmp ? '#ffd166' : '#ffb347') : cls === 'king' ? '#ffd84d' : cls === 'ninja' ? '#b8c4ff' : cls === 'wukong' ? '#ffc53d' : cls === 'pirate' ? (p.armed > 0 ? '#ff3b3b' : '#e8e0d0') : '#dcefff';
+  const color = cls === 'warrior' ? (p.atkEmp ? '#ffd166' : '#ffb347') : cls === 'king' ? '#ffd84d' : cls === 'ninja' ? '#b8c4ff' : cls === 'wukong' ? '#ffc53d' : cls === 'pirate' ? (p.armed > 0 ? '#ff3b3b' : '#e8e0d0') : cls === 'hound' ? '#e0303c' : '#dcefff';
   const prog = 1 - p.atk / 14;
   ctx.save(); ctx.translate(p.x + p.w / 2, p.y + 18); ctx.scale(p.face, 1);
   const a0 = -1.6, a1 = -1.6 + prog * 2.8;
   ctx.globalAlpha = 1 - prog * .6; ctx.lineCap = 'round'; ctx.shadowColor = color; ctx.shadowBlur = 12;
   ctx.strokeStyle = color; ctx.lineWidth = cls === 'samurai' ? 8 : 12; ctx.beginPath(); ctx.arc(4, 0, reach - 10, a0, a1); ctx.stroke();
-  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(4, 0, reach - 10, a0, a1); ctx.stroke();
+  if (cls === 'hound') { ctx.strokeStyle = '#14060a'; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(4, 0, reach - 10, a0, a1); ctx.stroke(); ctx.strokeStyle = '#ff6a7a'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(4, 0, reach - 4, a0, a1); ctx.stroke(); }
+  else { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(4, 0, reach - 10, a0, a1); ctx.stroke(); }
   line(4, 0, 4 + Math.cos(a1) * (reach - 6), Math.sin(a1) * (reach - 6), '#e0e4ee', cls === 'samurai' ? 3 : 5);
   ctx.restore();
 }
@@ -3556,6 +3573,12 @@ function drawEnemy(e) {
   if (e.wind > 6) { const c = center(e); ctx.save(); ctx.globalAlpha = .55 + Math.sin(t / 40) * .3; glow(c.x + e.face * e.w * .45, c.y, 22, '255,90,70', .6);
     ctx.fillStyle = '#ff5a4a'; ctx.font = '800 16px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('!', c.x, e.y - 8); ctx.textAlign = 'left'; ctx.restore(); }
   ctx.save(); ctx.translate(0, ly);
+  { const fc = e.face || e.dir || 1; let lean = 0, push = 0;
+    if (e.wind > 6) lean = -.16; else if (e.wind > 0) { lean = .24; push = 6; }
+    else if (e.castT > 0) { lean = e.castT > 6 ? -.12 : .18; push = e.castT > 6 ? 0 : 4; }
+    else if (e.kind === 'c' && e.charge > 0) lean = .16;
+    else if (!e.fly && Math.abs(e.vx || 0) > .3) { ctx.translate(0, -Math.abs(Math.sin((e.t || 0) * 6 + e.x * .05)) * 2); }
+    if (lean) { const bx = e.x + e.w / 2, by = e.y + e.h; ctx.translate(bx + push * fc, by); ctx.rotate(lean * fc); ctx.translate(-bx, -by); } }
   const W_ = e.flash ? '#ffffff' : null;
   if (e.kind === 'shadow') { ctx.save(); ctx.filter = 'brightness(.35) saturate(.2)'; glow(center(e).x, center(e).y, 30, '120,60,200', .4);
     drawHero({ ...heroStub(e.mimic || 'warrior', e.x, e.y, e.face), atk: e.wind > 0 && e.wind < 10 ? 8 : 0 }, e.flash ? 1 : .9); ctx.filter = 'none';
@@ -3872,6 +3895,12 @@ function drawBossBody(b, alpha) {
   }
   if (b.flash > 0) ctx.filter = 'brightness(2.4)';
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  { let lean = 0, crouch = 0, bob = 0;
+    if (b.state === 'tele') { lean = -.13; crouch = .07 + Math.sin(t / 60) * .01; }
+    else if (b.state === 'act' && b.at < 16) { lean = .22 * Math.sin(b.at / 16 * Math.PI); crouch = -.04 * Math.sin(b.at / 16 * Math.PI); }
+    if (Math.abs(b.vx || 0) > 6) lean = .2;
+    else if (b.state === 'idle' && Math.abs(b.vx || 0) > .3 && b.ground) bob = -Math.abs(Math.sin(t / 110)) * 3;
+    ctx.translate(0, h + bob); ctx.rotate(lean); ctx.scale(1 + crouch, 1 - crouch); ctx.translate(0, -h); }
   const s = h / 41; ctx.scale(s, s); ctx.translate(0, 3);
   (BOSS_ART[b.id] || BOSS_ART.fist)(D, t, b);
   ctx.filter = 'none';
