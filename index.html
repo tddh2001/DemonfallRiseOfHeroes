@@ -356,15 +356,20 @@
   .lib-card small { display: block; color: #a09b8c; font-size: 11px; }
   .lib-card.locked { color: #5b5a56; }
   .lib-detail { width: min(860px, 100%); display: grid; grid-template-columns: 220px 1fr; gap: 18px; text-align: left; background: #0a0e13; border: 1px solid #785a28; border-radius: 3px; padding: 16px; }
-  .lib-detail canvas { width: 220px; height: 220px; background: radial-gradient(#1a2840, #091018); border-radius: 3px; }
+  .lib-detail > canvas { width: 220px; height: 220px; background: radial-gradient(#1a2840, #091018); border-radius: 3px; }
   .lib-detail h2 { margin: 0; font: 700 26px 'Oswald', sans-serif; color: #f0e6d2; letter-spacing: .04em; }
   .lib-detail .ttl { color: #c8aa6e; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
   .lib-detail .meta { color: #a09b8c; font-size: 13px; margin-bottom: 8px; }
   .lib-detail .desc { color: #cdbe91; font-size: 14px; line-height: 1.5; margin-bottom: 12px; }
-  .lib-sk { display: flex; gap: 10px; padding: 8px 0; border-top: 1px solid #1e2328; }
+  .lib-sk { display: flex; gap: 10px; padding: 8px 6px; border-top: 1px solid #1e2328; cursor: pointer; border-radius: 2px; }
+  .lib-sk:hover { background: rgba(200,170,110,.07); }
+  .lib-sk.on { background: rgba(200,170,110,.14); box-shadow: inset 2px 0 0 #c8aa6e; }
+  .lib-sk.on b { background: #c8aa6e; color: #010a13; }
+  .lib-sim { width: 100%; max-width: 560px; aspect-ratio: 560 / 230; display: block; border-radius: 3px; border: 1px solid #3c3c41; margin: 4px 0 6px; }
+  .lib-hint { color: #a09b8c; font-size: 12px; margin-bottom: 4px; }
   .lib-sk b { flex: 0 0 26px; height: 26px; display: grid; place-items: center; border: 1px solid #c8aa6e; color: #c8aa6e; font: 700 13px 'Oswald', sans-serif; border-radius: 2px; }
   .lib-sk div { color: #f0e6d2; font-size: 14px; } .lib-sk div span { display: block; color: #a09b8c; font-size: 13px; margin-top: 2px; }
-  @media (max-width: 640px) { .lib-detail { grid-template-columns: 1fr; } .lib-detail canvas { margin: 0 auto; } }
+  @media (max-width: 640px) { .lib-detail { grid-template-columns: 1fr; } .lib-detail > canvas { margin: 0 auto; } }
   .gift-form { display: flex; gap: 8px; width: min(460px, 100%); margin-top: 6px; }
   .gift-form input { flex: 1; min-width: 0; font: 600 17px 'Be Vietnam Pro', sans-serif; letter-spacing: .06em; color: #f0e6d2; padding: 10px 14px;
     background: #010a13; border: 1px solid #785a28; border-radius: 2px; outline: none; }
@@ -1045,7 +1050,7 @@ function buildTraining() {
     [4, 'Sân đấu tập: bù nhìn không bao giờ gục. Thử chiêu thoải mái, ở đây bạn cũng không thể thua.'],
     [19, 'Bảng sát thương ở trên cùng: tổng sát thương, sát thương trong 5 giây gần nhất và sát thương mỗi giây.'],
     [33, IS_TOUCH ? 'Phi tiêu bay tới định kỳ: bấm ⚔ đúng lúc để đỡ đòn.' : 'Phi tiêu bay tới định kỳ: bấm J đúng lúc để đỡ đòn.'],
-    [41, 'Cẩn thận gai và đá rơi (có vòng đỏ báo trước).'],
+    [41, 'Cẩn thận hố gai.'],
   ];
   return { G, cols, len: cols, spawn: [[14, 9, 'dummy'], [48, 9, 'dummy']], flies: [], cps: [6], goalCol: 999, isBoss: false, n: TRAIN, d: 1, signs, training: true, tick: 0 };
 }
@@ -2073,8 +2078,7 @@ function update() {
   if (p.squash > 0) p.squash--;
   if (world.training) {
     world.tick++;
-    if (world.tick % 150 === 0) haz({ type: 'dart', x: (world.cols - 2) * T - 20, y: p.y + 10, w: 18, h: 8, vx: -6.5, vy: 0, life: 260, blockable: true, solidStop: true, color: '#c9cfe6' });
-    if (world.tick % 230 === 115) { const tx = center(p).x; haz({ type: 'mark', x: tx - 26, y: GROUND_Y - 6, w: 52, h: 6, life: 46, color: '#ff6b6b' }); haz({ type: 'fallsword', x: tx - 12, y: -90, w: 24, h: 60, delay: 46, g: 1.2, life: 220, groundKill: true, color: '#9a8a7a' }); }
+    if (world.tick % 150 === 0) haz({ type: 'dart', x: Math.min((world.cols - 2) * T - 20, camX + W + 40), y: p.y + 10, w: 18, h: 8, vx: -6.5, vy: 0, life: 260, blockable: true, solidStop: true, color: '#c9cfe6' });
     if (trainLog.length && trainLog[0].t < world.tick - 300) trainLog = trainLog.filter(q => q.t >= world.tick - 300);
   }
   if (cls === 'giong') {
@@ -4425,6 +4429,118 @@ function renderLibrary() {
     gEl.appendChild(card);
   }
 }
+function simSwap(sb) { let t;
+  t = world; world = sb.world; sb.world = t;
+  t = solids; solids = sb.solids; sb.solids = t;
+  t = spikes; spikes = sb.spikes; sb.spikes = t;
+  t = hazards; hazards = sb.hazards; sb.hazards = t;
+  t = particles; particles = sb.particles; sb.particles = t;
+  t = rings; rings = sb.rings; sb.rings = t;
+  t = fxList; fxList = sb.fxList; sb.fxList = t;
+  t = popups; popups = sb.popups; sb.popups = t;
+  t = enemies; enemies = sb.enemies; sb.enemies = t;
+  t = shots; shots = sb.shots; sb.shots = t;
+  t = boss; boss = sb.boss; sb.boss = t;
+  t = player; player = sb.player; sb.player = t;
+  t = camX; camX = sb.camX; sb.camX = t;
+  t = shake; shake = sb.shake; sb.shake = t;
+  t = hitStop; hitStop = sb.hitStop; sb.hitStop = t;
+  t = flashT; flashT = sb.flashT; sb.flashT = t;
+  t = trail; trail = sb.trail; sb.trail = t;
+  t = decals; decals = sb.decals; sb.decals = t;
+  t = bolts; bolts = sb.bolts; sb.bolts = t;
+  t = petals; petals = sb.petals; sb.petals = t;
+  t = curBoss; curBoss = sb.curBoss; sb.curBoss = t;
+  t = walls; walls = sb.walls; sb.walls = t;
+  t = traps; traps = sb.traps; sb.traps = t;
+  t = coins; coins = sb.coins; sb.coins = t;
+  t = checkpoints; checkpoints = sb.checkpoints; sb.checkpoints = t;
+  t = goal; goal = sb.goal; sb.goal = t;
+  t = gate; gate = sb.gate; sb.gate = t;
+  t = bossStarted; bossStarted = sb.bossStarted; sb.bossStarted = t;
+  t = state; state = sb.state; sb.state = t;
+  t = cls; cls = sb.cls; sb.cls = t;
+  t = reward; reward = sb.reward; sb.reward = t;
+}
+// Sân mô phỏng thu nhỏ: chạy đúng AI thật của quái / boss trên một đấu trường riêng, không ảnh hưởng game
+let libSim = null;
+function makeSimBox() {
+  const sb = { world: { cols: 24, len: 0, arenaL: 40, arenaR: 920, d: 5, G: [], theme: THEMES.forest, signs: null, flies: [], cps: [], n: 1, isBoss: true },
+    solids: [], spikes: [], hazards: [], particles: [], rings: [], fxList: [], popups: [], enemies: [], shots: [], boss: null, camX: 0, shake: 0, hitStop: 0, flashT: 0,
+    trail: [], decals: [], bolts: [], petals: [], curBoss: null, walls: [], traps: [], coins: [], checkpoints: [], goal: null, gate: null, bossStarted: true, state: 'play', cls: 'warrior', reward: null };
+  for (let x = 0; x < 24; x++) sb.solids.push({ x: x * T, y: GROUND_Y, w: T, h: T, top: false, grass: true });
+  sb.solids.push({ x: 0, y: 0, w: T, h: GROUND_Y, top: false }, { x: 23 * T, y: 0, w: T, h: GROUND_Y, top: false });
+  sb.player = Object.assign(heroStub('warrior', 250, GROUND_Y - 38, 1), { inv: 1e9, hearts: 5, maxHearts: 5, vy: 0, ground: true, hidden: false, parryWin: 0, shield: 0, cds: [0, 0, 0, 0], level: 30, xp: 0, kills: 0, dash: 0, phase: 0, pulled: 0, hurtCount: 0 });
+  return sb;
+}
+function simResetBoss(sim) {
+  const p2 = sim.key === 'demon2', id = p2 ? 'demon' : sim.key, D = BOSS_DEFS[id], w = p2 ? 84 : D.w, h = p2 ? 120 : D.h;
+  hazards.length = 0; enemies.length = 0; player.x = 250; player.y = GROUND_Y - 38;
+  const b = { boss: true, id, x: 600, y: GROUND_Y - h, w, h, hp: 999, maxHp: 999, alive: true, face: -1, vx: 0, vy: 0, ground: true, state: 'idle', timer: 99, skill: sim.skill, last: -1, at: 0, flash: 0,
+    phase: p2 ? 2 : 1, alpha: 1, warn: false, float: false, hitIds: new Set(), rcd: 0, xp: 0, stun: 0, lift: 0, label: null, t: 0, stunT: 0, fly: p2, wings: p2 };
+  enemies.push(b); boss = b; sim.phase = 'wait'; sim.f = 0;
+}
+function simResetEnemy(sim) {
+  hazards.length = 0; enemies.length = 0; player.x = 250; player.y = GROUND_Y - 38;
+  const e = makeEnemy(sim.key, 12, sim.key === 'b' ? 5 : 9, 3); if (sim.key === 'dummy') e.x = 420;
+  enemies.push(e); sim.f = 0;
+}
+function simStep(sim) {
+  sim.f++;
+  if (sim.kind === 'boss') {
+    const b = boss;
+    if (sim.phase === 'wait' && sim.f > 30) { sim.phase = 'tele'; sim.f = 0; b.state = 'tele'; b.label = { text: (b.phase === 2 ? BOSS_DEFS.demon.skills2 : BOSS_DEFS[b.id].skills)[sim.skill], t: 60 }; }
+    else if (sim.phase === 'tele' && sim.f > 30) { sim.phase = 'act'; sim.f = 0; b.state = 'act'; b.at = 0; b.skill = sim.skill; }
+    else if (sim.phase === 'act') { curBoss = b; let done = false; try { done = bossAI(b)[sim.skill](b, b.at); } catch (err) { done = true; } curBoss = null; b.at++;
+      if (done || b.at > 420) { sim.phase = 'rest'; sim.f = 0; b.state = 'idle'; b.vx = 0; b.warn = false; b.float = false; b.landed = false; } }
+    else if (sim.phase === 'rest' && sim.f > 80) { simResetBoss(sim); return; }
+    if (b.fly && !b.float) { b.vy = 0; b.y += (GROUND_Y - b.h - 64 + Math.sin(Date.now() / 400) * 12 - b.y) * .08; } else if (!b.float) b.vy += .75;
+    b.x += b.vx; if (!b.fly || b.float) b.y += b.vy;
+    if (!b.float && !b.fly && b.y + b.h >= GROUND_Y) { b.y = GROUND_Y - b.h; b.vy = 0; b.ground = true; } else b.ground = false;
+    b.x = clampBossX(b.x, b); if (b.state !== 'act') b.face = center(player).x < center(b).x ? -1 : 1;
+    if (b.label && --b.label.t <= 0) b.label = null; if (b.flash > 0) b.flash--;
+    for (const e of enemies) if (e.alive && !e.boss) { try { updateEnemy(e, center(player)); } catch (err) {} }
+  } else {
+    for (const e of enemies) if (e.alive) { try { updateEnemy(e, center(player)); } catch (err) {} if (e.flash > 0) e.flash--; }
+    if (sim.f > 420 || !enemies.some(e => e.alive && e.x > 60 && e.x < 900 && e.y < GROUND_Y + 40)) { simResetEnemy(sim); return; }
+  }
+  player.x = Math.max(60, Math.min(860, player.x)); player.y = GROUND_Y - 38;
+  try { updateHazards(player, center(player)); } catch (err) {}
+  state = 'play'; tickFx(); if (shake > 0) shake *= .85;
+}
+function simDraw(sim) {
+  const c = sim.canvas, g = c.getContext('2d'), old = ctx; ctx = g;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  const sky = ctx.createLinearGradient(0, 0, 0, c.height); sky.addColorStop(0, '#1d2340'); sky.addColorStop(1, '#3a3f73'); ctx.fillStyle = sky; ctx.fillRect(0, 0, c.width, c.height);
+  const k = c.width / 800, top = GROUND_Y - c.height / k + 34; ctx.save(); ctx.scale(k, k); ctx.translate(-80 + (shake > .5 ? (Math.random() - .5) * shake : 0), -top);
+  ctx.fillStyle = '#3b3148'; ctx.fillRect(0, GROUND_Y, 960, 80); ctx.fillStyle = '#3f7a5c'; ctx.fillRect(0, GROUND_Y, 960, 8); ctx.fillStyle = '#5fa97c'; ctx.fillRect(0, GROUND_Y, 960, 3);
+  for (const d of decals) { ctx.save(); ctx.globalAlpha = Math.min(1, d.t / 40) * .8; ctx.strokeStyle = '#120c14'; ctx.lineWidth = 2.5; for (const seg of d.arms) { ctx.beginPath(); ctx.moveTo(seg[0][0], seg[0][1]); for (const q of seg) ctx.lineTo(q[0], q[1]); ctx.stroke(); } ctx.restore(); }
+  try {
+    drawHero(player, .55);
+    for (const e of enemies) if (e.alive) { if (e.boss) drawBossBody(e, e.alpha); else drawEnemy(e); }
+    hazards.forEach(drawHazard); drawFxList();
+    for (const r of rings) { ctx.globalAlpha = r.t / 20; ctx.strokeStyle = r.color; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, 7); ctx.stroke(); }
+    for (const q of particles) { ctx.globalAlpha = Math.max(0, q.life / (q.puff ? 18 : 30)); ctx.fillStyle = q.color; if (q.puff) { ctx.beginPath(); ctx.arc(q.x, q.y, q.s, 0, 7); ctx.fill(); } else ctx.fillRect(q.x - 2, q.y - 2, 4, 4); }
+    ctx.globalAlpha = 1;
+    for (const b of bolts) { ctx.save(); ctx.globalAlpha = Math.min(1, b.t / 8); ctx.strokeStyle = b.col; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(b.pts[0][0], b.pts[0][1]); for (const q of b.pts) ctx.lineTo(q[0], q[1]); ctx.stroke(); ctx.restore(); }
+  } catch (err) {}
+  ctx.restore();
+  ctx.font = '600 12px "Be Vietnam Pro", sans-serif'; ctx.fillStyle = 'rgba(232,236,247,.6)'; ctx.fillText('Bóng mờ bên trái là mục tiêu thử (không bị trừ máu)', 10, c.height - 10);
+  ctx = old;
+}
+function simLoop() {
+  const sim = libSim; if (!sim || !document.body.contains(sim.canvas) || $('libPanel').hidden) { libSim = null; return; }
+  const savedState = state; simSwap(sim.box); state = 'play';
+  try { simStep(sim); simDraw(sim); } catch (err) {}
+  sim.box.state = 'play'; simSwap(sim.box); state = savedState;
+  requestAnimationFrame(simLoop);
+}
+function startSim(canvas, kind, key, skill) {
+  const running = !!libSim;
+  libSim = { canvas, kind, key, skill, box: makeSimBox(), f: 0, phase: 'wait' };
+  const savedState = state; simSwap(libSim.box); if (kind === 'boss') simResetBoss(libSim); else simResetEnemy(libSim); simSwap(libSim.box); state = savedState;
+  if (!running) requestAnimationFrame(simLoop);
+}
 function showLibDetail(kind, k) {
   const gEl = $('libGrid'), dEl = $('libDetail'); gEl.hidden = true; dEl.hidden = false; $('libBack').hidden = false; dEl.innerHTML = '';
   dEl.appendChild(libPortrait(kind, k, 220, false));
@@ -4438,6 +4554,13 @@ function showLibDetail(kind, k) {
       + names.map((n2, i) => `<div class="lib-sk"><b>${i + 1}</b><div>${n2}<span>${desc[i] || ''}</span></div></div>`).join('');
   }
   dEl.insertAdjacentHTML('beforeend', `<div>${html}</div>`);
+  const right = dEl.lastElementChild, cv = document.createElement('canvas'); cv.className = 'lib-sim'; cv.width = 560; cv.height = 230;
+  const hint = document.createElement('div'); hint.className = 'lib-hint'; hint.textContent = kind === 'boss' ? 'Bấm vào từng kỹ năng để xem hoạt ảnh.' : 'Hoạt ảnh hành vi của quái (bấm kỹ năng để chạy lại).';
+  right.insertBefore(hint, right.querySelector('.lib-sk')); right.insertBefore(cv, hint);
+  const rows = [...right.querySelectorAll('.lib-sk')];
+  rows.forEach((r, i) => r.addEventListener('click', () => { rows.forEach(x => x.classList.toggle('on', x === r)); startSim(cv, kind, k, i); }));
+  if (rows[0]) rows[0].classList.add('on');
+  startSim(cv, kind, k, 0);
 }
 $('libBtn').addEventListener('click', () => { hideAll(); $('libPanel').hidden = false; renderLibrary(); });
 $('libClose').addEventListener('click', toMenu);
