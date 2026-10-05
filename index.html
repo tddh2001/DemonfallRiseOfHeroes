@@ -866,9 +866,13 @@ STAGES.forEach((S, n) => {
 });
 // Chi tiết báo trước: Hắc Khuyển đã âm thầm dọn đường từ trước
 const FORESHADOW_STAGE = STAGES.findIndex(S => S.name === 'Thung Lũng Gầm Thét');
+// Nhân vật cốt truyện Saga I: Chiến binh, Pháp sư, Kiếm sĩ, Thiện xạ, Nhà vua (và Huyết Kiếm Khuyển Vệ).
+// Các nhân vật khác có cốt truyện riêng sau này; khi điều khiển họ, câu thoại 'me' trả về nhân vật cốt truyện mặc định.
+const STORY_HEROES = ['warrior', 'mage', 'samurai', 'gunner', 'king', 'hound'];
+const STORY_SPEAKS = ['warrior', 'mage', 'samurai', 'gunner', 'king'];
 if (FORESHADOW_STAGE > 0) STORY[FORESHADOW_STAGE].end = [
   ['nar', 'Dưới chân là những vệt máu còn mới, cùng những vết chém đỏ đen in sâu vào đá. Xác lũ quỷ phục kích đã hóa tro từ lâu.'],
-  ['me', 'Ai đó đã đến đây từ trước...', null, 'thach'],
+  ['me', 'Ai đó đã đến đây từ trước...', null, 'thach', ['king']],   // Chương 2: Vua vẫn còn bị phong ấn
 ];
 if (FORESHADOW_STAGE > 0) STORY[FORESHADOW_STAGE].end.top = true;
 STORY[LAST] = {
@@ -880,7 +884,7 @@ STORY[LAST] = {
     ['nar', 'Một đường kiếm đỏ đen xé toạc bóng tối.', () => endScene && endScene.cut()],
     ['hound', 'Không có lần sau.'],
     ['hound', 'Ở dòng thời gian trước, ngươi đã trở lại... và cả thế giới chìm trong biển máu.'],
-    ['me', 'Ngươi... là ai?'],
+    ['me', 'Ngươi... là ai?', null, 'thach'],
     ['hound', 'Một kẻ đã thấy ngày tận thế.'],
     ['hound', 'Hắn chỉ là con chó canh cửa. Kẻ thật sự đứng sau... đang bắt đầu thức dậy.'],
     ['nar', 'Mặt trời mọc trên vương quốc. Nhưng phía chân trời, vầng trăng đang dần nhuốm đỏ.', () => endScene && (endScene.moon = true)],
@@ -4178,7 +4182,7 @@ function wrapText(text, maxW) {
   if (cur) lines.push(cur); return lines;
 }
 function drawDialog() {
-  const d = dialog, [who0, text] = d.lines[d.i], who = who0 === 'me' && cls === 'hound' ? (d.lines[d.i][3] || 'vua') : who0;
+  const d = dialog, [who0, text] = d.lines[d.i], who = who0 === 'me' && (!STORY_SPEAKS.includes(cls) || (d.lines[d.i][4] || []).includes(cls)) ? (d.lines[d.i][3] || 'vua') : who0;
   const meName = { giong: 'Thánh Gióng', wukong: 'Tôn Ngộ Không', king: 'Vua Thái Dương', pirate: 'Thuyền trưởng Hắc Hải' }[cls] || `${CLASSES[cls].short || CLASSES[cls].name} ${CLASSES[cls].hero}`;
   const [name, color] = who === 'me' ? [meName, CLASSES[cls].color] : SPEAKERS[who];
   d.t++;
