@@ -710,7 +710,7 @@ const ACHS = [
   { id: 'gachaLeg',  ico: '🌞', name: 'Ánh sáng huyền thoại', desc: 'Chiêu mộ ra tướng Huyền thoại' },
   { id: 'rank5',     ico: '💠', name: 'Thức tỉnh',            desc: 'Nâng một tướng lên bậc 5' },
 ];
-const UNLOCK_HINT = { giong: 'Chiêu mộ (Huyền thoại)', ninja: 'Chiêu mộ (Sử thi)', wukong: 'Chiêu mộ (Huyền thoại)', pirate: 'Chiêu mộ (Huyền thoại)', brawler: 'Chiêu mộ (Sử thi)', beast: `Mua trong Cửa hàng (${400} ✦)`, mage: 'Giải cứu ở Màn 1 hoặc chiêu mộ', samurai: 'Giải cứu ở Màn 2 hoặc chiêu mộ', gunner: 'Giải cứu ở Màn 3 hoặc chiêu mộ', king: 'Giải phong ấn (Quả cầu ở Chương 1 + 4 mảnh từ Tứ Đại Thiên Vương ở Chương 3) hoặc chiêu mộ' };
+const UNLOCK_HINT = { giong: 'Chiêu mộ (Huyền thoại)', ninja: 'Chiêu mộ (Sử thi)', wukong: 'Chiêu mộ (Huyền thoại)', pirate: 'Chiêu mộ (Huyền thoại)', brawler: 'Chiêu mộ (Sử thi)', beast: `Mua trong Cửa hàng (${400} ✦)`, mage: 'Giải cứu ở Màn 1 hoặc chiêu mộ', samurai: 'Giải cứu ở Màn 2 hoặc chiêu mộ', gunner: 'Giải cứu ở Màn 3 hoặc chiêu mộ', king: 'Giải phong ấn (Quả cầu ở Chương 1 + 4 mảnh từ Tứ Đại Thiên Vương ở Chương 3). Chỉ sau khi sở hữu mới chiêu mộ ra mảnh tướng' };
 // ---------- Chiêu mộ ----------
 const RARITY = { warrior: 'com', mage: 'rare', samurai: 'rare', gunner: 'rare', beast: 'epic', brawler: 'epic', ninja: 'epic', king: 'leg', wukong: 'leg', pirate: 'leg', giong: 'leg' };
 const RARITY_NAME = { com: 'Thường', rare: 'Hiếm', epic: 'Sử thi', leg: 'Huyền thoại' };
@@ -4087,11 +4087,13 @@ document.getElementById('shopClose').addEventListener('click', toMenu);
 
 // ======================= CHIÊU MỘ =======================
 function addShards(c, n) { save.gacha.shards[c] = (save.gacha.shards[c] || 0) + n; }
-const LEG_POOL = ['king', 'wukong', 'pirate', 'giong'], EPIC_POOL = ['brawler', 'ninja'], RARE_POOL = ['mage', 'samurai', 'gunner'];
+const LEG_POOL = ['king', 'wukong', 'pirate', 'giong'],
+  // Nhà vua chỉ mở khóa qua cốt truyện; chưa sở hữu thì không ra trong chiêu mộ (kể cả mảnh)
+  gachaOk = c => c !== 'king' || save.unlocked.includes('king'), legPool = () => LEG_POOL.filter(gachaOk), EPIC_POOL = ['brawler', 'ninja'], RARE_POOL = ['mage', 'samurai', 'gunner'];
 const pickOf = a => a[Math.floor(Math.random() * a.length)];
 function pickHero() {   // trong 31%: Huyền thoại 3, Sử thi 6, Hiếm 9, Thường 13
   const r = Math.random() * 31;
-  if (r < 3) return pickOf(LEG_POOL);
+  if (r < 3) return pickOf(legPool());
   if (r < 9) return pickOf(EPIC_POOL);
   if (r < 18) return pickOf(RARE_POOL);
   return 'warrior';
@@ -4100,7 +4102,7 @@ function rollOnce() {
   const g = save.gacha;
   g.pity++; g.legPity++; g.pulls++;
   let hero = null;
-  if (g.legPity >= 60) hero = pickOf(LEG_POOL);                         // bảo hiểm Huyền thoại sau 60 lượt
+  if (g.legPity >= 60) hero = pickOf(legPool());                         // bảo hiểm Huyền thoại sau 60 lượt
   else if (g.pity >= 10 || Math.random() < 0.31) hero = pickHero(); // bảo hiểm tướng sau 10 lượt
   if (hero) {
     g.pity = 0; if (RARITY[hero] === 'leg') { g.legPity = 0; unlockAch('gachaLeg'); }
@@ -4110,7 +4112,7 @@ function rollOnce() {
   }
   const r = Math.random();
   if (r < 0.45) { const n = 8 + Math.floor(Math.random() * 13); save.coins += n; return { kind: 'coins', n }; }
-  if (r < 0.80) { const h = CLASS_ORDER[Math.floor(Math.random() * CLASS_ORDER.length)], n = 2 + Math.floor(Math.random() * 3); addShards(h, n); return { kind: 'shard', hero: h, n }; }
+  if (r < 0.80) { const pool = CLASS_ORDER.filter(gachaOk), h = pool[Math.floor(Math.random() * pool.length)], n = 2 + Math.floor(Math.random() * 3); addShards(h, n); return { kind: 'shard', hero: h, n }; }
   const n = 150; save.hxp[selCls] = heroXp(selCls) + n; return { kind: 'xp', n };
 }
 function doPull(count) {
@@ -4201,6 +4203,7 @@ const GIFT_CODES = {
   '1uduyxaqyn2': { tickets: 10 },                                     // TANTHU2026
   'lsqwxcp8st':  { coins: 500 },                                      // RISEOFHEROES
   '26j6kzmkah':  { shardsAll: 10 },                                   // TUONGMOI
+  'xof3fyjzp8': { unlockAll: true, reusable: true },                      // MOKHOATATCA: mở khóa mọi tướng, mọi màn, tất cả cấp 100
 };
 function redeemCode(raw) {
   const msg = $('giftMsg'), code = raw.trim().toLowerCase().replace(/\s+/g, '');
@@ -4212,6 +4215,13 @@ function redeemCode(raw) {
   const got = [];
   if (g.coins) { save.coins += g.coins; got.push(`<b>+${g.coins.toLocaleString('vi-VN')} ✦</b> đom đóm`); }
   if (g.tickets) { save.gacha.tickets += g.tickets; got.push(`<b>+${g.tickets.toLocaleString('vi-VN')} 🎟</b> vé chiêu mộ`); }
+  if (g.unlockAll) {
+    save.unlocked = CLASS_ORDER.slice();
+    for (const c of CLASS_ORDER) save.hxp[c] = Math.max(heroXp(c), LV_TOTAL[MAX_LV]);
+    save.cleared = Math.max(save.cleared, LAST); save.tutDone = true;
+    save.orb = true; save.frags = [true, true, true, true]; save.stats.kingSealBroken = true;
+    got.push(`<b>mở khóa toàn bộ ${CLASS_ORDER.length} tướng</b>`, `<b>mọi màn chơi</b>`, `<b>tất cả tướng cấp ${MAX_LV}</b>`);
+  }
   if (g.shardsAll) { CLASS_ORDER.forEach(c => addShards(c, g.shardsAll)); got.push(`<b>+${g.shardsAll} 🧩</b> mảnh cho mọi tướng`); }
   if (!g.reusable) save.giftUsed[h] = true;
   persist();
