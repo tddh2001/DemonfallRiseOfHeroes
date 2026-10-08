@@ -838,11 +838,11 @@ const TRAIN = STAGES.push({ name: 'Sân Đấu Tập', type: 'training', chapter
 const SAGA2 = { name: 'Saga II · Cổ Quốc Nguyệt Thành' };
 Object.assign(CHAPTERS, { 5: 'Chương 1 · Rừng Sâu Thẳm', 6: 'Chương 2 · Thành Phố Cổ Đại', 7: 'Chương 3 · Cung Điện Cổ Đại' });
 const S2_FIRST = STAGES.length;
-[[5, 'Bìa Rừng Sương'], [5, 'Rễ Cổ Thụ'], [5, 'Đầm Quạ Đen'], [5, 'Lối Đá Khắc Trăng'], [5, 'Cổng Thành Bị Nuốt', 'treant'],
- [6, 'Đại Lộ Đổ Nát'], [6, 'Khu Chợ Câm Lặng'], [6, 'Đền Chiêu Hồn', null, true], [6, 'Tháp Canh Nghiêng'], [6, 'Cầu Đá Gãy'], [6, 'Quảng Trường Nguyệt Thần'],
- [7, 'Hành Lang Vàng Mục'], [7, 'Sảnh Bích Họa'], [7, 'Phòng Cạm Bẫy'], [7, 'Mật Đạo Ngai Vàng'], [7, 'Điện Ngai Vàng', 'priest']].forEach(([ch, name, boss, shrine], i) =>
+[[5, 'Bìa Rừng Sương'], [5, 'Rễ Cổ Thụ'], [5, 'Đầm Quạ Đen', 'crowlord'], [5, 'Lối Đá Khắc Trăng'], [5, 'Cổng Thành Bị Nuốt', 'treant'],
+ [6, 'Đại Lộ Đổ Nát'], [6, 'Đền Chiêu Hồn', null, true], [6, 'Khu Chợ Câm Lặng', 'butcher'], [6, 'Tháp Canh Nghiêng'], [6, 'Cầu Đá Gãy'], [6, 'Quảng Trường Nguyệt Thần', 'moonstatue'],
+ [7, 'Hành Lang Vàng Mục'], [7, 'Sảnh Bích Họa'], [7, 'Phòng Cạm Bẫy', 'hollowguard'], [7, 'Mật Đạo Ngai Vàng'], [7, 'Điện Ngai Vàng', 'priest']].forEach(([ch, name, boss, shrine], i) =>
   STAGES.push({ name, type: boss ? 'boss' : 'normal', boss: boss || undefined, shrine: !!shrine, chapter: ch, saga: 2, d: 13 + i * .4,
-    theme: { 5: 'deepwood', 6: 'ruins', 7: 'palace' }[ch], pool: { 5: ['w', 'r', 'e', 'j', 'b', 'w'], 6: ['s', 'g', 'a', 'm', 'E', 's'], 7: ['s', 'g', 'm', 'E', 'a', 'r'] }[ch] }));
+    theme: { 5: 'deepwood', 6: 'ruins', 7: 'palace' }[ch], pool: { 5: ['w', 'r', 'n', 'v', 'f', 'w'], 6: ['u', 'U', 'r', 'v', 'w', 'u'], 7: ['s', 'u', 'U', 'f', 'v', 's'] }[ch] }));
 const S2_LAST = STAGES.length - 1;
 MAX_STARS = (LAST + S2_LAST - S2_FIRST + 1) * 3;
 function stageOpen(n) { if (n === TRAIN || n === 0) return true; const S = STAGES[n]; if (!S) return false;
@@ -858,6 +858,7 @@ const SPEAKERS = {
   wrath: ['Phẫn Nộ', '#ff5a3d'], pride: ['Kiêu Ngạo', '#ffd166'], greed: ['Tham Lam', '#e8c14a'], glutton: ['Tham Ăn', '#b4d455'],
   lust: ['Dục Vọng', '#ff7ac8'], envy: ['Đố Kị', '#4fd18b'], sloth: ['Lười Biếng', '#6fb6ff'], hound: ['Hắc Khuyển', '#ff5a6a'],
   hthink: ['Hắc Khuyển (nghĩ thầm)', '#a8707a'], treant: ['Thụ Yêu Vực', '#b06bff'], priest: ['Đại Tư Tế', '#ff5a6a'],
+  crowlord: ['Quạ Chúa Ba Mắt', '#9a5aff'], butcher: ['Đồ Tể Tha Hóa', '#d04a3a'], moonstatue: ['Tượng Nguyệt Thần', '#cfd8ff'], hollowguard: ['Vệ Binh Rỗng', '#b06bff'],
 };
 const STORY = {
   0: { intro: [['nar', 'Chào mừng tới Sân Tập. Hãy đọc các tấm biển gỗ dọc đường, chúng sẽ dạy bạn mọi thứ cần biết.']],
@@ -923,28 +924,28 @@ if (FORESHADOW_STAGE > 0) STORY[FORESHADOW_STAGE].end = [
 ];
 if (FORESHADOW_STAGE > 0) STORY[FORESHADOW_STAGE].end.top = true;
 // ----- Saga II · Cổ Quốc Nguyệt Thành -----
-(() => { const S = (i, o) => { STORY[S2_FIRST + i] = o; };
-  S(0, { intro: [['nar', 'Vệt ma khí từ khe nứt dưới xác Quỷ Vương kéo dài về phía tây, xuyên vào một khu rừng già chưa từng có trên bản đồ.'],
+(() => { const S = (name, o) => { STORY[STAGES.findIndex(st => st.saga === 2 && st.name === name)] = o; };
+  S('Bìa Rừng Sương', { intro: [['nar', 'Vệt ma khí từ khe nứt dưới xác Quỷ Vương kéo dài về phía tây, xuyên vào một khu rừng già chưa từng có trên bản đồ.'],
     ['ung', 'Chúng ta thật sự đi theo kẻ áo đen này sao? Hắn còn chưa nói mình là ai.'], ['thach', 'Hắn đã cứu tất cả chúng ta ở lâu đài. Thế là đủ với ta.'],
     ['hthink', '(Ở dòng thời gian trước, ta chưa từng đặt chân tới khu rừng này. Từ đây trở đi... ta cũng mù như họ.)']] });
-  S(1, { intro: [['lam', 'Cây cối ở đây đều chết khô từ bên trong, như thể bị hút cạn sinh khí.']] });
-  S(2, { intro: [['phong', 'Lũ quạ này có mắt đỏ. Chúng đang dõi theo chúng ta.']] });
-  S(3, { intro: [['lam', 'Những cột đá này khắc chữ cổ... "cánh cổng... không bao giờ được mở..."'], ['vua', 'Chữ của một vương quốc cổ. Ta chỉ từng thấy nó trong những cuộn sách cấm của hoàng tộc.']] });
-  S(4, { intro: [['thach', 'Cổng thành! Nhưng có thứ gì đó đang canh giữ nó...']], boss: [['treant', 'Grừ... KẺ... XÂM... NHẬP...']],
+  S('Rễ Cổ Thụ', { intro: [['lam', 'Cây cối ở đây đều chết khô từ bên trong, như thể bị hút cạn sinh khí.']] });
+  S('Đầm Quạ Đen', { intro: [['phong', 'Lũ quạ này có mắt đỏ. Chúng đang dõi theo chúng ta.']], boss: [['crowlord', 'Quạaa! Thịt tươi... lâu lắm rồi mới có thịt tươi!']], end: [['ung', 'Ba con mắt... thứ gì đã biến một con quạ thành như vậy?']] });
+  S('Lối Đá Khắc Trăng', { intro: [['lam', 'Những cột đá này khắc chữ cổ... "cánh cổng... không bao giờ được mở..."'], ['vua', 'Chữ của một vương quốc cổ. Ta chỉ từng thấy nó trong những cuộn sách cấm của hoàng tộc.']] });
+  S('Cổng Thành Bị Nuốt', { intro: [['thach', 'Cổng thành! Nhưng có thứ gì đó đang canh giữ nó...']], boss: [['treant', 'Grừ... KẺ... XÂM... NHẬP...']],
     end: [['nar', 'Cây cổ thụ đổ xuống, để lộ cánh cổng thành phủ đầy rêu phía sau.'], ['lam', 'Nguyệt Thành... vương quốc đã biến mất khỏi mọi bản đồ.']] });
-  S(5, { intro: [['nar', 'Phố xá hoang tàn, không một người sống. Chỉ còn những bóng ma lặp lại khoảnh khắc cuối đời.'], ['phong', 'Họ không tấn công... họ chỉ đang chạy trốn, mãi mãi.']] });
-  S(6, { intro: [['ung', 'Hàng hóa vẫn còn nguyên trên sạp. Họ bị giết trong một đêm, không kịp mang theo thứ gì.']] });
-  S(7, { intro: [['lam', 'Ngôi đền này... linh hồn những chiến binh cổ vẫn còn vương lại đây.']],
+  S('Đại Lộ Đổ Nát', { intro: [['nar', 'Phố xá hoang tàn, không một người sống. Chỉ còn những bóng ma lặp lại khoảnh khắc cuối đời.'], ['phong', 'Họ không tấn công... họ chỉ đang chạy trốn, mãi mãi.']] });
+  S('Khu Chợ Câm Lặng', { intro: [['ung', 'Hàng hóa vẫn còn nguyên trên sạp. Họ bị giết trong một đêm, không kịp mang theo thứ gì.']], boss: [['butcher', 'Khách... khách tới chợ... ĐÓI... ĐÓI QUÁ...'], ['lam', 'Hắn từng là người... Vực Thẳm đã biến hắn thành thứ này.']], end: [['phong', 'Cả khu chợ... đều thành những thứ như hắn sao?']] });
+  S('Đền Chiêu Hồn', { intro: [['lam', 'Ngôi đền này... linh hồn những chiến binh cổ vẫn còn vương lại đây.']],
     end: [['nar', 'Những linh hồn chiến binh Nguyệt Thành thức giấc, chờ người kế thừa sức mạnh của họ.'], ['nar', 'Đã mở trang chiêu mộ mới: Anh Linh Cổ Quốc.']] });
-  S(8, { intro: [['thach', 'Tháp canh nghiêng ngả... cẩn thận, mọi thứ có thể sụp bất cứ lúc nào.']] });
-  S(9, { intro: [['hound', 'Đi nhanh. Thứ đã giết cả thành phố này... vẫn còn ở đây.']], end: [['ung', 'Hắn lúc nào cũng biết trước nguy hiểm. Ngươi không thấy lạ sao, Thạch?'], ['thach', 'Lạ thì có. Nhưng hắn chưa từng để ai trong chúng ta bị thương.']] });
-  S(10, { intro: [['vua', 'Tượng thần Mặt Trăng... đầu tượng đã bị chặt. Có kẻ muốn xóa bỏ thứ gì đó ở đây.']] });
-  S(11, { intro: [['nar', 'Cung điện Nguyệt Thành. Vàng dát trên tường đã mục đen.']] });
-  S(12, { intro: [['lam', 'Bích họa kể lại lịch sử vương quốc... và đây, vị vua đầu tiên đứng trước một cánh cổng.'], ['vua', 'Khuôn mặt ông ấy... đã bị ai đó đục mất.'],
+  S('Tháp Canh Nghiêng', { intro: [['thach', 'Tháp canh nghiêng ngả... cẩn thận, mọi thứ có thể sụp bất cứ lúc nào.']] });
+  S('Cầu Đá Gãy', { intro: [['hound', 'Đi nhanh. Thứ đã giết cả thành phố này... vẫn còn ở đây.']], end: [['ung', 'Hắn lúc nào cũng biết trước nguy hiểm. Ngươi không thấy lạ sao, Thạch?'], ['thach', 'Lạ thì có. Nhưng hắn chưa từng để ai trong chúng ta bị thương.']] });
+  S('Quảng Trường Nguyệt Thần', { intro: [['vua', 'Tượng thần Mặt Trăng của Nguyệt Thành... đôi mắt nó vừa phát sáng màu tím.']], boss: [['moonstatue', '...KẺ... LẠ... RỜI KHỎI... THÁNH ĐỊA...'], ['lam', 'Ma khí đã thấm vào cả tượng thần hộ quốc!']], end: [['nar', 'Bức tượng vỡ vụn. Bên trong lõi đá là một vết nứt tím đã khô.'], ['hound', 'Cánh cổng ở gần đây. Cung điện.']] });
+  S('Hành Lang Vàng Mục', { intro: [['nar', 'Cung điện Nguyệt Thành. Vàng dát trên tường đã mục đen.'], ['phong', 'Lưỡi rìu đung đưa! Canh nhịp rồi hãy chạy qua.']] });
+  S('Sảnh Bích Họa', { intro: [['lam', 'Bích họa kể lại lịch sử vương quốc... và đây, vị vua đầu tiên đứng trước một cánh cổng.'], ['vua', 'Khuôn mặt ông ấy... đã bị ai đó đục mất.'],
     ['nar', 'Vua Thái Dương lặng người nhìn bức tranh rất lâu, nhưng không nói thêm lời nào.']] });
-  S(13, { intro: [['phong', 'Lưỡi rìu đung đưa! Canh nhịp rồi hãy chạy qua.']] });
-  S(14, { intro: [['ung', 'Mật đạo dẫn thẳng tới ngai vàng. Ta nghe thấy tiếng tụng kinh phía trước.']] });
-  S(15, { intro: [['nar', 'Điện Ngai Vàng. Một bóng người quấn vải liệm ngồi trên ngai, tay cầm cây trượng gãy.']],
+  S('Phòng Cạm Bẫy', { intro: [['phong', 'Phòng này đầy cạm bẫy... và có thứ gì đó đang đứng giữa phòng.']], boss: [['hollowguard', '...BẢO VỆ... NHÀ VUA... BẢO VỆ...'], ['thach', 'Bộ giáp rỗng... nó vẫn còn canh gác sau vạn năm.']], end: [['vua', 'Hắn vẫn trung thành tới tận cùng. Đáng tiếc thay.']] });
+  S('Mật Đạo Ngai Vàng', { intro: [['ung', 'Mật đạo dẫn thẳng tới ngai vàng. Ta nghe thấy tiếng tụng kinh phía trước.']] });
+  S('Điện Ngai Vàng', { intro: [['nar', 'Điện Ngai Vàng. Một bóng người quấn vải liệm ngồi trên ngai, tay cầm cây trượng gãy.']],
     boss: [['priest', 'Vạn năm rồi... cuối cùng cũng có kẻ sống bước vào đây. Chính ta đã mở cánh cổng, và ta được ban cho sự bất tử!'],
       ['thach', 'Ngươi đã bán cả vương quốc của mình cho Vực Thẳm!'], ['priest', 'Vương quốc? Chúng chỉ là vật tế. Và các ngươi... sẽ là vật tế tiếp theo!']],
     end: [['priest', 'Hahaha... Các ngươi tưởng đã thắng sao? Vực Thẳm... sẽ đón ta về!'],
@@ -1007,6 +1008,11 @@ const ETYPES = {
   w: { w: 32, h: 26, hp: 3, xp: 3, spd: 1.7, ai: 'c' },     // sói vực
   r: { w: 26, h: 18, hp: 2, xp: 2, spd: 0, fly: true, ai: 'b' },   // quạ mắt đỏ
   s: { w: 30, h: 44, hp: 5, xp: 4, spd: .9, ai: 'E' },      // lính hồn cổ
+  v: { w: 34, h: 24, hp: 4, xp: 4, spd: 0, ai: 'v' },       // trùng vực: ẩn dưới đất rồi trồi lên đớp
+  f: { w: 28, h: 22, hp: 2, xp: 3, spd: 0, fly: true, ai: 'm' },   // ruồi vực: bay, phun axit
+  n: { w: 30, h: 22, hp: 3, xp: 3, spd: 1.2, ai: 'j' },     // nhện vực: nhảy vồ
+  u: { w: 26, h: 38, hp: 4, xp: 3, spd: .75, ai: 'e' },     // dân tha hóa
+  U: { w: 36, h: 40, hp: 3, xp: 4, spd: .5, ai: 'e' },      // dân phình to: nổ tung khi chết
   dummy: { w: 34, h: 56, hp: 1, xp: 0, spd: 0 },
   shadow: { w: 26, h: 38, hp: 4, xp: 3, spd: 2.4 },        // bóng sao chép tướng (Đố Kị triệu hồi)          // bù nhìn sân tập (không bao giờ gục)
 };
@@ -1043,6 +1049,10 @@ const BOSS_DEFS = {
   lust:    { hover: 26, name: 'Dục Vọng',   title: 'Đại Tội · Đinh ba',   weapon: 'trident', color: '#ff7ac8', body: '#6a2456', dark: '#34102a', eye: '#ffe0f4', w: 46, h: 82, hp: 38, spd: 2.0, skills: ['Nụ Hôn Mê Hoặc', 'Vũ Điệu Hoa Hồng', 'Mị Ảnh Vũ', 'Trái Tim Vỡ'] },
   envy:    { name: 'Đố Kị',      title: 'Đại Tội · Cung gai',  weapon: 'bow',     color: '#4fd18b', body: '#1e5a3a', dark: '#0e2e1c', eye: '#c0ffe0', w: 54, h: 82, hp: 40, spd: 1.6, skills: ['Lục Nhãn Tiễn', 'Bóng Đố Kị', 'Vạn Nhãn Tiễn Vũ', 'Xuyên Tâm Độc Tiễn'] },
   sloth:   { name: 'Lười Biếng', title: 'Đại Tội · Lạc đà quỷ', weapon: 'mstaff', color: '#6fb6ff', body: '#1e3a5e', dark: '#0e1e34', eye: '#d8ecff', w: 84, h: 96, hp: 42, spd: 1.1, skills: ['Mộng Du Cầu', 'Ngáp Dài', 'Bong Bóng Mộng', 'Lạc Đà Xung Phong'] },
+  crowlord: { hover: 80, name: 'Quạ Chúa Ba Mắt', title: 'Chúa tể Đầm Quạ Đen', color: '#9a5aff', body: '#1a1424', dark: '#0c0a12', eye: '#ff3a5a', w: 72, h: 66, hp: 60, spd: 1.5, skills: ['Mưa Lông Sắt', 'Bổ Nhào', 'Bầy Quạ', 'Tiếng Kêu Xé Tai'] },
+  butcher: { name: 'Đồ Tể Tha Hóa', title: 'Kẻ canh Khu Chợ Câm Lặng', color: '#d04a3a', body: '#9a7a6a', dark: '#4a2a22', eye: '#ffd84d', w: 68, h: 86, hp: 85, spd: 1.2, skills: ['Chặt Thịt', 'Móc Xích', 'Ném Dao Phay', 'Cơn Đói'] },
+  moonstatue: { name: 'Tượng Nguyệt Thần', title: 'Thần hộ quốc bị tha hóa', color: '#cfd8ff', body: '#8a8a9a', dark: '#4a4a5a', eye: '#b06bff', w: 76, h: 106, hp: 100, spd: .6, skills: ['Nguyệt Quang Trảm', 'Trăng Vỡ', 'Cột Nguyệt Quang', 'Thạch Hóa Đại Địa'] },
+  hollowguard: { name: 'Vệ Binh Rỗng', title: 'Bộ giáp hoàng gia không người mặc', color: '#b06bff', body: '#6a6a7a', dark: '#3a3a4a', eye: '#b06bff', w: 64, h: 94, hp: 95, spd: 1, skills: ['Kích Quét', 'Đâm Xuyên', 'Khiên Húc', 'Hồi Trận'] },
   treant: { name: 'Thụ Yêu Vực', title: 'Cổ thụ bị Vực Thẳm chiếm xác', color: '#b06bff', body: '#3a2a1e', dark: '#1e140c', eye: '#d8a8ff', w: 92, h: 112, hp: 70, spd: .7, skills: ['Rễ Trồi', 'Mưa Hạt Gai', 'Quất Cành', 'Tiếng Gầm Rừng'] },
   priest: { hover: 18, name: 'Đại Tư Tế Phản Quốc', title: 'Kẻ đã mở cánh cổng', color: '#c8102e', body: '#2a5a5a', dark: '#14302e', eye: '#ff5a6a', w: 54, h: 92, hp: 95, spd: 1.1, skills: ['Triệu Hồn Lính', 'Nghi Lễ Hiến Tế', 'Khe Nứt Nhỏ', 'Thuấn Di Ngai Vàng'] },
   demon: { name: 'Quỷ Vương', title: 'Chúa tể bóng tối', color: '#ff4d4d', body: '#5a1622', dark: '#2a0a10', eye: '#ffdd55', w: 64, h: 96, hp: 70, spd: 1.4,
@@ -1186,8 +1196,8 @@ function buildStage(n) {
   for (let x = 0; x < cols; x++) for (let y = 10; y < ROWS; y++) G[y][x] = '#';
   const spawn = [], flies = [], cps = [];
   const pool = S.pool || enemyPool(d);
-  const dens = Math.min(0.9, 0.34 + d * 0.035);
-  const groundPool = pool.filter(k => 'eEjcws'.includes(k)), air = pool.filter(k => 'bg'.includes(k));
+  const dens = S.saga === 2 ? Math.min(.97, (0.34 + d * 0.035) * 1.5) : Math.min(0.9, 0.34 + d * 0.035);
+  const groundPool = pool.filter(k => 'eEjcwsvnuU'.includes(k)), air = pool.filter(k => 'bgrf'.includes(k));
   const pick = arr => arr[Math.floor(rnd() * arr.length)];
   const fly = (x, y) => flies.push([x, y]);
   const placeGround = cx => { if (groundPool.length && rnd() < dens) spawn.push([cx, 9, pick(groundPool)]); };
@@ -1259,6 +1269,7 @@ function buildWorld(n) {
   world.flies.forEach(([x, y]) => coins.push({ x: x * T + 20, y: y * T + 20, t: Math.random() * 6, got: false }));
   world.spawn.forEach(([cx, row, k]) => enemies.push(makeEnemy(k, cx, row, Math.max(1, world.d))));
   save.seen = save.seen || {}; for (const [, , k] of world.spawn) save.seen['e:' + k] = true;
+  if (STAGES[n].saga === 2 && STAGES[n].type !== 'boss') { const r = mulberry32(n * 77 + 5); for (const e of enemies) { e.hp *= 1.3; if (r() < .22) { e.elite = true; e.hp *= 2; e.xp *= 2; } e.maxHp = e.hp; } }
   checkpoints = world.cps.map(cx => ({ x: cx * T + 10, y: 9 * T - 10, w: 20, h: 50, on: false }));
   const S = STAGES[n], gc = world.goalCol;
   if (S.type === 'rescue') goal = { kind: 'cage', who: S.rescue, x: gc * T - 10, y: 9 * T - 30, w: 60, h: 70 };
@@ -1445,7 +1456,7 @@ function reflectHit(src) {
 }
 
 function damage(e, dmg, color) {
-  if (!e.alive || e.transforming) return;
+  if (!e.alive || e.transforming || e.under) return;
   dmg = Math.round(dmg * lvDmgMul(player ? player.level : 1) * 10) / 10;
   e.hp -= dmg; e.flash = 8;
   if (e.kind === 'dummy') { e.hp = e.maxHp; e.wob = 14; if (world.training) { trainLog.push({ t: world.tick, d: dmg }); world.trainTotal = (world.trainTotal || 0) + dmg; } }
@@ -1457,6 +1468,7 @@ function damage(e, dmg, color) {
   if (e.hp <= 0) {
     if (e.boss) { bossDown(e); return; }
     e.alive = false; burst(c.x, c.y, '#b69cff', 20, 7); gainXp(e.xp, c.x, e.y);
+    if (e.kind === 'U') { haz({ type: 'mark', x: c.x - 44, y: e.y + e.h - 6, w: 88, h: 6, life: 18, color: '#b06bff' }); haz({ type: 'erupt', x: c.x - 40, y: e.y + e.h - 70, w: 80, h: 70, delay: 18, life: 14, once: true, color: '#b06bff' }); }
     player.kills++; save.stats.kills = (save.stats.kills || 0) + 1;
     if (cls === 'giong' && player.holy) player.holyDrain = Math.min(player.holyDrain + 120, 240);
     if (cls === 'beast' && ++player.killHeal >= (rank() >= 5 ? 5 : 8)) { player.killHeal = 0; if (player.hearts < player.maxHearts) { player.hearts++; updateHud(); popups.push({ text: '+1 ♥', x: center(player).x, y: player.y - 12, t: 40, color: '#e0a060' }); } }
@@ -2095,6 +2107,44 @@ const S3 = {
     if (k === 10) { teleportBehind(b, 66); b.alpha = 1; burst(center(b).x, center(b).y, '#2a5a5a', 12, 5); }
     if (k === 22) zone(b, 92, b.h * .15, b.h * .7, 9, 'slash'); return false; },
 };
+const S4 = {
+  crowFeathers: (b, t) => { b.vx = 0; if (t === 10 || t === 28) { const c = center(b), base = Math.atan2(center(player).y - c.y, center(player).x - c.x);
+      for (let i = -2; i <= 2; i++) { const a = base + i * .17; haz({ type: 'arrow', x: c.x - 10, y: c.y - 3, w: 20, h: 6, vx: Math.cos(a) * 8, vy: Math.sin(a) * 8, life: 120, blockable: true, solidStop: true, color: '#7a4aba' }); } } return t >= 44; },
+  crowDive: (b, t) => { const K = b.k;
+    if (t === 0) { b.float = true; K.tx = center(player).x; }
+    if (t < 22) { b.vx = 0; b.vy = -2.5; b.warn = true; return false; }
+    if (t === 22) { b.warn = false; const tx = K.tx - b.w / 2, ty = GROUND_Y - b.h, d = Math.hypot(tx - b.x, ty - b.y) || 1; b.vx = (tx - b.x) / d * 13; b.vy = (ty - b.y) / d * 13; }
+    if (!K.hit && t > 22 && b.y + b.h >= GROUND_Y - 2) { K.hit = t; b.y = GROUND_Y - b.h; b.vx = 0; b.vy = 0; slam(b, 5); }
+    if (K.hit && t > K.hit + 24) { b.float = false; return true; } return t > 120 ? (b.float = false, true) : false; },
+  crowFlock: (b, t) => { b.vx = 0; if (t === 12) for (let i = 0; i < 3; i++) { const e = makeEnemy('r', Math.floor((center(b).x + (i - 1) * 80) / T), 5, Math.max(1, world.d)); e.y = b.y; enemies.push(e); burst(center(e).x, center(e).y, '#9a5aff', 8, 4); } return t >= 30; },
+  crowScreech: (b, t) => { b.vx = 0; b.warn = t < 22; if (t === 22) { const c = center(b); for (let k = 1; k <= 3; k++) rings.push({ x: c.x, y: c.y, r: 10, max: 120 + k * 70, t: 16 + k * 5, color: '#9a5aff' }); shake = 8;
+      for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; haz({ type: 'arrow', x: c.x - 10, y: c.y - 3, w: 20, h: 6, vx: Math.cos(a) * 6, vy: Math.sin(a) * 6, life: 110, blockable: true, solidStop: true, color: '#7a4aba' }); }
+      if (!invulnerable() && Math.hypot(center(player).x - c.x, center(player).y - c.y) < 260) { player.slowT = 150; player.toast = { text: 'Tai ù đi... (bị làm chậm)', color: '#9a5aff', t: 70 }; } } return t >= 50; },
+  butcherChop: (b, t) => { b.vx = t < 30 ? b.face * 2 : 0; if (t === 10 || t === 30) { zone(b, 100, b.h * .1, b.h * .8, 10, 'slash'); shake = 8; crack(bossFront(b, 60), GROUND_Y, .7); } return t >= 48; },
+  butcherHook: (b, t) => { b.vx = 0; if (t === 6) { const c = center(b), v = aimAt(c, 11);
+      haz({ type: 'hook', owner: b, x: c.x - 8, y: c.y - 8, w: 16, h: 16, vx: v.vx, vy: v.vy, life: 40, color: '#d04a3a', onHit: () => { player.vx = Math.sign(center(b).x - center(player).x) * 13; player.vy = -5; player.pulled = 14; } }); }
+    if (t === 34) zone(b, 90, b.h * .1, b.h * .8, 10, 'slash'); return t >= 50; },
+  butcherHunger: (b, t) => { if (t < 18) { b.vx = 0; b.warn = true; if (t % 4 === 0) popups.push({ text: 'ĐÓI...', x: center(b).x, y: b.y - 6, t: 26, color: '#d04a3a' }); return false; }
+    b.warn = false; if (t < 50) { b.vx = b.face * 10; if (b.atWall) b.vx = 0; return false; } b.vx = 0; if (t === 52) { zone(b, 90, b.h * .2, b.h * .7, 10, 'bite'); shake = 10; } return t >= 70; },
+  moonCrescent: (b, t) => { b.vx = 0; if (t === 10 || t === 30 || t === 50) { const c = center(b), high = t === 30;
+      haz({ type: 'crescent', x: c.x - 24 + b.face * 30, y: high ? GROUND_Y - 120 : GROUND_Y - 60, w: 48, h: 60, vx: b.face * 7.5, life: 140, blockable: true, color: '#cfd8ff' }); } return t >= 66; },
+  moonShards: (b, t) => { b.vx = 0; b.warn = t < 18; if (t >= 18 && t <= 66 && t % 5 === 0) { const x = Math.max(world.arenaL + T * 2, Math.min(world.arenaR - T * 3, center(player).x + (Math.random() - .5) * 380));
+      haz({ type: 'meteor', x, y: -60, w: 26, h: 26, vy: 3, g: .3, life: 240, groundKill: true, color: '#cfd8ff' }); } return t >= 90; },
+  moonPillars: (b, t) => { b.vx = 0; b.warn = t < 24; if (t === 0) for (let i = -2; i <= 2; i++) { const x = center(player).x + i * 95; haz({ type: 'lightcol', x: x - 26, y: 0, w: 52, h: GROUND_Y, delay: 26 + Math.abs(i) * 10, life: 18, once: false, color: '#cfd8ff' }); } return t >= 90; },
+  moonStomp: (b, t) => { const K = b.k; if (t === 0) { b.vy = -13; K.air = true; } if (K.air && b.ground && t > 6) { K.air = false; K.land = t; slam(b, 6);
+      if (!invulnerable() && Math.abs(center(player).x - center(b).x) < 300 && player.ground) { player.slowT = 150; player.toast = { text: 'Chân hóa đá... (bị làm chậm)', color: '#cfd8ff', t: 70 }; } }
+    return K.land !== undefined && t > K.land + 30; },
+  guardThrust: (b, t) => { b.vx = 0; b.warn = t < 16; if (t === 16) { zone(b, 180, b.h * .32, 24, 10, 'slash'); shake = 6; } return t >= 34; },
+  guardBash: (b, t) => { if (t < 16) { b.vx = 0; b.warn = true; return false; } b.warn = false; if (t < 46) { b.vx = b.face * 11; if (b.atWall) b.vx = 0; return false; }
+    b.vx = 0; if (t === 48) slam(b, 6); return t >= 66; },
+  guardRegroup: (b, t) => { b.vx = 0; b.warn = t < 22; if (t === 22) { for (const [k, dx] of [['s', -90], ['s', 90], ['u', -150]]) { const e = makeEnemy(k, Math.floor((center(b).x + dx) / T), 9, Math.max(1, world.d)); enemies.push(e); burst(center(e).x, center(e).y, '#b06bff', 12, 5); } } return t >= 40; },
+};
+Object.assign(BOSS_AI, {
+  crowlord: [S4.crowFeathers, S4.crowDive, S4.crowFlock, S4.crowScreech],
+  butcher: [S4.butcherChop, S4.butcherHook, SIN_AI.axeThrow, S4.butcherHunger],
+  moonstatue: [S4.moonCrescent, S4.moonShards, S4.moonPillars, S4.moonStomp],
+  hollowguard: [SIN_AI.glaiveSweep, S4.guardThrust, S4.guardBash, S4.guardRegroup],
+});
 Object.assign(BOSS_AI, {
   treant: [S3.treantRoots, SIN_AI.acidSpit, SIN_AI.glaiveSweep, S3.treantRoar],
   priest: [S3.priestSummon, S3.priestRitual, S3.priestRift, S3.priestBlink],
@@ -2162,7 +2212,7 @@ function bossMove(b, dx) {
 function bossAmbient(b) {
   if (!b.alive || b.alpha < .3 || Math.random() > .35) return;
   const c = center(b), r = (a = 1) => (Math.random() - .5) * a;
-  const fx = { treant: ['#b06bff', -1], priest: ['#c8102e', -.8], wrath: ['#ff6a2a', -2], pride: ['#ffd166', -.6], greed: ['#ffd84d', 1.2], glutton: ['#c8f070', 1.5], lust: ['#ff7ac8', -1], envy: ['#4fd18b', -.8], sloth: ['#bfe0ff', -.7],
+  const fx = { crowlord: ['#9a5aff', .8], butcher: ['#8a1a1a', 1.4], moonstatue: ['#cfd8ff', -.6], hollowguard: ['#b06bff', -.8], treant: ['#b06bff', -1], priest: ['#c8102e', -.8], wrath: ['#ff6a2a', -2], pride: ['#ffd166', -.6], greed: ['#ffd84d', 1.2], glutton: ['#c8f070', 1.5], lust: ['#ff7ac8', -1], envy: ['#4fd18b', -.8], sloth: ['#bfe0ff', -.7],
     fist: ['#ffb070', -1.5], sword: ['#b69cff', -.6], whip: ['#8fdc6f', -.6], spear: ['#8fc0ff', -.8], demon: ['#ff4d4d', -1.4] }[b.id];
   if (!fx) return;
   particles.push({ x: c.x + r(b.w), y: b.y + b.h * (fx[1] > 0 ? .5 : .9) + r(10), vx: r(.6), vy: fx[1] - Math.random() * .6, life: 26, color: fx[0] });
@@ -2683,7 +2733,7 @@ function update() {
 // Thân quái chỉ gây sát thương khi đang trong đòn tấn công (lao, húc, đập xuống), chạm bình thường thì không
 function bodyAttacking(e) {
   if (e.boss) return e.state === 'act' && (Math.abs(e.vx) >= 6 || (e.id === 'demon' && e.float && e.dvy && !e.landed && e.at > 21));
-  const k = e.ai || e.kind; return (k === 'b' && e.mode === 'swoop') || (k === 'c' && e.charge > 0) || (k === 'j' && !e.ground && e.vy > 1);
+  const k = e.ai || e.kind; return (k === 'v' && e.lunge > 0) || (k === 'b' && e.mode === 'swoop') || (k === 'c' && e.charge > 0) || (k === 'j' && !e.ground && e.vy > 1);
 }
 function updateEnemy(e, pc) {
   if (e.castT > 0) e.castT--;
@@ -2719,6 +2769,16 @@ function updateEnemy(e, pc) {
     }
   }
   switch (e.ai || e.kind) {
+    case 'v': {
+      if (e.under === undefined) e.under = true;
+      e.vy += .6; e.x += e.vx; e.y += e.vy; const gyv = groundY(center(e).x, e.y + e.h - 10);
+      if (e.y + e.h >= gyv) { e.y = gyv - e.h; e.vy = 0; if (e.lunge > 0) { e.lunge = 0; e.vx = 0; e.rest = 60; } }
+      if (e.rest > 0 && --e.rest === 0) e.under = true;
+      if (e.under) { e.vx = 0;
+        if (e.emerge > 0) { if (--e.emerge === 0) { e.under = false; e.lunge = 1; e.face = dx < 0 ? -1 : 1; e.vx = e.face * 6.5; e.vy = -7; burst(center(e).x, e.y + e.h, '#7a5a3a', 12, 5); } }
+        else if (!player.hidden && Math.abs(dx) < 150 && Math.abs(dy) < 80) e.emerge = 26; }
+      break;
+    }
     case 'a':
       e.face = dx < 0 ? -1 : 1;
       if (!player.hidden && Math.abs(dx) < 440 && Math.abs(dy) < 220 && --e.fire <= 0) {
@@ -2731,7 +2791,7 @@ function updateEnemy(e, pc) {
       if (e.cast > 0) e.cast--;
       if (!player.hidden && Math.abs(dx) < 480 && Math.abs(dy) < 260 && --e.fire <= 0) {
         e.fire = e.rate + 30; e.cast = 20; e.castT = 14; const tf = 60;
-        haz({ type: 'fireball', x: c.x - 8, y: e.y, w: 16, h: 16, vx: dx / tf, vy: (dy - 10) / tf - .5 * .25 * tf, g: .25, life: 180, blockable: true, solidStop: true, groundKill: true });
+        haz({ type: e.kind === 'f' ? 'acid' : 'fireball', x: c.x - 8, y: e.y, w: 16, h: 16, vx: dx / tf, vy: (dy - 10) / tf - .5 * .25 * tf, g: .25, life: 180, blockable: true, solidStop: true, groundKill: true, color: e.kind === 'f' ? '#9ae05a' : undefined });
       }
       break;
     case 'b':
@@ -3088,37 +3148,47 @@ function drawAncient(p) {
   }
 }
 function drawHound(p) {
+  // Mẫu J: kiếm sĩ sát thủ, khăn đỏ + áo choàng ngắn viền đỏ, mắt đỏ xếch (không vẽ miệng)
   const t = Date.now() / 1000, wave = Math.sin(t * 5);
   const P = (pts, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); ctx.fill(); };
   const E = (x, y, rx, ry, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.fill(); };
   const R = (x, y, w, h, r, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill(); };
-  const skin = '#e8c0a0', ink = '#1a1a2a';
+  const skin = '#efc7a4', RED = '#e0303c', BLK = '#0e0a0c';
   if (p.regressed) glow(0, 18, 30, '224,48,60', .25 + Math.sin(t * 6) * .08);
-  const rk = p.ground && Math.abs(p.vx || 0) > .6 ? Math.sin((p.run || 0) * 3) : 0, gs = rk * 3, a1 = p.ground === false ? -3 : -Math.max(0, rk) * 2.5, a2 = p.ground === false ? -1 : -Math.max(0, -rk) * 2.5;
-  ctx.fillStyle = '#14060a'; ctx.beginPath(); ctx.moveTo(-7, 9); ctx.quadraticCurveTo(-17 - wave, 24, -15 - wave * 1.5, 36); ctx.lineTo(-11, 32); ctx.lineTo(-9, 37); ctx.lineTo(-5, 31); ctx.lineTo(-2, 13); ctx.fill();
-  ctx.strokeStyle = '#e0303c'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-7, 9); ctx.quadraticCurveTo(-17 - wave, 24, -15 - wave * 1.5, 36); ctx.stroke();
-  P([[-8, 21], [8, 21], [9, 31], [-9, 31]], '#1c1418');
-  R(-9 + gs, 30 + a1, 8, 8, 2, '#0e0a0c'); R(2 - gs, 30 + a2, 9, 8, 2, '#0e0a0c'); ctx.fillStyle = '#e0303c'; ctx.fillRect(-9 + gs, 30 + a1, 8, 1.5); ctx.fillRect(2 - gs, 30 + a2, 9, 1.5);
-  R(-10, 9, 20, 14, 4, '#1c1418'); P([[-3, 9], [4, 9], [1, 18]], '#2a0a10'); ctx.fillStyle = '#e0303c'; ctx.fillRect(-10, 19, 20, 2.5); ctx.fillRect(-1, 10, 1.5, 9);
-  E(-9, 11, 5, 4, '#2a2028'); E(9, 11, 5.5, 4.2, '#2a2028');
-  P([[6, 8], [8, 6], [11, 8], [12, 11], [9, 12], [7, 11]], '#e0303c'); P([[8, 7], [9, 5], [10, 7]], '#e0303c');
-  E(0, 5, 7.5, 7.5, skin); E(2, 7, 5.5, 5.5, 'rgba(0,0,0,.08)');
-  ctx.fillStyle = '#0e0a0c'; ctx.beginPath(); ctx.arc(-1, 3, 8, Math.PI * .9, Math.PI * 1.95); ctx.lineTo(4, 1); ctx.fill(); ctx.fillRect(-8, 2, 3.5, 7);
-  ctx.beginPath(); ctx.moveTo(-5, -4); ctx.quadraticCurveTo(-12, -6 + wave, -16, 2 + wave); ctx.lineTo(-13, 3); ctx.quadraticCurveTo(-10, -2, -4, -2); ctx.fill();
-  P([[-3, -4], [0, -9], [2, -4]], '#0e0a0c');
-  ctx.save(); ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = p.regressed ? 8 : 4; ctx.fillStyle = '#ff2a3a'; ctx.fillRect(3, 4.5, 3, 2); ctx.restore(); line(2, 3, 6.5, 2, ink, 1.5); line(2, 10.5, 5.5, 10.3, '#8a4a3a', 1);
+  const moving = p.ground && Math.abs(p.vx || 0) > .6;
+  const rk = moving ? Math.sin((p.run || 0) * 3) : 0, gs = rk * 3, a1 = p.ground === false ? -3 : -Math.max(0, rk) * 2.5, a2 = p.ground === false ? -1 : -Math.max(0, -rk) * 2.5;
+  const k = wave * 1.4 + (moving ? 3 : 0);
+  // áo choàng ngắn: viền đỏ + thân đen, gấu rách, bay theo gió/khi chạy
+  const capePath = () => { ctx.beginPath(); ctx.moveTo(-5, 9); ctx.quadraticCurveTo(-19 - k * .5, 22, -20 - k, 38); ctx.lineTo(-15 - k * .6, 33); ctx.lineTo(-12 - k * .4, 38.5); ctx.lineTo(-8, 32.5); ctx.lineTo(-5.5, 37); ctx.lineTo(-2, 30); ctx.lineTo(-2, 12); ctx.closePath(); };
+  ctx.save(); ctx.translate(0, 9); ctx.scale(1, .8); ctx.translate(0, -9); ctx.fillStyle = '#b0101e'; capePath(); ctx.fill(); ctx.translate(1.6, -.6); ctx.fillStyle = '#100c14'; capePath(); ctx.fill(); ctx.restore();
+  // vỏ kiếm sau lưng
+  line(-6, 22, 6, 5, '#14060a', 3.2); line(-6, 22, -3.6, 19.4, RED, 1.6);
+  // chân
+  P([[-6, 21], [6, 21], [7, 32], [-7, 32]], '#1a1418');
+  R(-8 + gs, 31 + a1, 7, 7, 2, '#0e0a0c'); R(1.5 - gs, 31 + a2, 8, 7, 2, '#0e0a0c'); ctx.fillStyle = RED; ctx.fillRect(-8 + gs, 31 + a1, 7, 1.4); ctx.fillRect(1.5 - gs, 31 + a2, 8, 1.4);
+  // thân + dây đeo chéo + thắt lưng đỏ
+  R(-8, 9, 16, 14, 3, '#1c1418'); P([[-8, 21], [8, 21], [9.5, 26], [-9.5, 26]], '#1c1418'); line(-9.5, 26, 9.5, 26, RED, 1);
+  line(-7, 10, 7, 19, '#6a1620', 2.2); P([[-8, 19], [8, 19], [8, 21.6], [-8, 21.6]], '#b0101e'); ctx.fillStyle = '#c9cfe0'; ctx.fillRect(-1, 13.4, 2.6, 2.6);
+  E(-8, 11, 3.8, 4, '#1c1418'); E(9, 12.5, 4, 3.8, '#1c1418'); for (const y of [13.4, 14.8]) line(7.2, y, 10.8, y - .4, '#d8d0c8', .8);
+  // khăn đỏ quấn cổ, đuôi khăn bay
+  R(-5, 8, 10, 3, 1.5, '#b0101e'); P([[-3, 9], [-12 - wave, 10 + wave], [-18 - wave * 1.5 - (moving ? 3 : 0), 17 + wave * 1.5], [-11, 16], [-2, 13]], '#b0101e');
   // góc kiếm theo động tác: đứng thủ / vung chém / chém liên hoàn / lướt / thu kiếm rồi chém một đường
-  let ang = -.62, len = 28, ext = 0;
-  if (p.void) { const vt = p.void.t; if (vt < 24) { ang = 2.5 + Math.sin(vt) * .03; ext = -4; } else { ang = -.05 + Math.max(0, 30 - vt) * .02; len = 34; ext = 6; } }
-  else if (p.fury) { ang = Math.sin(Date.now() / 22) * 1.3; len = 30; ext = 4; }
-  else if (p.hdash > 0) { ang = .05; len = 32; ext = 6; }
-  else if (p.atk > 0) { const u = 1 - p.atk / 12; ang = -1.8 + u * 2.9; len = 30; ext = 3; }
+  let ang = -.62, len = 30, ext = 0;
+  if (p.void) { const vt = p.void.t; if (vt < 24) { ang = 2.5 + Math.sin(vt) * .03; ext = -4; } else { ang = -.05 + Math.max(0, 30 - vt) * .02; len = 36; ext = 6; } }
+  else if (p.fury) { ang = Math.sin(Date.now() / 22) * 1.3; len = 32; ext = 4; }
+  else if (p.hdash > 0) { ang = .05; len = 34; ext = 6; }
+  else if (p.atk > 0) { const u = 1 - p.atk / 12; ang = -1.8 + u * 2.9; len = 32; ext = 3; }
   const hx = 9 + ext, hy = 15, ex = hx + Math.cos(ang) * len, ey = hy + Math.sin(ang) * len;
-  E(hx, hy + 1, 3, 3, skin);
   ctx.save(); ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = p.regressed || p.atk > 0 || p.fury || p.void ? 14 : 8;
-  line(hx - Math.cos(ang) * 5, hy - Math.sin(ang) * 5, hx, hy, '#2a1a14', 3.5); line(hx, hy, ex, ey, '#14060a', 3.4); line(hx + Math.cos(ang) * 2, hy + Math.sin(ang) * 2, ex, ey, '#e0303c', 1.2);
-  ctx.restore(); line(hx - Math.sin(ang) * 3, hy + Math.cos(ang) * 3, hx + Math.sin(ang) * 3, hy - Math.cos(ang) * 3, '#e0303c', 2);
-  if (p.fury || (p.void && p.void.t >= 24 && p.void.t < 34)) { ctx.save(); ctx.globalAlpha = .5; ctx.strokeStyle = '#e0303c'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(hx, hy, len, ang - .9, ang); ctx.stroke(); ctx.restore(); }
+  line(hx - Math.cos(ang) * 5, hy - Math.sin(ang) * 5, hx, hy, '#2a1a14', 3.4); line(hx, hy, ex, ey, '#14060a', 2.8); line(hx + Math.cos(ang) * 2, hy + Math.sin(ang) * 2, ex, ey, RED, 1.2);
+  ctx.restore(); line(hx - Math.sin(ang) * 3.4, hy + Math.cos(ang) * 3.4, hx + Math.sin(ang) * 3.4, hy - Math.cos(ang) * 3.4, RED, 2); E(hx, hy, 3, 3, '#1c1418');
+  if (p.fury || (p.void && p.void.t >= 24 && p.void.t < 34)) { ctx.save(); ctx.globalAlpha = .5; ctx.strokeStyle = RED; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(hx, hy, len, ang - .9, ang); ctx.stroke(); ctx.restore(); }
+  // đầu: tóc đen dựng, mắt đỏ xếch giận dữ, không miệng
+  E(0, 5, 7.5, 7.5, skin); E(2, 7, 5.5, 5.5, 'rgba(0,0,0,.08)');
+  ctx.fillStyle = BLK; ctx.beginPath(); ctx.arc(-1, 3, 8.4, Math.PI * .9, Math.PI * 1.98); ctx.lineTo(4, 0); ctx.fill(); ctx.beginPath(); ctx.roundRect(-8.6, 1.2, 4, 9.4, 2); ctx.fill();
+  P([[-3, -3.6], [1, -9.5], [4, -3.4]], BLK); P([[3.4, -3.4], [9, -5.4], [8, 1], [5.4, -.4]], BLK); P([[-9, 1], [-13, 8 + wave], [-7, 8]], BLK);
+  ctx.save(); ctx.shadowColor = '#ff2a3a'; ctx.shadowBlur = p.regressed ? 12 : 8; ctx.fillStyle = '#ff3a48'; ctx.beginPath(); ctx.moveTo(2.1, 4.5); ctx.quadraticCurveTo(4.8, 3.9, 7.5, 5.9); ctx.quadraticCurveTo(5, 8.2, 3, 7.5); ctx.closePath(); ctx.fill(); ctx.restore();
+  ctx.fillStyle = '#ffe8ea'; ctx.beginPath(); ctx.ellipse(5.7, 6.2, .9, 1.1, 0, 0, 7); ctx.fill(); line(1.8, 2.1, 7.4, 3.9, '#0a0408', 1.3);
 }
 function drawGiong(p) {
   const t = Date.now() / 1000, sw = Math.sin(t * 5);
@@ -3770,6 +3840,8 @@ function drawHazard(h) {
       if (h.scythe) { line(-16, 0, 16, 0, '#261a3e', 3); ctx.fillStyle = '#e8e0ff'; ctx.beginPath(); ctx.moveTo(14, -2); ctx.quadraticCurveTo(30, -26, 4, -30); ctx.quadraticCurveTo(22, -20, 12, 2); ctx.fill(); ctx.restore(); break; }
       line(-14, 0, 14, 0, '#6b4a2a', 4); ctx.fillStyle = '#d8dcea'; ctx.beginPath(); ctx.moveTo(8, -14); ctx.quadraticCurveTo(22, 0, 8, 14); ctx.lineTo(4, 0); ctx.fill();
       ctx.beginPath(); ctx.moveTo(-8, -12); ctx.quadraticCurveTo(-20, 0, -8, 12); ctx.lineTo(-4, 0); ctx.fill(); ctx.restore(); break;
+    case 'crescent': { ctx.save(); ctx.translate(c.x, c.y); ctx.scale(Math.sign(h.vx) || 1, 1); glow(0, 0, 40, '207,216,255', .5);
+      ctx.fillStyle = '#eef2ff'; ctx.beginPath(); ctx.arc(-6, 0, 30, -1.25, 1.25); ctx.arc(-20, 0, 26, 1.05, -1.05, true); ctx.fill(); ctx.restore(); break; }
     case 'pend': { ctx.save(); ctx.strokeStyle = '#6a5a3a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(h.ax, h.ay); ctx.lineTo(c.x, c.y); ctx.stroke();
       ctx.fillStyle = '#4a3a2a'; ctx.fillRect(h.ax - 10, h.ay - 6, 20, 8); ctx.translate(c.x, c.y); ctx.rotate(-h.ang); glow(0, 8, 30, '255,90,60', .25);
       ctx.fillStyle = '#c9cfe0'; ctx.beginPath(); ctx.moveTo(-24, 0); ctx.quadraticCurveTo(0, 30, 24, 0); ctx.quadraticCurveTo(0, 12, -24, 0); ctx.fill(); ctx.strokeStyle = '#ff6a5a'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(-22, 2); ctx.quadraticCurveTo(0, 28, 22, 2); ctx.stroke(); ctx.restore(); break; }
@@ -3856,6 +3928,34 @@ function drawEnemy(e) {
     else if (!e.fly && Math.abs(e.vx || 0) > .3) { ctx.translate(0, -Math.abs(Math.sin((e.t || 0) * 6 + e.x * .05)) * 2); }
     if (lean) { const bx = e.x + e.w / 2, by = e.y + e.h; ctx.translate(bx + push * fc, by); ctx.rotate(lean * fc); ctx.translate(-bx, -by); } }
   const W_ = e.flash ? '#ffffff' : null;
+  if (e.elite) glow(center(e).x, center(e).y, Math.max(e.w, e.h) * 1.1, '176,107,255', .45 + Math.sin(t / 120) * .1);
+  if ('vfnuU'.includes(e.kind) && e.kind.length === 1) {
+    const c = center(e), f = e.face || e.dir || 1, t2 = t / 1000; ctx.save(); ctx.translate(c.x, e.y + e.h); ctx.scale(f, 1);
+    const P = (pts, col) => { ctx.fillStyle = W_ || col; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (const q of pts.slice(1)) ctx.lineTo(q[0], q[1]); ctx.closePath(); ctx.fill(); };
+    const E = (x, y, rx, ry, col) => { ctx.fillStyle = W_ || col; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.fill(); };
+    if (e.kind === 'v') {
+      if (e.under) { const sh = e.emerge > 0 ? Math.sin(t2 * 60) * 2 : 0; E(sh, -3, 20, 6, '#4a3a2a'); E(sh - 6, -6, 6, 3, '#5a4a36'); E(sh + 7, -5, 5, 2.4, '#5a4a36');
+        if (e.emerge > 0) for (let i = 0; i < 2; i++) particles.push({ x: c.x + (Math.random() - .5) * 30, y: e.y + e.h - 4, vx: (Math.random() - .5) * 2, vy: -2, life: 14, color: '#7a5a3a' }); }
+      else { for (let i = 3; i >= 0; i--) E(-i * 7, -10 - Math.sin(t2 * 10 + i) * 2, 8 - i, 7 - i * .8, i % 2 ? '#5a2a6a' : '#7a3a8a');
+        E(8, -12, 9, 8, '#8a4a9a'); P([[12, -18], [20, -12], [12, -6]], '#1a0a1e'); ctx.fillStyle = '#e8d8c0'; for (let k = 0; k < 3; k++) ctx.fillRect(12 + k * 2.4, -16, 1.4, 3);
+        ctx.fillStyle = '#ffd84d'; ctx.fillRect(6, -17, 2.5, 2.5); }
+    } else if (e.kind === 'f') { const fl = Math.sin(t2 * 40) * 6; ctx.translate(0, -e.h / 2);
+      ctx.globalAlpha = .6; E(-2, -6 - Math.abs(fl) * .3, 10, 3 + Math.abs(fl) * .3, '#cfe8ff'); ctx.globalAlpha = 1;
+      E(0, 0, 10, 7, '#3a5a2a'); E(-7, 2, 6, 5, '#2a4a1e'); E(8, -1, 5, 5, '#4a6a32'); ctx.fillStyle = '#ff3a3a'; ctx.fillRect(9, -3, 2.5, 2.5); ctx.fillRect(10, 0, 2, 2);
+      P([[12, 1], [16, 4], [12, 4]], '#9ae05a');
+    } else if (e.kind === 'n') { const lg = Math.sin(t2 * 16) * 2;
+      for (let i = 0; i < 4; i++) for (const sd of [-1, 1]) { ctx.strokeStyle = W_ || '#1a0a1e'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(sd * 3, -10); ctx.lineTo(sd * (10 + i * 3), -16 + (i % 2 ? lg : -lg)); ctx.lineTo(sd * (12 + i * 3), 0); ctx.stroke(); }
+      E(-4, -11, 10, 8, '#2a1a34'); E(6, -10, 6, 5, '#3a2448'); ctx.fillStyle = '#ff3a3a'; for (let k = 0; k < 3; k++) ctx.fillRect(7 + k * 2, -12, 1.6, 1.6); ctx.fillStyle = '#b06bff'; ctx.fillRect(-8, -14, 6, 2);
+    } else {
+      const big = e.kind === 'U', sway = Math.sin(t2 * 3) * 2, sk = '#8a9a8a', reach = e.wind > 0 ? (e.wind <= 6 ? 12 : -2) : 4;
+      ctx.fillStyle = W_ || '#3a3440'; ctx.fillRect(-7, -12, 5, 12); ctx.fillRect(2, -12, 5, 12);
+      if (big) { E(0, -22, 18, 16, sk); E(-6, -26, 4, 4, '#b06bff'); E(7, -18, 3, 3, '#b06bff'); E(2, -30, 2.6, 2.6, '#c88aff'); }
+      else { P([[-8, -12], [8, -12], [6, -30], [-6, -30]], '#5a4a5a'); for (let k = 0; k < 3; k++) P([[-8 + k * 6, -12], [-5 + k * 6, -12], [-6 + k * 6, -8]], '#5a4a5a'); }
+      ctx.strokeStyle = W_ || sk; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.moveTo(4, big ? -26 : -26); ctx.lineTo(12 + reach, -22 + sway); ctx.stroke();
+      E(2, big ? -40 : -36, 7, 7, sk); ctx.fillStyle = '#b06bff'; ctx.fillRect(4, (big ? -42 : -38), 3, 2); ctx.fillRect(-1, (big ? -42 : -38), 2, 2); ctx.fillStyle = '#2a1a2a'; ctx.fillRect(1, big ? -36 : -32, 5, 1.6);
+    }
+    ctx.restore(); ctx.restore(); return;
+  }
   if (e.kind === 'w' || e.kind === 'r' || e.kind === 's') {
     const c = center(e), f = e.face || e.dir || 1, t2 = Date.now() / 1000; ctx.save(); ctx.translate(c.x, e.y + e.h); ctx.scale(f, 1);
     const P = (pts, col) => { ctx.fillStyle = W_ || col; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (const q of pts.slice(1)) ctx.lineTo(q[0], q[1]); ctx.closePath(); ctx.fill(); };
@@ -4130,6 +4230,40 @@ const BOSS_ART = (() => {
     evil(D.eye, 5, false);
     L(4, 18, 9, 15, D.body, 3.4); L(-6, 36, 26, -6, '#8a7a6a', 2);
     P([[26, -6], [24, -13], [30, -10]], '#e8ecf7'); ctx.save(); ctx.shadowColor = D.color; ctx.shadowBlur = 6; P([[23, -4], [26, -2.5], [22, 3], [19.5, 1.5]], D.color); ctx.restore();
+  };
+  art.crowlord = (D, t) => { const fl = Math.sin(t / 90) * 6;
+    P([[-4, 14], [-26, 2 - fl], [-22, 16 - fl * .5], [-8, 22]], D.dark); P([[4, 14], [26, 4 + fl], [22, 18 + fl * .5], [8, 22]], D.body);
+    E(0, 20, 14, 12, D.body); E(-3, 24, 9, 7, D.dark); P([[-10, 30], [-16, 38], [-6, 33]], D.dark); P([[8, 30], [14, 38], [4, 33]], D.dark);
+    L(-4, 31, -5, 38, '#d8a83a', 1.4); L(4, 31, 5, 38, '#d8a83a', 1.4);
+    E(0, 5, 9, 8, D.body); P([[6, 4], [16, 7], [6, 9]], '#d8a83a'); P([[-6, -2], [-2, -9], [2, -2]], D.dark);
+    for (const [x, y] of [[0, 2], [4, 6], [-3, 6]]) { ctx.save(); ctx.shadowColor = D.eye; ctx.shadowBlur = 6; E(x, y, 1.6, 1.3, D.eye); ctx.restore(); }
+    ctx.save(); ctx.shadowColor = D.color; ctx.shadowBlur = 10; L(-8, 14, 8, 26, D.color, 1); ctx.restore();
+  };
+  art.butcher = (D, t) => { const sw = Math.sin(t / 300);
+    R(-9, 31, 8, 7, 2, '#2a1a14'); R(2, 31, 9, 7, 2, '#2a1a14'); E(0, 21, 14, 13, D.body); P([[-9, 12], [9, 12], [10, 32], [-10, 32]], '#d8d0c0');
+    for (const [x, y] of [[-4, 20], [3, 26], [-1, 30]]) E(x, y, 2.4, 1.6, '#8a1a1a');
+    E(-11, 14, 5, 5, D.body); E(12, 14, 5, 5, D.body); L(12, 16, 16, 24, D.body, 4);
+    ctx.save(); ctx.translate(16, 24); ctx.rotate(-.6 + sw * .1); R(-2, -2, 4, 8, 1, '#4a2a14'); R(-4, -16, 16, 14, 2, '#c9cfe0'); ctx.fillStyle = '#8a1a1a'; ctx.fillRect(6, -14, 5, 3); ctx.restore();
+    L(-12, 16, -18, 28, '#6a6a7a', 1.4); ctx.strokeStyle = '#9a9aa8'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(-18, 31, 4, -1, 3.6); ctx.stroke();
+    E(0, 5, 8, 7.5, D.body); E(4, 8, 4, 3, '#c88a8a'); ctx.fillStyle = '#4a2a22'; ctx.fillRect(3, 7.5, 1.4, 1.4); ctx.fillRect(5.6, 7.5, 1.4, 1.4);
+    evil(D.eye, 4, true); P([[-8, 0], [-6, -4], [-3, 0]], '#4a2a22');
+  };
+  art.moonstatue = (D, t) => { const gl = .5 + Math.sin(t / 200) * .3;
+    P([[-10, 12], [10, 12], [14, 38], [-14, 38]], D.body); for (let y = 16; y < 38; y += 5) L(-10 - (y - 16) * .15, y, 10 + (y - 16) * .15, y + 1.5, D.dark, 1);
+    R(-9, 8, 18, 8, 3, D.body); E(-10, 11, 4.5, 4, D.body); E(10, 11, 4.5, 4, D.body); L(10, 13, 16, 22, D.body, 3.5); L(-10, 13, -14, 24, D.body, 3.5);
+    ctx.save(); ctx.shadowColor = D.eye; ctx.shadowBlur = 10; ctx.globalAlpha = gl; L(-4, 16, 2, 24, D.eye, 1.2); L(2, 24, -1, 32, D.eye, 1.2); L(5, 18, 8, 28, D.eye, 1); ctx.restore(); ctx.globalAlpha = 1;
+    E(0, 4, 7.5, 7.5, '#a8a8b8'); ctx.fillStyle = D.dark; ctx.beginPath(); ctx.arc(0, 3, 8, Math.PI * .9, Math.PI * 2.1); ctx.fill();
+    ctx.save(); ctx.shadowColor = D.color; ctx.shadowBlur = 14; ctx.fillStyle = '#eef2ff'; ctx.beginPath(); ctx.arc(0, -6, 7, Math.PI * 1.1, Math.PI * 1.9); ctx.arc(0, -2, 5, Math.PI * 1.85, Math.PI * 1.15, true); ctx.fill(); ctx.restore();
+    evil(D.eye, 5, false); L(-2, 9, 2, 12, D.eye, 1);
+  };
+  art.hollowguard = (D, t) => { const br = Math.sin(t / 250);
+    R(-9, 30, 8, 8, 2, D.dark); R(2, 30, 9, 8, 2, D.dark); P([[-9, 20], [9, 20], [11, 31], [-11, 31]], D.dark);
+    R(-11, 8, 22, 14, 4, D.body); ctx.fillStyle = '#c9a24a'; ctx.fillRect(-11, 18, 22, 2.5); ctx.fillRect(-1, 9, 2, 9);
+    E(-11, 10, 6, 5, '#8a8a9a'); E(11, 10, 6, 5, '#8a8a9a'); R(-17, 12, 9, 18, 2, '#5a5a6a'); ctx.fillStyle = '#c9a24a'; ctx.beginPath(); ctx.arc(-12.5, 21, 3, 0, 7); ctx.fill();
+    L(11, 34, 15, -14, '#5a4a3a', 2.2); P([[15, -14], [10, -6], [20, -8]], '#c9cfe0'); P([[15, -14], [13, -22], [17, -22]], '#c9cfe0');
+    R(-8, -3, 16, 15, 5, '#8a8a9a'); ctx.fillStyle = '#05010a'; ctx.fillRect(-5, 3, 12, 3); ctx.save(); ctx.shadowColor = D.eye; ctx.shadowBlur = 10; ctx.fillStyle = D.eye; ctx.globalAlpha = .7 + br * .3; ctx.fillRect(2, 3.5, 4, 2); ctx.restore();
+    P([[-2, -3], [0, -12 + br], [2, -3]], D.color);
+    for (let i = 0; i < 2; i++) { const a = t / 300 + i * 3; ctx.fillStyle = 'rgba(176,107,255,.5)'; ctx.beginPath(); ctx.arc(Math.cos(a) * 4, 14 + Math.sin(a) * 3, 1.4, 0, 7); ctx.fill(); }
   };
   art.treant = (D, t) => { const sw = Math.sin(t / 500) * 1.2;
     for (const [x, dx] of [[-8, -10], [-2, -4], [4, 4], [9, 11]]) { ctx.strokeStyle = D.dark; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x, 30); ctx.quadraticCurveTo(x + dx * .5, 36, x + dx, 38); ctx.stroke(); }
@@ -5109,6 +5243,11 @@ const LIB_ENEMY = {
   c: { name: 'Lợn rừng', where: 'Từ Chương 2', desc: 'Hung hăng, thấy bạn là cào chân lấy đà.', skills: [['Húc', 'Lao thẳng tới với tốc độ cao. Chỉ gây sát thương khi đang húc, có thể nhảy qua.']] },
   m: { name: 'Pháp sư lửa', where: 'Từ Chương 2', desc: 'Đứng từ xa niệm phép, rất yếu khi bị áp sát.', skills: [['Cầu lửa', 'Ném cầu lửa theo đường cong về phía bạn, rơi xuống đất thì tắt.']] },
   g: { name: 'Hồn ma', where: 'Cuối Chương 2 trở đi', desc: 'Linh hồn lơ lửng, không bị địa hình cản trở.', skills: [['Xuyên tường', 'Bay xuyên qua tường và nền để áp sát bạn.'], ['Chạm hồn', 'Khi ở gần, hiện dấu "!" rồi vung tay chém.']] },
+  v: { name: 'Trùng vực', where: 'Saga II', desc: 'Loài trùng từ Vực Thẳm, ẩn mình dưới lòng đất, chỉ lộ một ụ đất nhỏ.', skills: [['Trồi lên đớp', 'Khi bạn lại gần, ụ đất rung lên rồi trùng phóng ra đớp. Khi còn ẩn dưới đất thì không đánh trúng được.']] },
+  f: { name: 'Ruồi vực', where: 'Saga II', desc: 'Ruồi khổng lồ biến dị, bay lượn trên cao.', skills: [['Phun axit', 'Phun cục axit xanh theo đường cong xuống chỗ bạn.']] },
+  n: { name: 'Nhện vực', where: 'Saga II · Rừng Sâu Thẳm', desc: 'Nhện rừng bị ma khí biến dị, ba mắt đỏ.', skills: [['Nhảy vồ', 'Bật nhảy về phía bạn, gây sát thương khi rơi đè xuống.']] },
+  u: { name: 'Dân tha hóa', where: 'Saga II · Nguyệt Thành', desc: 'Người dân Nguyệt Thành bị ma khí biến thành xác sống, lê bước vô định.', skills: [['Vồ', 'Chậm chạp, nhưng hiện dấu "!" rồi vồ tới khi ở gần.']] },
+  U: { name: 'Dân phình nổ', where: 'Saga II · Nguyệt Thành', desc: 'Xác sống phình to vì ma khí, cơ thể đầy mụn tím.', skills: [['Vồ', 'Vồ tới khi ở gần.'], ['Nổ tung', 'Khi bị hạ sẽ nổ ma khí sau một nhịp (vạch tím báo trước), hãy tránh xa.']] },
   w: { name: 'Sói vực', where: 'Saga II · Rừng Sâu Thẳm', desc: 'Sói rừng bị ma khí Vực Thẳm biến dị, bờm tím, mắt đỏ.', skills: [['Vồ', 'Cào chân lấy đà rồi lao vồ tới rất nhanh; chỉ gây sát thương khi đang lao.']] },
   r: { name: 'Quạ mắt đỏ', where: 'Saga II · Rừng Sâu Thẳm', desc: 'Bầy quạ canh gác khu rừng, dõi theo mọi kẻ xâm nhập.', skills: [['Bổ nhào', 'Lượn trên cao rồi bổ nhào xuống chỗ bạn.']] },
   s: { name: 'Lính hồn cổ', where: 'Saga II · Nguyệt Thành', desc: 'Hồn ma lính gác Nguyệt Thành, vẫn cầm thương canh giữ sau vạn năm.', skills: [['Đâm thương', 'Hiện dấu "!" rồi đâm thương tầm xa hơn quái thường.']] },
@@ -5128,18 +5267,22 @@ const LIB_BOSS_SK = {
   whip:    ['Quất roi dài trước mặt.', 'Phóng roi trói rồi kéo bạn lại gần.', 'Xoay roi tạo vòng tròn nguy hiểm quanh người.', 'Gai độc trồi lên từ mặt đất.'],
   spear:   ['Đâm thương tầm xa.', 'Ném thương bay thẳng về phía bạn.', 'Nhảy lên bổ thương từ trên xuống.', 'Hàng loạt mũi thương trồi lên khắp đấu trường.'],
   demon:   ['Ném cầu lửa địa ngục cỡ lớn.', 'Phân thân bóng tối lao tới chém.', 'Cột lửa địa ngục phun lên tại các điểm được đánh dấu.', 'Triệu hồi cả bầy quái.'],
+  crowlord: ['Hai loạt lông vũ sắt tỏa hình quạt nhắm vào bạn.', 'Vọt lên cao rồi bổ nhào chéo xuống chỗ bạn, tạo sóng chấn khi chạm đất.', 'Gọi ba con quạ mắt đỏ lao vào trận.', 'Tiếng kêu xé tai: lông vũ bắn tỏa tám hướng, đứng gần sẽ bị làm chậm.'],
+  butcher:  ['Hai nhát dao chặt thịt bổ xuống, vừa chặt vừa tiến tới.', 'Quăng móc xích kéo bạn lại gần rồi chém.', 'Ném dao phay bay vòng rồi quay về tay.', 'Lẩm bẩm "ĐÓI...", rồi lao tới đớp.'],
+  moonstatue: ['Ba vầng trăng lưỡi liềm bay ngang: hai thấp phải nhảy qua, một cao phải đứng dưới.', 'Mảnh trăng vỡ rơi khắp đấu trường.', 'Năm cột nguyệt quang lần lượt giáng xuống quanh bạn.', 'Nhảy lên đập đất tạo sóng chấn; đứng dưới đất gần đó sẽ bị hóa đá làm chậm.'],
+  hollowguard: ['Kích quét rộng hai nhát.', 'Đâm kích tầm rất xa thẳng phía trước.', 'Giơ khiên lao húc dọc đấu trường rồi dậm đất.', 'Triệu hồi lính hồn cổ và dân tha hóa.'],
   treant:  ['Rễ cây lần lượt trồi lên từ mặt đất tiến về phía bạn.', 'Phun một loạt hạt gai theo đường cong.', 'Quất cành cây quét rộng trước mặt.', 'Gầm lên gọi bầy sói vực, lá gai rơi khắp đấu trường.'],
   priest:  ['Triệu hồi hai lính hồn cổ ra trận.', 'Vẽ vòng phép hiến tế dưới chân bạn; cột máu phun lên sau một nhịp.', 'Xé khe nứt nhỏ: cầu bóng tối đuổi theo bạn, quạ mắt đỏ bay ra.', 'Hai lần thuấn di ra sau lưng bạn và chém.'],
   demon2:  ['Bay lên cao, bắn ba loạt lông vũ sắc.', 'Vọt lên rồi bổ nhào chéo xuống chỗ bạn, để lại vệt lửa.', 'Ba vòng lửa lan dọc mặt đất, phải nhảy qua.', 'Tia sáng quét ngang đấu trường hai lần: lần thấp phải nhảy, lần cao phải đứng yên. Trúng mất 3 tim.'],
 };
-const LIB_BOSS_ORDER = ['wrath', 'pride', 'greed', 'glutton', 'lust', 'envy', 'sloth', 'fist', 'sword', 'whip', 'spear', 'demon', 'demon2', 'treant', 'priest'];
+const LIB_BOSS_ORDER = ['wrath', 'pride', 'greed', 'glutton', 'lust', 'envy', 'sloth', 'fist', 'sword', 'whip', 'spear', 'demon', 'demon2', 'crowlord', 'treant', 'butcher', 'moonstatue', 'hollowguard', 'priest'];
 let libTab = 'enemy';
 const seen = k => !!(save.seen && save.seen[k]);
 function markSeen(k) { save.seen = save.seen || {}; if (!save.seen[k]) { save.seen[k] = true; persist(); } }
 function libPortrait(kind, key, size, locked) {
   const c = document.createElement('canvas'); c.width = c.height = size; const old = ctx; ctx = c.getContext('2d');
   try {
-    if (kind === 'enemy') { const e = makeEnemy(key, 0, 0, 1); const k = size / 80; ctx.translate(size / 2, size * .72); ctx.scale(k * 1.4, k * 1.4); e.x = -e.w / 2; e.y = -e.h + (e.fly ? -6 : 0); e.face = 1; e.dir = 1; drawEnemy(e); }
+    if (kind === 'enemy') { const e = makeEnemy(key, 0, 0, 1); const k = size / 80, sc = Math.min(1.4, 50 / Math.max(e.h, e.w * .75)); ctx.translate(size / 2, size * .8); ctx.scale(k * sc, k * sc); e.x = -e.w / 2; e.y = -e.h + (e.fly ? -6 : 0); e.face = 1; e.dir = 1; drawEnemy(e); }
     else { const p2 = key === 'demon2', id = p2 ? 'demon' : key, D = BOSS_DEFS[id], w = p2 ? 84 : D.w, h = p2 ? 120 : D.h, k = size * (p2 ? .5 : .62) / h;
       ctx.translate(size / 2, size * .88); ctx.scale(k, k); drawBossBody({ id, x: -w / 2, y: -h, w, h, face: 1, phase: p2 ? 2 : 1, wings: p2, state: 'idle' }, 1); }
   } catch (err) {}
@@ -5149,7 +5292,7 @@ function libPortrait(kind, key, size, locked) {
 }
 function bossWhere(id) {
   if (id === 'demon' || id === 'demon2') return `Chương 4 · ${STAGES[LAST].name}`;
-  if (id === 'priest' || id === 'treant') { const n = STAGES.findIndex(S => S.boss === id); return `Saga II · Màn ${stageNo(n)} · ${STAGES[n].name}`; }
+  if (STAGES.some(S => S.saga === 2 && S.boss === id)) { const n = STAGES.findIndex(S => S.boss === id); return `Saga II · Màn ${stageNo(n)} · ${STAGES[n].name}`; }
   const n = STAGES.findIndex(S => S.boss === id); return n > 0 ? `${STAGES[n].saga === 2 ? 'Saga II · ' : ''}${CHAPTERS[STAGES[n].chapter].split(' · ')[0]} · Màn ${stageNo(n)} · ${STAGES[n].name}` : '';
 }
 function renderLibrary() {
