@@ -1257,7 +1257,7 @@ function makeEnemy(kind, cx, row, n, extra) { // n = độ khó
 function buildWorld(n) {
   world = buildStage(n);
   const TH = THEMES[STAGES[n].theme] || THEMES.forest;
-  world.theme = TH;
+  world.theme = TH; world.themeKey = THEMES[STAGES[n].theme] ? STAGES[n].theme : 'forest';
   solids = []; spikes = []; coins = []; enemies = []; shots = []; walls = []; hazards = []; traps = []; rings = [];
   particles = []; trail = []; popups = []; ult = null; ultCine = null; endScene = null; riftScene = null; shake = 0; dialog = null; petals = []; bolts = []; decals = []; cutin = null; flashT = 0; curBoss = null;
   boss = null; bossStarted = false; reward = null; goalTaken = false; gate = null; trainLog = [];
@@ -1266,6 +1266,7 @@ function buildWorld(n) {
     if (c === '#' || c === '=') solids.push({ x: x * T, y: y * T, w: T, h: T, top: c === '=', grass: y === 0 || G[y - 1][x] !== '#' });
     else if (c === '^') spikes.push({ x: x * T, y: y * T + 18, w: T, h: 22 });
   }));
+  world.decor = PXW.makeDecor(world, world.themeKey, n);
   world.flies.forEach(([x, y]) => coins.push({ x: x * T + 20, y: y * T + 20, t: Math.random() * 6, got: false }));
   world.spawn.forEach(([cx, row, k]) => enemies.push(makeEnemy(k, cx, row, Math.max(1, world.d))));
   save.seen = save.seen || {}; for (const [, , k] of world.spawn) save.seen['e:' + k] = true;
@@ -3079,6 +3080,7 @@ const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)).join(','
 function line(x1, y1, x2, y2, color, w) { ctx.strokeStyle = color; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
 
 function drawBg() {
+  if (PIXEL_ART && world.themeKey) { PXW.drawBg(ctx, world.themeKey, camX, Date.now(), W, H); return; }
   const TH = world.theme;
   const g = ctx.createLinearGradient(0, 0, 0, H);
   g.addColorStop(0, TH.sky[0]); g.addColorStop(1, TH.sky[1]);
@@ -3782,7 +3784,7 @@ return {hero,boss,enemy,enemyInfo,hasHero:c=>!!HEROES[c],hasBoss:id=>!!BOSSES[id
 
 // ======================= PIXEL ART: tướng & boss nhìn nghiêng =======================
 const PIXEL_ART = true, HERO_SC = 1.25;
-const BUILD = 36;
+const BUILD = 37;
 addEventListener('load', () => { const t = document.getElementById('buildTag'); if (t) t.textContent = `Bản ${BUILD} · ${PIXEL_ART ? 'Pixel art' : 'Vector'}`; });
 function heroPixPose(p) {
   const A = Date.now();
@@ -3882,6 +3884,272 @@ function drawBossPix(b, c, pid) {
   ctx.drawImage(cv, -cv.ax * S, -cv.fy * S + bob, cv.width * S, cv.height * S);
   ctx.filter = 'none';
 }
+
+// ======================= MÔI TRƯỜNG PIXEL ART: nền nhiều lớp, địa hình, bẫy, trang trí =======================
+const PXW = (() => {
+  const S = 1.25, SW = 1536, SH = 352, STRIP_Y = 100;
+  const hx = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const toHex = (r, g, b) => '#' + [r, g, b].map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
+  const mix = (a, b, t) => { const A = hx(a), B = hx(b); return toHex(A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t); };
+  const lit = (c, t) => mix(c, '#ffffff', t), drk = (c, t) => mix(c, '#000000', t);
+  const rngF = seed => { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; };
+  const hash = (...n) => { let h = 2166136261; for (const v of n) { h ^= (v | 0); h = Math.imul(h, 16777619); } return h >>> 0; };
+  const hashStr = s => hash(...[...s].map(c => c.charCodeAt(0)));
+  const U = (hex, a = 255) => { const [r, g, b] = hx(hex); return ((a << 24) | (b << 16) | (g << 8) | r) >>> 0; };
+  const BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+  const ACC = { forest: '#ff9ac8', crimson: '#ff5a4a', ash: '#a8a0b8', swamp: '#c8ff6a', steel: '#7ac8ff', wrath: '#ff8a2a', pride: '#ffd166', greed: '#ffd84d', glutton: '#c8f070', lust: '#ff7ac8', envy: '#4fd18b', sloth: '#6fb6ff', deepwood: '#9ae08a', ruins: '#e0d8c0', palace: '#c9a24a', castle: '#ff4a5a' };
+  const palC = {};
+  function pal(key) { if (palC[key]) return palC[key]; const T = THEMES[key] || THEMES.forest; return palC[key] = { key, sky0: T.sky[0], sky1: T.sky[1], moon: T.moon, h1: T.hill1, h2: T.hill2, deco: T.deco, gd: T.ground, gr: T.grass, gt: T.grassTop, pl: T.plat, sp: T.spike, type: T.decoType, acc: ACC[key] || '#ffffff' }; }
+  // ---- bề mặt điểm ảnh ----
+  function surf(w, h, wrap) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'), id = g.createImageData(w, h), u = new Uint32Array(id.data.buffer);
+    return { c, g, w, h, u, set(x, y, col) { x = Math.round(x); y = Math.round(y); if (wrap) x = ((x % w) + w) % w; if (x < 0 || y < 0 || x >= w || y >= h) return; u[y * w + x] = col; },
+      rect(x, y, ww, hh, col) { for (let j = Math.round(y); j < Math.round(y + hh); j++) for (let i = Math.round(x); i < Math.round(x + ww); i++) this.set(i, j, col); },
+      flush() { g.putImageData(id, 0, 0); return c; } }; }
+  const rcg = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
+  function outlineCol(c, col) { const x = c.getContext('2d'), W = c.width, H = c.height, d = x.getImageData(0, 0, W, H), a = d.data, op = (i, j) => i >= 0 && j >= 0 && i < W && j < H && a[(j * W + i) * 4 + 3] > 0, out = [];
+    for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) if (!op(i, j) && (op(i - 1, j) || op(i + 1, j) || op(i, j - 1) || op(i, j + 1))) out.push([i, j]); x.fillStyle = col; out.forEach(([i, j]) => x.fillRect(i, j, 1, 1)); }
+  // sprite có viền: khung (w+4)x(h+4), gốc ở giữa-đáy
+  function spr(w, h, draw, ol) { const c = document.createElement('canvas'); c.width = w + 4; c.height = h + 4; const g = c.getContext('2d'); g.translate(2, 2); draw(g, w, h); g.setTransform(1, 0, 0, 1, 0, 0); if (ol) outlineCol(c, ol); c.ax = c.width / 2; c.fy = h + 3; return c; }
+
+  // ================= NỀN =================
+  const bgC = {};
+  function disc(s, cx, cy, r, col, f) { for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) if (x * x + y * y <= r * r + r * .4) s.set(cx + x, cy + y, f ? f(x, y) : col); }
+  function buildSky(P) {
+    const W = 768, H = 432, s = surf(W, H), A = hx(P.sky0), B = hx(P.sky1), N = 10;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const tt = y / (H - 1) * (N - 1), band = Math.floor(tt), f = tt - band, thr = (BAYER[y & 3][x & 3] + .5) / 16, b2 = band + (f > thr ? 1 : 0), k = Math.min(1, b2 / (N - 1)); s.u[y * W + x] = U(toHex(A[0] + (B[0] - A[0]) * k, A[1] + (B[1] - A[1]) * k, A[2] + (B[2] - A[2]) * k)); }
+    const r = rngF(hashStr(P.key) + 5), sc = lit(P.moon, .45);
+    for (let i = 0; i < 110; i++) { const x = Math.floor(r() * W), y = Math.floor(r() * H * .6); s.set(x, y, U(mix(P.sky1, sc, .35 + r() * .5))); }
+    for (let i = 0; i < 16; i++) { const x = 8 + Math.floor(r() * (W - 16)), y = 6 + Math.floor(r() * H * .5), c = U(sc); s.set(x, y, c); s.set(x - 1, y, U(mix(P.sky1, sc, .45))); s.set(x + 1, y, U(mix(P.sky1, sc, .45))); s.set(x, y - 1, U(mix(P.sky1, sc, .45))); s.set(x, y + 1, U(mix(P.sky1, sc, .45))); }
+    const mx = W - 112, my = 72;
+    for (const [rr, a] of [[46, .06], [36, .09], [29, .14]]) for (let y = -rr; y <= rr; y++) for (let x = -rr; x <= rr; x++) if (x * x + y * y <= rr * rr && ((x + y) & 1) === 0) s.set(mx + x, my + y, U(mix(P.sky1, P.moon, a * 2.2)));
+    disc(s, mx, my, 21, null, (x, y) => { const d = Math.hypot(x + 6, y - 5); return U(d > 22 ? mix(P.moon, P.sky1, .32) : d > 17 ? mix(P.moon, P.sky1, .12) : P.moon); });
+    for (const [cx, cy, w] of [[-7, -6, 3], [5, 6, 4], [-3, 9, 2], [9, -9, 2]]) s.rect(mx + cx, my + cy, w, 2, U(mix(P.moon, P.sky1, .38)));
+    return s.flush(); }
+  function buildClouds(P) { const s = surf(SW, 130, true), r = rngF(hashStr(P.key) + 9), col = U(mix(P.sky1, P.moon, .16)), colD = U(mix(P.sky1, P.moon, .08));
+    for (let i = 0; i < 7; i++) { const cx = Math.floor(r() * SW), cy = 20 + Math.floor(r() * 80), w = 40 + Math.floor(r() * 60);
+      for (let x = -w; x <= w; x++) { const hh = Math.round(Math.sqrt(Math.max(0, 1 - (x / w) * (x / w))) * (5 + r() * 0) + (Math.abs(x) < w * .5 ? 3 : 0)); for (let y = -hh; y <= 2; y++) s.set(cx + x, cy + y, (y > 0 || ((x + y) & 1)) ? colD : col); } }
+    return s.flush(); }
+  function hillFn(base, comps, seed) { const r = rngF(seed), cs = comps.map(([amp, fr]) => ({ amp, fr, ph: r() * 6.2832 })); return x => base - cs.reduce((a, c) => a + Math.sin(x / SW * 6.2832 * c.fr + c.ph) * c.amp, 0); }
+  function fillHill(s, fn, base, hi, lo) { for (let x = 0; x < SW; x++) { const y0 = Math.round(fn(x)); for (let y = y0; y < SH; y++) { const d = y - y0; s.set(x, y, d < 2 ? hi : (d < 12 && (BAYER[y & 3][x & 3] + .5) / 16 > d / 12) ? mix2(base, hi) : d > 60 && (BAYER[y & 3][x & 3] > 8) ? lo : base); } } }
+  const m2c = {}; function mix2(base, hi) { return base; }
+  function peaks(s, cols, P, n, hh, hw, key) { const r = rngF(hashStr(key) + 21), ps = []; for (let i = 0; i < n; i++) ps.push([Math.floor((i + .5) * SW / n + (r() - .5) * 90), hh * (.7 + r() * .5), hw * (.8 + r() * .5)]);
+    const hf = x => { let m = 0; for (const [cx, h, w] of ps) { let dx = Math.abs(x - cx); dx = Math.min(dx, SW - dx); const v = Math.max(0, h * (1 - dx / w) + (Math.round(Math.sin(x * .9) * 1.2))); if (v > m) m = v; } return m; };
+    for (let x = 0; x < SW; x++) { const h = hf(x), y0 = Math.round(cols.base - h), hl = hf(x - 1) < h; for (let y = y0; y < SH; y++) { const d = y - y0, snow = (P.key === 'steel' || P.key === 'sloth' || P.key === 'crimson') && h > hh * .72 && d < (h - hh * .72) * .8 + 2;
+        s.set(x, y, snow ? U(lit(cols.hi, .6)) : (d < 2 ? (hl ? cols.hi : cols.lo) : (d < 14 && !hl && (BAYER[y & 3][x & 3] + .5) / 16 < .45) ? cols.lo : cols.base)); } } }
+  function castleSil(s, cx, by, sc, col, colD, colW, acc, r, ruin) {
+    const R = (x, y, w, h, c) => s.rect(x, y, w, h, c), bat = (x, y, w, c) => { for (let i = 0; i < w; i += 4) R(x + i, y - 2, 2, 2, c); };
+    const kw = Math.round((24 + r() * 10) * sc), kh = Math.round((34 + r() * 14) * sc), ww = kw * 2 + Math.round(34 * sc), wh = Math.round(14 * sc);
+    R(cx - ww / 2, by - wh, ww, wh + 4, col); bat(cx - ww / 2, by - wh, ww, col);
+    R(cx - kw / 2, by - kh, kw, kh + 4, col); bat(cx - kw / 2, by - kh, kw, col);
+    const towers = [[-ww / 2 + 5 * sc, 11 + r() * 3, 60 + r() * 28], [ww / 2 - 5 * sc, 11 + r() * 3, 54 + r() * 26], [0, 13, kh + 26 + r() * 14]];
+    for (const [dx, tw0, th0] of towers) { const tw = Math.round(tw0 * sc), th = Math.round(th0 * sc), tx = Math.round(cx + dx), roof = Math.round(tw * 1.25);
+      R(tx - tw / 2, by - th, tw, th + 4, col); R(tx - tw / 2, by - th, 1, th, U(lit(hx2s(col), .12)));
+      if (!ruin || r() > .4) { for (let i = 0; i < roof; i++) { const half = Math.round((i / roof) * (tw / 2 + 2)); R(tx - half, by - th - roof + i, half * 2 + 1, 1, colD); } R(tx, by - th - roof - 7, 1, 8, colD); R(tx + 1, by - th - roof - 7, 4, 2, U(acc)); }
+      else { for (let i = 0; i < 4; i++) R(tx - tw / 2 + i * 3, by - th - Math.floor(r() * 4), 2, 4, col); }
+      for (let k = 0; k < 3; k++) if (r() < .6) R(tx - 1, by - th + 8 + k * Math.round(14 * sc), 2, 3, colW); }
+    for (let k = 0; k < 4; k++) if (r() < .6) R(cx - kw / 2 + 4 + k * Math.round(kw / 4), by - kh + 8 + Math.floor(r() * 14), 2, 3, colW);
+    R(cx - 3, by - 9 * sc, 6, 9 * sc + 4, colD); }
+  const hx2s = c => { const a = (c >>> 0), r = a & 255, g = (a >> 8) & 255, b = (a >> 16) & 255; return toHex(r, g, b); };
+  function silTree(s, x, by, h, col, hi, kind, r) {
+    if (kind === 'pine') { const tiers = 5, th = (h - 6) / tiers; for (let y = 0; y < h - 6; y++) { const ti = Math.floor(y / th), loc = y - ti * th, half = Math.round(1 + ti * 1.7 + loc * .8); s.rect(x - half, by - h + y, half * 2 + 1, 1, col); s.set(x - half, by - h + y, hi); } s.rect(x - 1, by - 6, 3, 7, col); }
+    else if (kind === 'dead') { s.rect(x - 1, by - h, 3, h + 1, col); let bx = x, by2 = by - h * .6; for (let i = 0; i < 4; i++) { const dir = i % 2 ? 1 : -1, len = 6 + Math.floor(r() * 8), yy = by - h * (.35 + i * .16); for (let k = 0; k < len; k++) s.set(x + dir * k, yy - k * .7, col); for (let k = 0; k < 3; k++) s.set(x + dir * (len - 1) + dir * k, yy - len * .7 - k, col); } }
+    else { s.rect(x - 2, by - h * .45, 4, h * .45 + 1, col); for (const [dx, dy, rr] of [[0, .62, .3], [-.2, .5, .22], [.22, .52, .24]]) disc(s, Math.round(x + dx * h), Math.round(by - h * dy), Math.round(rr * h), null, (px, py) => (px + py < -rr * h * .5 ? hi : col)); } }
+  function torii(s, x, by, h, col) { s.rect(x, by - h, 3, h + 1, col); s.rect(x + 22, by - h, 3, h + 1, col); s.rect(x - 7, by - h - 1, 39, 3, col); s.set(x - 8, by - h - 3, col); s.set(x - 9, by - h - 4, col); s.set(x + 32, by - h - 3, col); s.set(x + 33, by - h - 4, col); s.rect(x - 3, by - h + 7, 31, 2, col); }
+  function buildStrips(P) {
+    const key = P.key, r = rngF(hashStr(key) + 77), far = surf(SW, SH, true), mid = surf(SW, SH, true), near = surf(SW, SH, true);
+    const cF = mix(P.h1, P.sky1, .5), cF2 = lit(cF, .1), cFd = drk(cF, .18), cM = mix(P.h1, P.sky1, .22), cM2 = lit(cM, .09), cN = P.h2, cN2 = lit(cN, .08);
+    const hf = hillFn(150, [[10, 2], [6, 5], [3, 9]], hashStr(key)), pk = P.type === 'peaks';
+    if (pk) peaks(far, { y: 188, base: U(cF), hi: U(cF2), lo: U(cFd) }, P, 5, 96, 150, key); else fillHill(far, hf, U(cF), U(cF2), U(cFd));
+    // lâu đài xa: 1-3 toà trên đồi xa
+    const nC = key === 'castle' || key === 'palace' || key === 'pride' || key === 'steel' ? 3 : 2, style = { castle: 1, wrath: 1 }[key], cols = U(drk(cF, .22)), colsD = U(drk(cF, .38)), colW = U(mix('#ffd166', cF, .35)), accC = ACC[key] || '#ffffff';
+    for (let i = 0; i < nC; i++) { const cx = Math.round((i + .5) * SW / nC + (r() - .5) * 120), by = pk ? 190 : Math.round(hf(cx)) + 6; castleSil(far, cx, by, .9 + r() * .5, cols, colsD, colW, accC, r, key === 'ruins' || key === 'deepwood'); }
+    // lớp giữa: đồi + trang trí
+    const hm = hillFn(206, [[9, 3], [5, 7], [3, 11]], hashStr(key) + 3); fillHill(mid, hm, U(cM), U(cM2), U(drk(cM, .1)));
+    const dcol = U(P.deco), dhi = U(lit(P.deco, .12)), nT = 11;
+    for (let i = 0; i < nT; i++) { const x = Math.round((i + .5) * SW / nT + (r() - .5) * 50), by = Math.round(hm(x)) + 3;
+      if (P.type === 'torii') { if (i % 3 === 0) torii(mid, x, by, 46 + Math.floor(r() * 10), dcol); else silTree(mid, x, by, 40 + Math.floor(r() * 28), dcol, dhi, i % 2 ? 'pine' : 'round', r); }
+      else if (P.type === 'peaks') silTree(mid, x, by, 36 + Math.floor(r() * 30), dcol, dhi, i % 3 ? 'pine' : 'dead', r);
+      else if (P.type === 'trees') silTree(mid, x, by, 44 + Math.floor(r() * 36), dcol, dhi, i % 4 === 0 ? 'round' : 'dead', r);
+      else { if (i % 2 === 0) castleSil(mid, x, by, .62 + r() * .3, dcol, U(drk(P.deco, .25)), U(mix('#ffcc66', P.deco, .4)), accC, r, key === 'ruins'); else silTree(mid, x, by, 34 + Math.floor(r() * 22), dcol, dhi, 'pine', r); } }
+    const hn = hillFn(246, [[7, 4], [4, 9]], hashStr(key) + 9); fillHill(near, hn, U(cN), U(cN2), U(drk(cN, .15)));
+    for (let i = 0; i < 24; i++) { const x = Math.round((i + .5) * SW / 24 + (r() - .5) * 20), by = Math.round(hn(x)) + 2; silTree(near, x, by, 18 + Math.floor(r() * 22), U(mix(P.deco, P.h2, .5)), U(mix(P.deco, P.h2, .7)), P.type === 'trees' ? 'dead' : i % 3 ? 'pine' : 'round', r); }
+    return { far: far.flush(), mid: mid.flush(), near: near.flush() };
+  }
+  function bgFor(key) { if (bgC[key]) return bgC[key]; const P = pal(key), st = buildStrips(P); return bgC[key] = { sky: buildSky(P), clouds: buildClouds(P), ...st }; }
+  function drawBg(ctx, key, camX, t, W, H) {
+    const B = bgFor(key), P = pal(key); ctx.save(); ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = P.sky0; ctx.fillRect(-W, -H, W * 3, H * 1.5); ctx.fillStyle = P.sky1; ctx.fillRect(-W, H * .5, W * 3, H * 2);
+    ctx.drawImage(B.sky, 0, 0, W, H);
+    const tw = Math.sin(t / 700) > 0; ctx.fillStyle = 'rgba(255,255,255,.7)'; for (let i = 0; i < 6; i++) { const x = (i * 197 + 40) % W, y = 20 + (i * 53) % 220; if ((i + (tw ? 1 : 0)) % 2) ctx.fillRect(x, y, 2, 2); }
+    const sw = SW * S, drift = camX * .05 + t * .006;
+    for (let x = -((drift) % sw); x < W; x += sw) ctx.drawImage(B.clouds, Math.round(x), 40, sw, 130 * S);
+    for (const [st, par] of [[B.far, .12], [B.mid, .3], [B.near, .52]]) for (let x = -((camX * par) % sw); x < W; x += sw) ctx.drawImage(st, Math.round(x), STRIP_Y, sw, SH * S);
+    ctx.restore(); }
+
+  // ================= ĐỊA HÌNH =================
+  const tileC = {}, BRICK = k => ['castle', 'steel', 'pride', 'ruins', 'palace'].includes(k);
+  function genGround(P, mask, v, depth) {
+    const s = surf(32, 32), r = rngF(hash(v, mask, depth, hashStr(P.key)));
+    const b0 = depth > 1 ? drk(P.gd, .2) : depth > 0 ? drk(P.gd, .08) : P.gd, base = U(b0), hi = U(lit(b0, .11)), lo = U(drk(b0, .22)), lo2 = U(drk(b0, .4));
+    s.rect(0, 0, 32, 32, base);
+    if (BRICK(P.key)) { for (let row = 0; row < 4; row++) { const y = row * 8, off = ((row % 2) * 8 + (v * 3) % 5) % 16; s.rect(0, y, 32, 1, lo); for (let x = off; x < 32; x += 16) s.rect(x, y, 1, 8, lo); s.rect(0, y + 1, 32, 1, hi); for (let x = off; x < 32; x += 16) s.rect(x + 1, y + 1, 1, 7, hi); }
+      for (let i = 0; i < 14; i++) s.set(Math.floor(r() * 32), Math.floor(r() * 32), r() < .5 ? lo : hi); }
+    else { for (let i = 0; i < 60; i++) s.set(Math.floor(r() * 32), Math.floor(r() * 32), r() < .55 ? lo : hi);
+      for (let i = 0; i < 9; i++) s.rect(Math.floor(r() * 28), Math.floor(r() * 28), 2, 1, lo);
+      for (let i = 0; i < 3; i++) { const x = 3 + Math.floor(r() * 24), y = 8 + Math.floor(r() * 20); s.rect(x, y, 3, 2, hi); s.rect(x, y + 2, 3, 1, lo2); s.set(x + 3, y, lo); } }
+    if (mask & 4) { const dk = U(drk(P.gr, .55)); s.rect(0, 0, 32, 1, dk);
+      for (let x = 0; x < 32; x++) { const gd = 6 + (((x * 7 + v * 5) % 6) < 2 ? 1 : 0) + (x % 5 === 0 ? 1 : 0) - ((x * 3 + v) % 7 === 0 ? 1 : 0);
+        for (let y = 1; y < gd; y++) s.set(x, y, y < 3 ? U(P.gt) : (y > gd - 2 ? U(drk(P.gr, .25)) : U(P.gr))); s.set(x, gd, dk); }
+      for (let i = 0; i < 6; i++) s.set(Math.floor(r() * 32), 2 + Math.floor(r() * 3), U(lit(P.gt, .3))); }
+    if (mask & 1) { for (let y = 0; y < 32; y++) s.set(0, y, lo2); for (let y = 7; y < 32; y++) s.set(1, y, hi); }
+    if (mask & 2) { for (let y = 0; y < 32; y++) s.set(31, y, lo2); for (let y = 7; y < 32; y++) s.set(30, y, lo); }
+    return s.flush(); }
+  function genPlank(P, mask, v) {
+    const s = surf(32, 18), r = rngF(hash(v, mask, hashStr(P.key)) + 3), base = U(P.pl), hi = U(lit(P.pl, .16)), lo = U(drk(P.pl, .25)), lo2 = U(drk(P.pl, .45));
+    if (BRICK(P.key)) { s.rect(0, 0, 32, 12, base); s.rect(0, 0, 32, 2, hi); s.rect(0, 11, 32, 1, lo); s.rect(0, 12, 32, 1, lo2); for (let x = 7 + v % 3; x < 32; x += 11) s.rect(x, 2, 1, 9, lo); for (let y = 13; y < 18; y++) { s.rect(3 + (y - 13), y, 3, 1, lo2); s.rect(26 - (y - 13), y, 3, 1, lo2); } }
+    else { s.rect(0, 0, 32, 12, base); s.rect(0, 0, 32, 2, hi); s.rect(0, 10, 32, 2, lo); s.rect(0, 12, 32, 1, lo2); for (const x of [8, 16, 24]) s.rect(x, 2, 1, 8, lo); for (let i = 0; i < 12; i++) s.set(Math.floor(r() * 32), 2 + Math.floor(r() * 8), r() < .5 ? lo : hi);
+      for (const [x, y] of [[2, 5], [29, 5], [10, 5], [21, 5]]) s.set(x, y, lo2); for (let y = 13; y < 18; y++) { s.rect(4 + (y - 13), y, 2, 1, lo2); s.rect(26 - (y - 13), y, 2, 1, lo2); } }
+    if (mask & 1) { s.rect(0, 0, 1, 13, lo2); s.rect(1, 2, 1, 2, hi); } if (mask & 2) s.rect(31, 0, 1, 13, lo2);
+    return s.flush(); }
+  const tileOf = (k, P, mask, v, depth) => { const key = P.key + k + mask + v + depth; return tileC[key] || (tileC[key] = k === 'g' ? genGround(P, mask, v, depth) : genPlank(P, mask, v)); };
+  const spikeC = {}; function spikeSpr(P) { if (spikeC[P.key]) return spikeC[P.key];
+    const s = surf(32, 18), met = P.sp, base = U(met), hi = U(lit(met, .55)), lo = U(drk(met, .3)), lo2 = U(drk(met, .6));
+    for (const cx of [8, 24]) for (let y = 0; y < 18; y++) { const half = Math.round((y + 1) / 18 * 8); for (let x = -half; x <= half; x++) s.set(cx + x, y, x < -half * .3 ? hi : x > half * .35 ? lo : base); s.set(cx - half, y, hi); s.set(cx + half, y, lo2); }
+    s.rect(0, 16, 32, 2, lo2); const c = s.flush(); outlineCol(c, drk(P.gd, .7)); return spikeC[P.key] = c; }
+  let gateC; function gateSpr() { if (gateC) return gateC; const GH = 330, s = surf(32, GH); s.rect(0, 0, 32, GH, U('#281420', 215));
+    for (const bx of [3, 11, 19, 27]) { s.rect(bx, 6, 3, GH - 6, U('#8b8fa8')); s.rect(bx, 6, 1, GH - 6, U('#c4c8dc')); s.rect(bx + 2, 6, 1, GH - 6, U('#5a5f76')); for (let k = 0; k < 6; k++) { s.rect(bx + 1 - k % 2, 6 - k, 1 + (k % 2) * 1, 1, U('#c4c8dc')); } s.rect(bx, 0, 3, 6, U('#8b8fa8')); s.set(bx + 1, 0, U('#e8ecff')); }
+    for (let y = 24; y < GH; y += 80) { s.rect(0, y, 32, 3, U('#6a6f86')); s.rect(0, y, 32, 1, U('#9aa0b8')); s.rect(0, y + 2, 32, 1, U('#3a3f56')); }
+    return gateC = s.flush(); }
+
+  // ================= TRANG TRÍ =================
+  const DEC = {
+    tuft(g, w, h, P, r) { for (let i = 0; i < 5; i++) { const x = 1 + i * 2, hh = 3 + Math.floor(r() * 5), lean = Math.round((r() - .5) * 2); for (let y = 0; y < hh; y++) rcg(g, x + (y > hh * .6 ? lean : 0), h - 1 - y, 1, 1, y > hh * .5 ? P.gt : P.gr); } },
+    flower(g, w, h, P, r) { const x = w / 2 | 0, hh = 6 + Math.floor(r() * 4), col = [P.acc, '#ffffff', '#ffd84d', '#ff9ac8'][Math.floor(r() * 4)]; for (let y = 1; y <= hh; y++) rcg(g, x, h - y, 1, 1, P.gr); rcg(g, x - 1, h - hh - 1, 3, 1, col); rcg(g, x, h - hh - 2, 1, 3, col); rcg(g, x, h - hh - 1, 1, 1, '#fff6c0'); rcg(g, x + 1, h - 4, 2, 1, P.gt); },
+    bush(g, w, h, P, r) { const b = drk(P.gr, .12); for (let y = 0; y < h; y++) { const half = Math.round(Math.sqrt(Math.max(0, 1 - Math.pow((y - h * .55) / (h * .55), 2))) * w / 2); for (let x = -half; x <= half; x++) rcg(g, w / 2 + x, y, 1, 1, (x + y < -w * .2) ? P.gt : (x + y > w * .18) ? drk(P.gr, .35) : b); } for (let i = 0; i < 3; i++) rcg(g, 3 + Math.floor(r() * (w - 6)), 2 + Math.floor(r() * (h - 4)), 1, 1, P.acc); },
+    rock(g, w, h, P, r) { const base = mix(P.gd, '#8c8ca0', .45); for (let y = 0; y < h; y++) { const half = Math.round(Math.sqrt(Math.max(0, 1 - Math.pow((y - h * .2) / (h * .9), 2))) * w / 2); for (let x = -half; x <= half; x++) rcg(g, w / 2 + x, y, 1, 1, (x + y < -w * .25) ? lit(base, .2) : (x + y > w * .15) ? drk(base, .3) : base); } rcg(g, 3, h - 3, 2, 1, drk(base, .4)); },
+    mushroom(g, w, h, P, r) { const cap = [P.acc, '#e8503a', '#b06bff'][Math.floor(r() * 3)], gl = ['swamp', 'deepwood', 'sloth', 'glutton', 'envy'].includes(P.key) ? P.acc : cap; rcg(g, w / 2 - 1, h - 5, 3, 5, '#e8ddc8'); rcg(g, w / 2 - 1, h - 5, 1, 5, '#fff6e0'); for (let y = 0; y < 4; y++) { const half = 2 + (3 - y); rcg(g, w / 2 - half, h - 9 + y, half * 2 + 1, 1, y < 1 ? lit(gl, .3) : gl); } rcg(g, w / 2 - 3, h - 7, 1, 1, '#fff6e0'); rcg(g, w / 2 + 1, h - 8, 1, 1, '#fff6e0'); },
+    pine(g, w, h, P, r) { const leaf = drk(P.gr, .32), lh = P.gt, ll = drk(P.gr, .55), tiers = 5, th = (h - 8) / tiers; for (let y = 0; y < h - 8; y++) { const ti = Math.floor(y / th), loc = y - ti * th, half = Math.round(1 + ti * (w / 2 - 2) / tiers + loc * .7); for (let x = -half; x <= half; x++) rcg(g, w / 2 + x, y, 1, 1, x < -half * .35 ? mix(leaf, lh, .35) : x > half * .35 ? ll : leaf); } rcg(g, w / 2 - 1, h - 8, 3, 8, drk(P.pl, .35)); rcg(g, w / 2 - 1, h - 8, 1, 8, P.pl); },
+    round(g, w, h, P, r, pink) { const leaf = pink ? mix(P.acc, '#ff9ac8', .3) : mix(P.gr, '#1a3a22', .3), hi = pink ? lit(P.acc, .5) : P.gt, lo = pink ? drk(P.acc, .35) : drk(P.gr, .5); rcg(g, w / 2 - 2, h - 20, 4, 20, drk(P.pl, .3)); rcg(g, w / 2 - 2, h - 20, 1, 20, P.pl);
+      for (const [dx, dy, rr] of [[0, 17, 13], [-9, 23, 9], [9, 23, 9], [0, 11, 9]]) for (let y = -rr; y <= rr; y++) for (let x = -rr; x <= rr; x++) if (x * x + y * y <= rr * rr) { const c = (x + y < -rr * .55) ? hi : (x + y > rr * .5) ? lo : leaf; rcg(g, w / 2 + dx + x, dy + y, 1, 1, (((x + y) & 1) && Math.abs(x + y) < rr * .6) ? mix(c, leaf, .5) : c); } },
+    sakura(g, w, h, P, r) { DEC.round(g, w, h, P, r, true); },
+    dead(g, w, h, P, r) { const bark = drk(P.pl, .4); let x = w / 2; for (let y = h - 1; y >= 0; y--) { const t = (h - y) / h, wd = Math.max(1, Math.round(4 * (1 - t) + 1)); if (r() < .12) x += r() < .5 ? -1 : 1; rcg(g, x - wd / 2, y, wd, 1, bark); rcg(g, x - wd / 2, y, 1, 1, P.pl); }
+      for (let i = 0; i < 4; i++) { const dir = i % 2 ? 1 : -1, yy = h * (.25 + i * .17), len = 7 + Math.floor(r() * 8); for (let k = 0; k < len; k++) rcg(g, w / 2 + dir * k, h - yy - k * .8, 1, 1, bark); for (let k = 0; k < 3; k++) rcg(g, w / 2 + dir * (len + k), h - yy - len * .8 - k * 1.2, 1, 1, bark); }
+      if (['swamp', 'deepwood'].includes(P.key)) for (let i = 0; i < 6; i++) rcg(g, w / 2 - 3 + Math.floor(r() * 6), h - 6 - Math.floor(r() * 12), 2, 1, P.gt); },
+    lantern(g, w, h, P) { const st = mix(P.gd, '#b8b8c8', .4), hi = lit(st, .2), lo = drk(st, .3); rcg(g, 2, h - 4, 10, 4, st); rcg(g, 2, h - 4, 10, 1, hi); rcg(g, 5, h - 16, 4, 12, st); rcg(g, 5, h - 16, 1, 12, hi); rcg(g, 2, h - 26, 10, 10, st); rcg(g, 4, h - 24, 6, 6, '#ffd166'); rcg(g, 4, h - 24, 6, 1, '#fff0b0'); rcg(g, 6, h - 24, 2, 6, '#e8b04a'); rcg(g, 0, h - 29, 14, 3, lo); rcg(g, 1, h - 30, 12, 1, hi); rcg(g, 5, h - 33, 4, 3, st); },
+    torch(g, w, h, P) { rcg(g, 4, 8, 2, h - 8, drk(P.pl, .35)); rcg(g, 4, 8, 1, h - 8, P.pl); rcg(g, 2, 6, 6, 3, '#5a5f76'); rcg(g, 2, 6, 6, 1, '#8b8fa8'); rcg(g, 3, h - 3, 4, 3, '#5a5f76'); },
+    pillar(g, w, h, P, r) { const st = mix(P.gd, '#c8c8d4', .45), hi = lit(st, .2), lo = drk(st, .28), lo2 = drk(st, .5); rcg(g, 0, h - 5, w, 5, lo); rcg(g, 0, h - 5, w, 1, st); rcg(g, 2, h - 8, w - 4, 3, st); const top = Math.floor(r() * 6) + 3;
+      rcg(g, 3, top, w - 6, h - 8 - top, st); rcg(g, 3, top, 2, h - 8 - top, hi); rcg(g, w - 5, top, 2, h - 8 - top, lo); for (let y = top; y < h - 8; y += 6) rcg(g, 3, y, w - 6, 1, lo); for (let x = 3; x < w - 3; x++) rcg(g, x, top - Math.floor(r() * 3), 1, 2, x < w / 2 ? hi : st);
+      for (let i = 0; i < 3; i++) rcg(g, 4 + Math.floor(r() * 5), top + 4 + Math.floor(r() * Math.max(1, h - top - 14)), 1, 3, lo2); if (['palace', 'pride'].includes(P.key)) rcg(g, 2, h - 8, w - 4, 1, P.acc); else if (r() < .6) { rcg(g, w - 5, top + 8, 2, 10, P.gr); rcg(g, w - 4, top + 16, 1, 4, P.gt); } },
+    banner(g, w, h, P) { const cl = ['palace', 'pride', 'steel', 'castle'].includes(P.key) ? P.acc : mix(P.acc, '#a02030', .4); rcg(g, 7, 0, 2, h, drk(P.pl, .3)); rcg(g, 7, 0, 1, h, P.pl); rcg(g, 1, 3, 14, 2, '#c9a24a'); rcg(g, 3, 5, 10, 20, cl); rcg(g, 3, 5, 2, 20, lit(cl, .25)); rcg(g, 11, 5, 2, 20, drk(cl, .3)); for (let i = 0; i < 3; i++) rcg(g, 3 + i * 4, 25, 2, 3 - (i % 2), cl); rcg(g, 6, 10, 4, 4, lit(cl, .5)); rcg(g, 7, 9, 2, 6, lit(cl, .5)); },
+    crystal(g, w, h, P) { for (const [cx, hh, ww] of [[5, 16, 5], [11, 26, 6], [16, 12, 4]]) for (let yy = 0; yy < hh; yy++) { const half = Math.min(Math.floor(ww / 2), Math.floor(yy / 2)); for (let x = -half; x <= half; x++) rcg(g, cx + x, h - hh + yy, 1, 1, x < -half * .2 ? lit(P.acc, .35) : x > half * .3 ? drk(P.acc, .35) : P.acc); } },
+    bones(g, w, h, P) { const bn = '#d8d0c0', sh = '#a8a090'; rcg(g, 2, 3, 7, 6, bn); rcg(g, 3, 9, 5, 1, bn); rcg(g, 3, 5, 2, 2, '#1a0e12'); rcg(g, 6, 5, 2, 2, '#1a0e12'); rcg(g, 4, 8, 1, 2, '#1a0e12'); rcg(g, 7, 8, 1, 2, '#1a0e12'); rcg(g, 2, 3, 1, 5, sh); rcg(g, 10, h - 3, 7, 2, bn); rcg(g, 10, h - 4, 2, 2, bn); rcg(g, 15, h - 4, 2, 2, bn); },
+    grave(g, w, h, P) { const st = mix(P.gd, '#a8a8b8', .45); for (let y = 0; y < h; y++) { const half = y < 4 ? 2 + y : w / 2 - 1; for (let x = -half; x <= half; x++) rcg(g, w / 2 + x, y, 1, 1, x < -half * .4 ? lit(st, .18) : x > half * .5 ? drk(st, .3) : st); } rcg(g, w / 2 - 1, 5, 2, 7, drk(st, .45)); rcg(g, w / 2 - 3, 7, 6, 2, drk(st, .45)); rcg(g, 1, h - 4, 3, 2, P.gt); },
+    reeds(g, w, h, P, r) { for (let i = 0; i < 5; i++) { const x = 1 + i * 3, hh = 12 + Math.floor(r() * 12); for (let y = 0; y < hh; y++) rcg(g, x + (y > hh * .7 ? 1 : 0), h - 1 - y, 1, 1, y > hh * .5 ? P.gt : drk(P.gr, .1)); if (i % 2 === 0) rcg(g, x + 1, h - hh - 3, 2, 4, '#7a4a2a'); } },
+    barrel(g, w, h, P) { rcg(g, 1, 1, w - 2, h - 2, '#8a5a2a'); rcg(g, 0, 3, w, h - 6, '#8a5a2a'); rcg(g, 2, 1, 2, h - 2, '#b07a3a'); rcg(g, w - 4, 2, 2, h - 4, '#5a3a1a'); rcg(g, 0, 3, w, 2, '#3a3f56'); rcg(g, 0, h - 5, w, 2, '#3a3f56'); rcg(g, 0, 3, w, 1, '#6a6f86'); },
+    coins(g, w, h, P) { for (let y = 0; y < h; y++) { const half = Math.round((y + 1) / h * (w / 2 - 1)); for (let x = -half; x <= half; x++) rcg(g, w / 2 + x, y, 1, 1, ((x + y) & 3) === 0 ? '#c8901a' : (x + y) < -3 ? '#ffe680' : '#e8c14a'); } rcg(g, 5, 2, 1, 1, '#ffffff'); rcg(g, 12, 5, 1, 1, '#ffffff'); }
+  };
+  const DIM = { tuft: [12, 9], flower: [8, 12], bush: [18, 11], rock: [14, 9], mushroom: [14, 10], pine: [28, 52], round: [38, 46], sakura: [38, 46], dead: [30, 44], lantern: [14, 34], torch: [10, 30], pillar: [14, 40], banner: [16, 42], crystal: [20, 26], bones: [18, 10], grave: [12, 18], reeds: [14, 26], barrel: [14, 16], coins: [18, 10] };
+  const NOOL = new Set(['tuft', 'flower']);
+  const decC = {};
+  function decoSpr(name, P, v) { const k = P.key + name + v; if (decC[k]) return decC[k]; const r = rngF(hash(v, hashStr(name), hashStr(P.key))); let [w, h] = DIM[name]; if (name === 'pine') { h = 44 + (v % 3) * 8; } else if (name === 'dead') h = 38 + (v % 3) * 7; else if (name === 'pillar') h = 28 + (v % 3) * 8;
+    return decC[k] = spr(w, h, (g, ww, hh) => DEC[name](g, ww, hh, P, r), NOOL.has(name) ? null : drk(P.gd, .62)); }
+  const POOLS = {
+    forest: { big: [['pine', 3], ['sakura', 2], ['lantern', 2]], small: [['tuft', 5], ['flower', 3], ['bush', 2], ['rock', 1], ['mushroom', 1]] },
+    crimson: { big: [['dead', 3], ['torch', 1], ['bones', 1]], small: [['tuft', 3], ['rock', 3], ['bones', 1], ['flower', 1]] },
+    ash: { big: [['dead', 3], ['grave', 2]], small: [['tuft', 2], ['rock', 3], ['grave', 1]] },
+    swamp: { big: [['dead', 2], ['reeds', 2]], small: [['reeds', 3], ['mushroom', 3], ['tuft', 2], ['rock', 1]] },
+    steel: { big: [['pillar', 2], ['banner', 2], ['torch', 2], ['crystal', 1]], small: [['tuft', 1], ['rock', 3], ['crystal', 1]] },
+    wrath: { big: [['dead', 2], ['torch', 3], ['bones', 1]], small: [['rock', 3], ['bones', 1], ['tuft', 1]] },
+    pride: { big: [['pillar', 3], ['banner', 2], ['torch', 2]], small: [['tuft', 1], ['rock', 2], ['flower', 1]] },
+    greed: { big: [['torch', 2], ['banner', 1], ['barrel', 2]], small: [['coins', 3], ['rock', 2], ['barrel', 1], ['tuft', 1]] },
+    glutton: { big: [['round', 2], ['dead', 1], ['reeds', 1]], small: [['mushroom', 4], ['tuft', 3], ['reeds', 2]] },
+    lust: { big: [['sakura', 3], ['lantern', 2]], small: [['flower', 4], ['tuft', 3], ['bush', 2]] },
+    envy: { big: [['dead', 2], ['crystal', 2], ['round', 1]], small: [['crystal', 2], ['tuft', 3], ['bush', 2], ['mushroom', 1]] },
+    sloth: { big: [['crystal', 2], ['lantern', 1], ['pine', 1]], small: [['mushroom', 3], ['crystal', 2], ['rock', 2], ['tuft', 1]] },
+    deepwood: { big: [['round', 3], ['pine', 3], ['dead', 1]], small: [['mushroom', 3], ['tuft', 4], ['bush', 3], ['rock', 1]] },
+    ruins: { big: [['pillar', 3], ['round', 1], ['dead', 1]], small: [['tuft', 3], ['rock', 3], ['bones', 1], ['flower', 1]] },
+    palace: { big: [['pillar', 3], ['banner', 3], ['torch', 3]], small: [['tuft', 1], ['flower', 1], ['rock', 1]] },
+    castle: { big: [['torch', 3], ['banner', 2], ['pillar', 1]], small: [['rock', 3], ['bones', 1], ['tuft', 1]] }
+  };
+  function wpick(list, r) { let tot = 0; for (const [, w] of list) tot += w; let x = r() * tot; for (const [n, w] of list) { x -= w; if (x <= 0) return n; } return list[0][0]; }
+  function makeDecor(world, key, seed) {
+    const G = world.G, cols = G[0].length, rows = G.length, P = pal(key), pool = POOLS[key] || POOLS.forest, r = rngF(seed * 977 + hashStr(key) + 13), out = [], T = 40;
+    const near = (c, list) => list.some(q => Math.abs(q - c) <= 1);
+    const keep = [...(world.cps || []), world.goalCol, ...(world.signs || []).map(sg => sg[0])];
+    let lastBig = -9;
+    for (let c = 2; c < cols - 1; c++) {
+      let sr = -1; for (let y = 0; y < rows; y++) if (G[y][c] === '#') { sr = y; break; } if (sr < 6) continue;
+      if (G[sr - 1] && (G[sr - 1][c] === '^' || G[sr - 1][c] === '=')) continue; if (near(c, keep)) continue;
+      let hasSpike = false; for (let y = 0; y < rows; y++) if (G[y][c] === '^') hasSpike = true; if (hasSpike) continue;
+      const x = c * T + 20 + Math.round((r() - .5) * 14), y = sr * T;
+      if (c - lastBig >= 4 && r() < .085) { const n = wpick(pool.big, r); out.push({ x, y: y + 3, name: n, v: Math.floor(r() * 4), back: true, anim: n === 'torch' || n === 'lantern' }); lastBig = c; }
+      else if (r() < .34) { const n = wpick(pool.small, r); out.push({ x, y: y + 1, name: n, v: Math.floor(r() * 4), back: false }); }
+    }
+    return out; }
+  const flameC = []; function flame(i) { return flameC[i] || (flameC[i] = spr(8, 11, (g) => { const w = i ? 5 : 6; rcg(g, 4 - w / 2, 4, w, 7, '#ff7a1a'); rcg(g, 3, 1 + i, 2, 5, '#ff7a1a'); rcg(g, 4 - 1, 5, 3, 5, '#ffd04a'); rcg(g, 3, 7, 2, 3, '#fff4c0'); }, null)); }
+  function drawDecor(ctx, d, P, t) {
+    const sp = decoSpr(d.name, P, d.v), x = Math.round(d.x - sp.ax * S), y = Math.round(d.y - sp.fy * S);
+    ctx.drawImage(sp, x, y, sp.width * S, sp.height * S);
+    if (d.anim) { const hh = DIM[d.name][1], fi = Math.floor(t / 130 + d.x) % 2, f = flame(fi);
+      if (d.name === 'torch') { ctx.drawImage(f, Math.round(d.x - f.ax * S), Math.round(d.y - (hh - 4) * S - f.fy * S + 6), f.width * S, f.height * S); glow(d.x, d.y - hh * S + 8, 34 + fi * 3, '255,150,60', .4); }
+      else { glow(d.x, d.y - (hh - 18) * S, 30, '255,200,110', .35 + fi * .05); } }
+  }
+  function drawWorld(ctx, world, solids, spikes, camX, t, W) {
+    const P = pal(world.themeKey), G = world.G, T = 40; ctx.imageSmoothingEnabled = false; const decor = world.decor || [];
+    for (const d of decor) if (d.back && d.x > camX - 90 && d.x < camX + W + 90) drawDecor(ctx, d, P, t);
+    for (const s of solids) {
+      if (s.x + T < camX - 60 || s.x > camX + W + 60) continue;
+      if (s.gate) { ctx.drawImage(gateSpr(), s.x, 0, 40, GROUND_Y); continue; }
+      const col = Math.round(s.x / T), row = Math.round(s.y / T), v = (col * 7 + row * 3) & 3;
+      if (s.top) { const m = (G[row][col - 1] !== '=' ? 1 : 0) | (G[row][col + 1] !== '=' ? 2 : 0); ctx.drawImage(tileOf('p', P, m, v, 0), s.x, s.y, 40, 22.5); continue; }
+      const Lo = col > 0 && G[row][col - 1] !== '#', Ro = G[row][col + 1] !== undefined && G[row][col + 1] !== '#', top = !!s.grass;
+      let depth = 0; if (!top) depth = (row > 0 && G[row - 1][col] === '#' && (row < 2 || G[row - 2][col] !== '#')) ? 1 : 2;
+      ctx.drawImage(tileOf('g', P, (Lo ? 1 : 0) | (Ro ? 2 : 0) | (top ? 4 : 0), v, depth), s.x, s.y, 40, 40);
+    }
+    const sp = spikeSpr(P); for (const k of spikes) { if (k.x + T < camX || k.x > camX + W) continue; ctx.drawImage(sp, k.x - 1, k.y + k.h - (sp.height - 2) * S + 1, sp.width * S, sp.height * S); }
+    for (const d of decor) if (!d.back && d.x > camX - 60 && d.x < camX + W + 60) drawDecor(ctx, d, P, t);
+  }
+  return { S, pal, mix, lit, drk, rngF, hash, hashStr, surf, spr, rcg, U, drawBg, drawWorld, makeDecor, drawDecor, gateSpr, spikeSpr };
+})();
+
+
+// ---- vật thể trong màn theo kiểu pixel ----
+const pxC = {};
+function pxLampSpr(on) { const P = PXW.pal(world.themeKey), k = 'lamp' + on + world.themeKey; if (pxC[k]) return pxC[k];
+  return pxC[k] = PXW.spr(16, 38, (g) => { const st = PXW.mix(P.pl, '#b8b8c8', .35), hi = PXW.lit(st, .2), lo = PXW.drk(st, .3), R = PXW.rcg;
+    R(g, 1, 34, 14, 4, st); R(g, 1, 34, 14, 1, hi); R(g, 6, 20, 4, 14, st); R(g, 6, 20, 1, 14, hi); R(g, 2, 8, 12, 12, st); R(g, 4, 10, 8, 8, on ? '#ffd166' : '#2b2f4a');
+    if (on) { R(g, 4, 10, 8, 2, '#fff0b0'); R(g, 7, 10, 2, 8, '#ffe08a'); } else R(g, 4, 10, 8, 1, '#3a3f60'); R(g, 0, 5, 16, 3, lo); R(g, 1, 4, 14, 1, hi); R(g, 3, 2, 10, 2, st); R(g, 6, 0, 4, 2, st); }, PXW.drk(P.gd, .55)); }
+function pxLamp(cx, bottom, on, big) { const sp = pxLampSpr(on), S = PXW.S; ctx.imageSmoothingEnabled = false;
+  if (on) glow(cx, bottom - 30, big ? 56 : 40, '255,209,102', big ? .7 : .6);
+  ctx.drawImage(sp, Math.round(cx - sp.ax * S), Math.round(bottom - sp.fy * S + 2), sp.width * S, sp.height * S); }
+function pxFirefly(x, y, t) { const f = Math.floor(t * 2) % 2; ctx.fillStyle = 'rgba(255,209,102,.14)'; ctx.fillRect(x - 10, y - 8, 20, 16); ctx.fillRect(x - 8, y - 10, 16, 20);
+  ctx.fillStyle = 'rgba(255,209,102,.3)'; ctx.fillRect(x - 6, y - 5, 12, 10); ctx.fillRect(x - 5, y - 6, 10, 12);
+  ctx.fillStyle = '#ffd166'; ctx.fillRect(x - 3, y - 3, 6, 6); ctx.fillStyle = '#fff6c8'; ctx.fillRect(x - 2, y - 3, 4, 3); ctx.fillStyle = '#ffffff'; ctx.fillRect(x - 2, y - 3, 2, 2);
+  ctx.fillStyle = f ? 'rgba(255,240,170,.9)' : 'rgba(255,240,170,.4)'; ctx.fillRect(x - 1, y - 8, 2, 2); ctx.fillRect(x - 1, y + 6, 2, 2); ctx.fillRect(x - 8, y - 1, 2, 2); ctx.fillRect(x + 6, y - 1, 2, 2); }
+function pxSignSpr() { const k = 'sign' + world.themeKey; if (pxC[k]) return pxC[k];
+  return pxC[k] = PXW.spr(22, 34, (g) => { const R = PXW.rcg; R(g, 9, 14, 4, 20, '#6b4a2a'); R(g, 9, 14, 1, 20, '#8a6a3a'); R(g, 0, 2, 22, 14, '#a07a4a'); R(g, 0, 2, 22, 2, '#c8a070'); R(g, 0, 14, 22, 2, '#6b4a2a'); R(g, 0, 2, 1, 14, '#c8a070');
+    R(g, 3, 6, 15, 1, '#5a3a1a'); R(g, 3, 9, 10, 1, '#5a3a1a'); R(g, 3, 12, 12, 1, '#5a3a1a'); R(g, 2, 3, 1, 1, '#3a2410'); R(g, 19, 3, 1, 1, '#3a2410'); }, '#2a1a0e'); }
+function pxSign(x, y) { const sp = pxSignSpr(), S = PXW.S; ctx.imageSmoothingEnabled = false; ctx.drawImage(sp, Math.round(x + 20 - sp.ax * S), Math.round(y - sp.fy * S + 3), sp.width * S, sp.height * S); }
+function pxTrapDraw(tr) { const f = Math.floor(tr.t / 20) % 2, R = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), w, h); };
+  R(tr.x, tr.y, tr.w, tr.h, '#5a5f76'); R(tr.x, tr.y, tr.w, 2, '#8b8fa8'); R(tr.x, tr.y + tr.h - 2, tr.w, 2, '#3a3f56'); R(tr.x - 1, tr.y, 1, tr.h, '#14161e'); R(tr.x + tr.w, tr.y, 1, tr.h, '#14161e'); R(tr.x, tr.y - 1, tr.w, 1, '#14161e');
+  for (let i = 0; i < 4; i++) { const bx = tr.x + 3 + i * 7; R(bx, tr.y - 4, 3, 3, '#c8ccdc'); R(bx + 1, tr.y - 6, 1, 2, '#ffffff'); R(bx - 1, tr.y - 7, 5, 1, '#14161e'); R(bx - 1, tr.y - 7, 1, 4, '#14161e'); R(bx + 3, tr.y - 7, 1, 4, '#14161e'); }
+  if (f) { glow(tr.x + tr.w / 2, tr.y + 3, 12, '255,143,107', 1); R(tr.x + 4, tr.y + 3, 3, 2, '#ff8f6b'); R(tr.x + tr.w - 7, tr.y + 3, 3, 2, '#ff8f6b'); } }
+function pxBladeSpr() { if (pxC.blade) return pxC.blade; return pxC.blade = PXW.spr(32, 14, (g) => { for (let y = 0; y < 14; y++) for (let x = 0; x < 32; x++) { const d = Math.hypot(x - 15.5, y - 1.5); if (y >= 1 && d <= 15.5 && d >= 10) { const outer = d > 14, inner = d < 11.5; g.fillStyle = outer ? '#eef2ff' : inner ? '#ff6a5a' : (x < 12 ? '#c8ccdc' : '#8b8fa8'); g.fillRect(x, y, 1, 1); } } }, '#1a1220'); }
+function pxPendulum(h, c) { const S = PXW.S, bl = pxBladeSpr(); ctx.imageSmoothingEnabled = false;
+  const dx = c.x - h.ax, dy = c.y - h.ay, n = Math.max(2, Math.floor(Math.hypot(dx, dy) / 6)); for (let i = 1; i < n; i++) { const x = Math.round(h.ax + dx * i / n), y = Math.round(h.ay + dy * i / n); ctx.fillStyle = '#14161e'; ctx.fillRect(x - 2, y - 2, 5, 5); ctx.fillStyle = '#8b8fa8'; ctx.fillRect(x - 1, y - 1, 3, 3); ctx.fillStyle = '#c8ccdc'; ctx.fillRect(x - 1, y - 1, 1, 1); }
+  ctx.fillStyle = '#14161e'; ctx.fillRect(h.ax - 12, h.ay - 8, 24, 12); ctx.fillStyle = '#5a5f76'; ctx.fillRect(h.ax - 11, h.ay - 7, 22, 10); ctx.fillStyle = '#8b8fa8'; ctx.fillRect(h.ax - 11, h.ay - 7, 22, 2);
+  glow(c.x, c.y + 8, 30, '255,90,60', .22); ctx.save(); ctx.translate(Math.round(c.x), Math.round(c.y)); ctx.rotate(-h.ang); ctx.drawImage(bl, -bl.ax * S, -3 * S, bl.width * S, bl.height * S); ctx.restore(); }
+
+
+function pxCage(g) { const R = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), w, h); };
+  for (let i = 0; i <= 6; i++) { const x = g.x + i * 10 - 2; R(x - 1, g.y, 5, g.h, '#14161e'); R(x, g.y, 3, g.h, '#8b8fa8'); R(x, g.y, 1, g.h, '#c4c8dc'); R(x + 2, g.y, 1, g.h, '#5a5f76'); }
+  for (const y of [g.y - 6, g.y + g.h - 2]) { R(g.x - 5, y - 1, g.w + 10, 10, '#14161e'); R(g.x - 4, y, g.w + 8, 8, '#6a6f86'); R(g.x - 4, y, g.w + 8, 2, '#9aa0b8'); R(g.x - 4, y + 6, g.w + 8, 2, '#3a3f56'); for (let k = 0; k < 5; k++) R(g.x + 2 + k * (g.w / 4.5), y + 3, 2, 2, '#c4c8dc'); } }
+function pxOrb(g) { const R = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), w, h); };
+  R(g.x - 1, g.y + 35, 42, 8, '#14161e'); R(g.x, g.y + 36, 40, 6, '#6a6f86'); R(g.x, g.y + 36, 40, 2, '#9aa0b8'); R(g.x + 3, g.y + 39, 34, 22, '#14161e'); R(g.x + 4, g.y + 40, 32, 20, '#5a5f76'); R(g.x + 4, g.y + 40, 3, 20, '#8b8fa8'); R(g.x + 33, g.y + 40, 3, 20, '#3a3f56');
+  for (const y of [47, 54]) R(g.x + 4, g.y + y, 32, 1, '#3a3f56'); R(g.x + 18, g.y + 40, 1, 7, '#3a3f56'); R(g.x + 12, g.y + 47, 1, 7, '#3a3f56'); R(g.x + 24, g.y + 47, 1, 7, '#3a3f56');
+  const y = g.y + 18 + Math.sin(Date.now() / 300) * 4; glow(g.x + 20, y, 40, '255,216,77', .6);
+  for (let yy = -13; yy <= 13; yy++) for (let xx = -13; xx <= 13; xx++) { const d = xx * xx + yy * yy; if (d > 169) continue; R(g.x + 20 + xx, y + yy, 1, 1, d > 140 ? '#c9a24a' : (xx + yy < -8) ? '#ffffff' : (xx + yy > 8) ? '#ffe08a' : '#fff4c9'); }
+  for (let a = 0; a < 6.28; a += .09) R(g.x + 20 + Math.cos(a) * 16, y + Math.sin(a) * 16, 2, 2, '#5a5f76'); }
 
 function heroStub(c, x, y, face) { return { cls: c, x, y, w: 26, h: 38, face, vx: 0, ground: true, run: 0, thrust: 0, atk: 0, stack: 0, empower: false, plant: 0, spin: 0, trans: 0 }; }
 
@@ -4466,7 +4734,7 @@ function drawHazard(h) {
       ctx.beginPath(); ctx.moveTo(-8, -12); ctx.quadraticCurveTo(-20, 0, -8, 12); ctx.lineTo(-4, 0); ctx.fill(); ctx.restore(); break;
     case 'crescent': { ctx.save(); ctx.translate(c.x, c.y); ctx.scale(Math.sign(h.vx) || 1, 1); glow(0, 0, 40, '207,216,255', .5);
       ctx.fillStyle = '#eef2ff'; ctx.beginPath(); ctx.arc(-6, 0, 30, -1.25, 1.25); ctx.arc(-20, 0, 26, 1.05, -1.05, true); ctx.fill(); ctx.restore(); break; }
-    case 'pend': { ctx.save(); ctx.strokeStyle = '#6a5a3a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(h.ax, h.ay); ctx.lineTo(c.x, c.y); ctx.stroke();
+    case 'pend': { if (PIXEL_ART) { pxPendulum(h, c); break; } ctx.save(); ctx.strokeStyle = '#6a5a3a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(h.ax, h.ay); ctx.lineTo(c.x, c.y); ctx.stroke();
       ctx.fillStyle = '#4a3a2a'; ctx.fillRect(h.ax - 10, h.ay - 6, 20, 8); ctx.translate(c.x, c.y); ctx.rotate(-h.ang); glow(0, 8, 30, '255,90,60', .25);
       ctx.fillStyle = '#c9cfe0'; ctx.beginPath(); ctx.moveTo(-24, 0); ctx.quadraticCurveTo(0, 30, 24, 0); ctx.quadraticCurveTo(0, 12, -24, 0); ctx.fill(); ctx.strokeStyle = '#ff6a5a'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(-22, 2); ctx.quadraticCurveTo(0, 28, 22, 2); ctx.stroke(); ctx.restore(); break; }
     case 'mirror': { ctx.save(); ctx.filter = 'brightness(1.6) sepia(1) saturate(2)'; drawBossBody({ id: h.id, x: h.x, y: h.y, w: h.w, h: h.h, face: h.face, phase: 1, state: 'idle' }, .55); ctx.filter = 'none'; ctx.restore(); break; }
@@ -5001,9 +5269,11 @@ function drawBossBody(b, alpha) {
 
 function drawSign(sg) {
   const x = sg.x, y = GROUND_Y;
+  if (PIXEL_ART && world.themeKey) pxSign(x, y); else {
   ctx.fillStyle = '#6b4a2a'; ctx.fillRect(x + 17, y - 40, 6, 40);
   ctx.fillStyle = '#a07a4a'; rr(x, y - 58, 40, 24, 4);
   ctx.fillStyle = '#6b4a2a'; ctx.fillRect(x + 6, y - 50, 28, 3); ctx.fillRect(x + 6, y - 44, 20, 3);
+  }
   const pc = center(player);
   if (Math.abs(pc.x - (x + 20)) < 150) {
     ctx.font = '600 16px "Baloo 2", sans-serif';
@@ -5022,15 +5292,19 @@ function drawDizzy(x, y) {
 }
 function drawGoal() {
   if (goal) {
-    if (goal.kind === 'lantern') {
+    if (goal.kind === 'lantern' && PIXEL_ART && world.themeKey) { pxLamp(goal.x + 12, goal.y + goal.h, true, true); }
+    else if (goal.kind === 'lantern') {
       ctx.fillStyle = world.theme.plat; ctx.fillRect(goal.x + 9, goal.y + 20, 6, goal.h - 20);
       glow(goal.x + 12, goal.y + 14, 50, '255,209,102', .7); ctx.fillStyle = '#ffd166'; ctx.fillRect(goal.x + 2, goal.y + 4, 20, 20);
     } else if (goal.kind === 'cage') {
       drawHero(heroStub(goal.who, goal.x + 17, goal.y + 30, -1), 1);
+      if (PIXEL_ART) pxCage(goal); else {
       ctx.strokeStyle = '#8b8fa8'; ctx.lineWidth = 3;
       for (let i = 0; i <= 6; i++) line(goal.x + i * 10, goal.y, goal.x + i * 10, goal.y + goal.h, '#8b8fa8', 3);
       ctx.fillStyle = '#6a6f86'; ctx.fillRect(goal.x - 4, goal.y - 6, goal.w + 8, 8); ctx.fillRect(goal.x - 4, goal.y + goal.h - 2, goal.w + 8, 6);
+      }
       if (!goalTaken) { ctx.font = '700 14px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = CLASSES[goal.who].color; ctx.fillText('Cứu tôi với!', goal.x + 30, goal.y - 14); ctx.textAlign = 'left'; }
+    } else if (goal.kind === 'orb' && PIXEL_ART) { pxOrb(goal);
     } else if (goal.kind === 'orb') {
       ctx.fillStyle = '#6a6f86'; ctx.fillRect(goal.x + 4, goal.y + 40, 32, 20); ctx.fillRect(goal.x, goal.y + 36, 40, 6);
       const y = goal.y + 18 + Math.sin(Date.now() / 300) * 4;
@@ -5050,6 +5324,7 @@ function drawGoal() {
 }
 
 function drawCheckpoint(c) {
+  if (PIXEL_ART && world.themeKey) { pxLamp(c.x + 10, c.y + 50, c.on, false); return; }
   if (c.on) glow(c.x + 10, c.y + 14, 40, '255,209,102', .6);
   ctx.fillStyle = '#8b8fa8';
   ctx.fillRect(c.x + 6, c.y + 26, 8, 24); ctx.fillRect(c.x - 2, c.y + 44, 24, 6); ctx.fillRect(c.x - 4, c.y + 4, 28, 5);
@@ -5057,6 +5332,7 @@ function drawCheckpoint(c) {
   ctx.fillStyle = '#8b8fa8'; ctx.beginPath(); ctx.moveTo(c.x - 6, c.y + 5); ctx.lineTo(c.x + 10, c.y - 6); ctx.lineTo(c.x + 26, c.y + 5); ctx.fill();
 }
 function drawTrap(tr) {
+  if (PIXEL_ART) { pxTrapDraw(tr); return; }
   ctx.fillStyle = '#5a5f76'; rr(tr.x, tr.y, tr.w, tr.h, 3);
   ctx.fillStyle = '#8b8fa8'; for (let i = 0; i < 4; i++) ctx.fillRect(tr.x + 3 + i * 7, tr.y - 3, 3, 3);
   if (Math.floor(tr.t / 20) % 2) glow(tr.x + tr.w / 2, tr.y + 3, 10, '255,143,107', 1);
@@ -5291,6 +5567,8 @@ function draw() {
   ctx.save();
   const sx = shake > .5 ? (Math.random() - .5) * shake : 0, sy = shake > .5 ? (Math.random() - .5) * shake : 0;
   ctx.translate(-Math.round(camX) + sx, sy);
+  if (PIXEL_ART && world.themeKey) PXW.drawWorld(ctx, world, solids, spikes, camX, Date.now(), W);
+  else {
   for (const s of solids) {
     if (s.x + T < camX - 320 || s.x > camX + W + 320) continue;
     if (s.gate) { ctx.fillStyle = 'rgba(40,20,30,.85)'; ctx.fillRect(s.x, 0, T, GROUND_Y); for (let i = 0; i < 4; i++) line(s.x + 5 + i * 10, 0, s.x + 5 + i * 10, GROUND_Y, '#6a6f86', 3); continue; }
@@ -5300,6 +5578,7 @@ function draw() {
   }
   ctx.fillStyle = TH.spike;
   for (const s of spikes) { if (s.x + T < camX || s.x > camX + W) continue; for (let i = 0; i < 2; i++) { ctx.beginPath(); ctx.moveTo(s.x + i * 20, s.y + s.h); ctx.lineTo(s.x + i * 20 + 10, s.y); ctx.lineTo(s.x + i * 20 + 20, s.y + s.h); ctx.fill(); } }
+  }
   for (const d of decals) { ctx.save(); ctx.globalAlpha = Math.min(1, d.t / 40) * .8; ctx.strokeStyle = '#120c14'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
     for (const seg of d.arms) { ctx.beginPath(); ctx.moveTo(seg[0][0], seg[0][1]); for (const q of seg) ctx.lineTo(q[0], q[1]); ctx.stroke(); } ctx.restore(); }
   if (world.ghosts) for (const g of world.ghosts) { const t2 = Date.now() / 1000, x = g.x + Math.sin(t2 * .9 + g.ph) * 50 * g.dir, y = groundY(g.x, 0), a = .22 + Math.sin(t2 * 2 + g.ph) * .08, f = Math.cos(t2 * .9 + g.ph) * g.dir > 0 ? 1 : -1;
@@ -5315,7 +5594,7 @@ function draw() {
     ctx.restore(); }
   checkpoints.forEach(drawCheckpoint);
   traps.forEach(drawTrap);
-  for (const c of coins) { if (c.got) continue; const y = c.y + Math.sin(c.t) * 4; glow(c.x, y, 18, '255,209,102', .9); ctx.fillStyle = '#fff1c1'; ctx.beginPath(); ctx.arc(c.x, y, 5, 0, 7); ctx.fill(); }
+  for (const c of coins) { if (c.got) continue; const y = c.y + Math.sin(c.t) * 4; if (PIXEL_ART) { pxFirefly(Math.round(c.x), Math.round(y), c.t); continue; } glow(c.x, y, 18, '255,209,102', .9); ctx.fillStyle = '#fff1c1'; ctx.beginPath(); ctx.arc(c.x, y, 5, 0, 7); ctx.fill(); }
   if (world.signs) world.signs.forEach(([c, text]) => drawSign({ x: c * T, text }));
   drawGoal();
   for (const t of trail) if (t.boss) drawBossBody({ ...t.boss, x: t.x, y: t.y, face: t.face, label: null, warn: false, state: 'idle' }, t.life / 10 * .3);
