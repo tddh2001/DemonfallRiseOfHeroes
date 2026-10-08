@@ -470,7 +470,7 @@
 
   <div class="overlay lobby" id="menuPanel">
     <header class="lb-top">
-      <div class="lb-logo"><span>DEMONFALL</span><small>Rise of Heroes</small></div>
+      <div class="lb-logo"><span>DEMONFALL</span><small>Rise of Heroes</small><small id="buildTag" style="display:block;margin-top:2px;font-size:11px;color:#c8aa6e;letter-spacing:.06em"></small></div>
       <div class="lb-res" id="lbRes"></div>
       <nav class="lb-nav">
         <button class="nav-btn" id="shopBtn"><i>🛒</i><span>Cửa hàng</span></button>
@@ -3688,6 +3688,8 @@ return {hero,boss,hasHero:c=>!!HEROES[c],hasBoss:id=>!!BOSSES[id]};
 
 // ======================= PIXEL ART: tướng & boss nhìn nghiêng =======================
 const PIXEL_ART = true, HERO_SC = 1.25;
+const BUILD = 35;
+addEventListener('load', () => { const t = document.getElementById('buildTag'); if (t) t.textContent = `Bản ${BUILD} · ${PIXEL_ART ? 'Pixel art' : 'Vector'}`; });
 function heroPixPose(p) {
   const A = Date.now();
   if (p.hitT > 0) return ['hit', 0];
