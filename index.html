@@ -493,6 +493,7 @@
   .bt-skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
   .bt-sk { padding: 10px 12px; border: 1px solid rgba(74,168,255,.5); border-radius: 10px; background: rgba(74,168,255,.08); } .bt-sk .old { font-size: 12px; opacity: .65; text-decoration: line-through; } .bt-sk .nw { font-weight: 800; color: #8fcaff; font-size: 14px; } .bt-sk .ds { font-size: 12px; opacity: .85; margin-top: 3px; line-height: 1.4; }
   .bt-hint { margin-top: 8px; font-size: 12px; color: #ff9a9a; } .bt-max { text-align: center; padding: 20px; } .bt-big { font: 600 28px Oswald, sans-serif; color: var(--lantern); }
+  .train-opt { display: flex; align-items: center; gap: 8px; margin: 6px 4px 2px; padding: 7px 10px; border: 1px solid rgba(159,240,216,.45); border-radius: 8px; background: rgba(10,30,28,.55); font-size: 13px; cursor: pointer; text-align: left; } .train-opt input { width: 18px; height: 18px; accent-color: #9ff0d8; } .train-opt small { opacity: .7; }
   .stn canvas { width: 22px; image-rendering: pixelated; vertical-align: middle; }
   .tier-SS { color: #fff; border-color: #ffe9a8; background: linear-gradient(90deg, #7a0e1a, #c8861a, #7a0e1a); box-shadow: 0 0 14px rgba(255,100,60,.7); text-shadow: 0 1px 2px #000; font-weight: 800; letter-spacing: .1em; }
   .champ .rb.SS { background: linear-gradient(90deg, #7a0e1a, #ffd76a, #ff3a3a, #ffd76a, #7a0e1a); }
@@ -677,6 +678,7 @@
       <button class="btn ghost" id="retryBtn">Chơi lại màn</button>
       <button class="btn ghost" id="menuBtn">Về menu</button>
     </div>
+    <div class="menuTools" id="trainTools" hidden><label class="train-opt"><input type="checkbox" id="trainNoCd2"> <span>Miễn hồi chiêu (Sân tập)</span></label></div>
     <div class="menuTools"><button class="btn ghost small fsBtn" hidden>⛶ Toàn màn hình</button> <button class="btn ghost small" id="ctrlBtn2">🎮 Tùy chỉnh nút</button></div>
   </div>
   <div class="overlay" id="endPanel" hidden>
@@ -1203,7 +1205,7 @@ const BOSS_DEFS = {
 const SAVE_KEY = 'bmvq-save-v1';
 const DEFAULT_SAVE = { cleared: 0, unlocked: ['warrior'], frags: [false, false, false, false], orb: false, xp: 0, cls: 'warrior',
   coins: 0, stars: {}, upg: {}, sk: {}, ach: {}, stats: { kills: 0, parries: 0, minis: {}, heroes: {}, sins: {} }, tutDone: false, giftUsed: {}, ver: 3, hxp: {},
-  gacha: { tickets: 3, pity: 0, legPity: 0, pulls: 0, shards: {}, rank: {} }, form: {}, inv: { stones: {}, dust: 0 } };
+  gacha: { tickets: 3, pity: 0, legPity: 0, pulls: 0, shards: {}, rank: {} }, form: {}, inv: { stones: {}, dust: 0 }, trainNoCd: false };
 const clone = o => JSON.parse(JSON.stringify(o));
 function loadSave() {
   try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s && typeof s === 'object') return Object.assign(clone(DEFAULT_SAVE), s); } catch (e) {}
@@ -2480,7 +2482,7 @@ function darkStrike(x, gy, red) {
 function darkBolt(x1, y1, x2, y2, red) {
   const pts = [[x1, y1]], n = 6;
   for (let i = 1; i < n; i++) { const k = i / n; pts.push([x1 + (x2 - x1) * k + (Math.random() - .5) * 24, y1 + (y2 - y1) * k + (Math.random() - .5) * 24]); }
-  pts.push([x2, y2]); bolts.push({ pts, t: 12, col: red ? '#ff2a3a' : '#8a2bd6', dark: true, red });
+  pts.push([x2, y2]); bolts.push({ pts, t: red === 'blk' ? 28 : 12, col: red === 'blk' ? '#ff1a2a' : red ? '#ff2a3a' : '#8a2bd6', dark: true, red, blk: red === 'blk' });
 }
 const bossOn = () => enemies.some(e => e.alive && e.boss && !e.transforming);
 function ancStepM(p) { return [{ reach: 80, dmg: 2 }, { reach: 58, dmg: 2 }, { reach: 92, dmg: 3 }][p.ancStep || 0]; }
@@ -2690,7 +2692,7 @@ function useSkill(i) {
   if (cls === 'ancient' && i === 3 && p.awake > 0) return;
   if (i === 3 && (RARITY[cls] === 'leg' || RARITY[cls] === 'ss')) {
     if ((cls === 'king' && p.trans > 0 && ult) || (cls === 'giong' && (p.gcharge > 0 || p.rear > 0))) return;
-    ultCine = { t: 0, i, name: skillsOf(p)[3].name, color: (p.holy || p.trans > 0) ? '#ffd84d' : CLASSES[cls].color }; return;
+    ultCine = { t: 0, i, name: skillsOf(p)[3].name, color: (p.holy || p.trans > 0) ? '#ffd84d' : CLASSES[cls].color }; if (cls === 'pirate' && formOf('pirate')) { ultCine.ss = true; ultCine.len = SS_CINE_LEN; ultCine.bolts = []; } return;
   }
   castSkill(i, false);
 }
@@ -2705,8 +2707,54 @@ function castSkill(i, cine) {
   if (res !== 'custom') { const dur = SKILL_DUR[cls] && SKILL_DUR[cls][i]; p.cds[i] = skillCd(i) + (dur ? Math.max(0, dur(p) || 0) : 0); }
   if (p.refund === i) { p.cds[i] = Math.round(p.cds[i] * .5); p.refund = -1; }
 }
-function tickCine() { const c = ultCine; c.t++; if (c.t >= CINE_LEN) { ultCine = null; castSkill(c.i, true); } }
+function tickCine() { const c = ultCine; c.t++; if (c.t >= (c.len || CINE_LEN)) { ultCine = null; castSkill(c.i, true); } }
+// ---------- Màn cắt cảnh riêng: Kiếm Kỹ Bá Khí Trảm ----------
+const SS_CINE_LEN = 168;
+const cineZoomSS = t => t < 20 ? 1 : t < 70 ? 1 + .55 * (1 - Math.pow(1 - (t - 20) / 50, 3)) : t < 118 ? 1.55 + (t - 70) / 48 * .15 : t < 132 ? 1.7 - .7 * Math.pow((t - 118) / 14, 2) : 1;
+function drawCineSS() {
+  const c = ultCine, t = c.t, p = player, L = SS_CINE_LEN, a = t < 12 ? t / 12 : t > L - 14 ? Math.max(0, (L - t) / 14) : 1;
+  const ph1 = Math.min(1, t / 30), flash = t > 108 && t < 124 ? (1 - Math.abs(t - 116) / 8) : 0;
+  ctx.save();
+  // trời đỏ thẫm + vầng trăng máu
+  const sky = ctx.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, `rgba(10,0,8,${.9 * a})`); sky.addColorStop(.6, `rgba(70,4,14,${.85 * a})`); sky.addColorStop(1, `rgba(20,0,6,${.92 * a})`); ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+  ctx.globalAlpha = a; const mr = 120 + Math.sin(t * .08) * 4; const mg = ctx.createRadialGradient(W * .72, H * .3, mr * .6, W * .72, H * .3, mr * 2.6); mg.addColorStop(0, 'rgba(255,60,40,.5)'); mg.addColorStop(1, 'rgba(255,60,40,0)'); ctx.fillStyle = mg; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#c8101c'; ctx.beginPath(); ctx.arc(W * .72, H * .3, mr * .5, 0, 7); ctx.fill(); ctx.fillStyle = '#0a0004'; ctx.beginPath(); ctx.arc(W * .72 - 18, H * .3 - 6, mr * .45, 0, 7); ctx.fill();
+  // hạm đội hải tặc trôi trên biển
+  ctx.fillStyle = `rgba(6,0,6,${a})`; ctx.fillRect(0, H * .78, W, H * .22);
+  for (let s2 = 0; s2 < 3; s2++) { const bx = ((s2 * 340 + 120 - t * (1.2 + s2 * .4)) % (W + 300) + W + 300) % (W + 300) - 150, by = H * .78 - s2 * 4, sc2 = 1 - s2 * .18;
+    ctx.save(); ctx.translate(bx, by); ctx.scale(sc2, sc2); ctx.fillStyle = '#080004';
+    ctx.beginPath(); ctx.moveTo(-70, 0); ctx.lineTo(70, 0); ctx.lineTo(50, 22); ctx.lineTo(-56, 22); ctx.closePath(); ctx.fill(); ctx.fillRect(-3, -90, 6, 90); ctx.fillRect(-40, -62, 4, 62); ctx.fillRect(34, -56, 4, 56);
+    ctx.beginPath(); ctx.moveTo(3, -88); ctx.lineTo(48, -60); ctx.lineTo(3, -30); ctx.closePath(); ctx.fill(); ctx.beginPath(); ctx.moveTo(-36, -60); ctx.lineTo(-4, -44); ctx.lineTo(-36, -22); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(-2, -104, 14, 9); ctx.fillStyle = '#080004'; ctx.fillRect(2, -102, 3, 3); ctx.restore(); }
+  ctx.globalAlpha = 1;
+  // nhân vật khổng lồ ở giữa, kiếm giơ cao, bá khí bao bọc
+  const key = 'pK', spr = PIX.hero(key, 'atk', 5, false, 'ph' + capePh()), S = 7.2 + (t > 60 ? Math.min(.9, (t - 60) / 60) : 0), hx = W * .34, hy = H * .9;
+  const pulse = .6 + .4 * Math.sin(t * .4);
+  glow(hx, hy - 160, 260 + pulse * 60, '255,26,42', .35 * a * ph1);
+  ctx.globalAlpha = a * ph1; ctx.imageSmoothingEnabled = false; ctx.drawImage(spr, hx - spr.ax * S, hy - spr.fy * S, spr.width * S, spr.height * S); ctx.globalAlpha = 1;
+  // sét đen + vòng hào quang đỏ co lại quanh thanh kiếm
+  const sx = hx + 10 * S, sy = hy - 33 * S;
+  if (t > 24 && t < 118) { for (let r2 = 0; r2 < 3; r2++) { const kk = ((t * 2 + r2 * 28) % 84) / 84, rad = 180 * (1 - kk) + 16; ctx.globalAlpha = a * kk; ctx.strokeStyle = '#ff2a3a'; ctx.lineWidth = 5 * (1 - kk) + 1; ctx.shadowColor = '#ff1a2a'; ctx.shadowBlur = 22; ctx.beginPath(); ctx.arc(sx, sy, rad, 0, 7); ctx.stroke(); } ctx.shadowBlur = 0; ctx.globalAlpha = 1; }
+  if (t > 20 && t % 3 === 0 && t < 120) { const ang = Math.random() * 6.283, r0 = 30 + Math.random() * 40, r1 = 200 + Math.random() * 260; const pts = [[sx + Math.cos(ang) * r0, sy + Math.sin(ang) * r0]]; for (let i = 1; i < 7; i++) { const k2 = i / 7, rr2 = r0 + (r1 - r0) * k2; pts.push([sx + Math.cos(ang) * rr2 + (Math.random() - .5) * 40, sy + Math.sin(ang) * rr2 + (Math.random() - .5) * 40]); } c.bolts.push({ pts, t: 9 }); }
+  for (const b of c.bolts) { b.t--; ctx.globalAlpha = Math.min(1, b.t / 6) * a; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(b.pts[0][0], b.pts[0][1]); for (const q of b.pts) ctx.lineTo(q[0], q[1]); ctx.strokeStyle = 'rgba(255,26,42,.6)'; ctx.lineWidth = 11; ctx.stroke(); ctx.strokeStyle = '#050003'; ctx.lineWidth = 4.5; ctx.stroke(); }
+  c.bolts = c.bolts.filter(b => b.t > 0); ctx.globalAlpha = 1;
+  // lưỡi kiếm sáng dần
+  if (t > 60 && t < 124) { const k3 = Math.min(1, (t - 60) / 46); ctx.save(); ctx.globalAlpha = a * k3; ctx.shadowColor = '#ff2a2a'; ctx.shadowBlur = 40; ctx.strokeStyle = '#fff2e8'; ctx.lineWidth = 5 + k3 * 8; ctx.beginPath(); ctx.moveTo(sx - 6, sy + 150); ctx.lineTo(sx + 6, sy - 150 * k3); ctx.stroke(); ctx.restore(); }
+  // đường chém xé màn hình
+  if (t >= 112) { const k4 = Math.min(1, (t - 112) / 10), fade = t > 128 ? Math.max(0, 1 - (t - 128) / 16) : 1; ctx.save(); ctx.globalAlpha = fade * a; ctx.translate(W / 2, H * .5); ctx.rotate(-.5); ctx.shadowColor = '#ff1a2a'; ctx.shadowBlur = 50; ctx.strokeStyle = '#ff3a3a'; ctx.lineWidth = 70 * (1 - (t - 112) / 40); ctx.beginPath(); ctx.moveTo(-W * k4, 0); ctx.lineTo(W * k4, 0); ctx.stroke(); ctx.shadowBlur = 0; ctx.strokeStyle = '#fff'; ctx.lineWidth = 16; ctx.stroke(); ctx.restore(); }
+  if (flash > 0) { ctx.globalAlpha = flash * .95; ctx.fillStyle = '#ffe8e0'; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }
+  // viền đen điện ảnh
+  const bar = 62 * a; ctx.fillStyle = `rgba(0,0,0,${.96 * a})`; ctx.fillRect(0, 0, W, bar); ctx.fillRect(0, H - bar, W, bar);
+  // chữ
+  ctx.textAlign = 'center';
+  const hide = t > 116 ? Math.max(0, 1 - (t - 116) / 8) : 1;
+  if (t >= 20) { const k5 = Math.min(1, (t - 20) / 14); ctx.globalAlpha = Math.min(a, k5) * hide; ctx.font = '700 17px "Baloo 2", sans-serif'; ctx.fillStyle = '#ff6a5a'; ctx.fillText('TUYỆT KỸ · HẮC HẢI VƯƠNG', W / 2, H - 150); }
+  if (t >= 40) { const k6 = Math.min(1, (t - 40) / 10), sh = t < 52 ? (Math.random() - .5) * 8 : 0; ctx.globalAlpha = Math.min(a, k6) * hide; ctx.font = '900 34px "Baloo 2", sans-serif'; ctx.fillStyle = '#ffffff'; ctx.shadowColor = '#ff1a2a'; ctx.shadowBlur = 20; ctx.fillText('BÁ KHÍ BAO PHỦ THANH KIẾM...', W / 2 + sh, H - 118); ctx.shadowBlur = 0; }
+  if (t >= 126) { const k7 = Math.min(1, (t - 126) / 8), fs = 78 + (1 - k7) * 40; ctx.globalAlpha = Math.min(a, k7); ctx.font = `900 ${fs}px "Baloo 2", sans-serif`; ctx.lineWidth = 10; ctx.strokeStyle = 'rgba(0,0,0,.85)'; ctx.strokeText(c.name, W / 2, H * .5 + 22); ctx.shadowColor = '#ff1a2a'; ctx.shadowBlur = 36; ctx.fillStyle = '#ffffff'; ctx.fillText(c.name, W / 2, H * .5 + 22); ctx.shadowBlur = 0; ctx.fillStyle = '#ff3a3a'; ctx.fillRect(W / 2 - 330 * k7, H * .5 + 42, 660 * k7, 4); }
+  ctx.globalAlpha = 1; ctx.textAlign = 'left'; ctx.restore();
+}
 function drawCine() {
+  if (ultCine.ss) { drawCineSS(); return; }
   const c = ultCine, t = c.t, p = player, sx = (center(p).x - camX), sy = center(p).y - 10;
   const a = t < 10 ? t / 10 : t > 54 ? Math.max(0, (CINE_LEN - t) / 10) : 1;
   ctx.save();
@@ -3338,6 +3386,7 @@ function update() {
   if (p.castT > 0) p.castT--;
   if (p.hitT > 0) p.hitT--;
   if (p.charm > 0) p.charm--; if (p.slowT > 0) p.slowT--;
+  if (world.training && save.trainNoCd) p.cds = [0, 0, 0, 0];
   if (world.training) {
     world.tick++;
     if (world.tick % 150 === 0) haz({ type: 'dart', x: Math.min((world.cols - 2) * T - 20, camX + W + 40), y: p.y + 10, w: 18, h: 8, vx: -6.5, vy: 0, life: 260, blockable: true, solidStop: true, color: '#c9cfe6' });
@@ -4913,7 +4962,7 @@ return {hero,boss,enemy,enemyInfo,hasHero:c=>!!HEROES[c],hasBoss:id=>!!BOSSES[id
 
 // ======================= PIXEL ART: tướng & boss nhìn nghiêng =======================
 const PIXEL_ART = true, HERO_SC = 1.25;
-const BUILD = 47;
+const BUILD = 48;
 addEventListener('load', () => { const t = document.getElementById('buildTag'); if (t) t.textContent = `Bản ${BUILD} · ${PIXEL_ART ? 'Pixel art' : 'Vector'}`; });
 function heroPixPose(p) {
   const A = Date.now();
@@ -5742,6 +5791,25 @@ function drawFxList() {
         for (let pass = 0; pass < 2; pass++) { ctx.strokeStyle = pass ? f.col2 : f.col; for (let i = 1; i < pts.length; i++) { const u = i / pts.length, w = f.w * Math.sin(Math.PI * Math.min(1, u * 1.05)) * (pass ? .35 : 1) * Math.min(1, k * 1.5);
             ctx.globalAlpha = Math.min(1, k * 1.4) * (.25 + .75 * u); ctx.lineWidth = Math.max(.5, w); ctx.beginPath(); ctx.moveTo(pts[i - 1][0], pts[i - 1][1]); ctx.lineTo(pts[i][0], pts[i][1]); ctx.stroke(); } }
         ctx.restore(); }
+    } else if (f.type === 'bakhi') {                                 // sóng Bá Khí: vòng hào quang đỏ + sét đen tỏa ra
+      const pr = 1 - k, r = f.r * easeO(pr), a = Math.min(1, k * 2.2); ctx.save(); ctx.translate(f.x, f.y); ctx.lineJoin = 'round';
+      const g0 = ctx.createRadialGradient(0, 0, Math.max(1, r * .55), 0, 0, Math.max(2, r)); g0.addColorStop(0, 'rgba(120,0,10,0)'); g0.addColorStop(.7, `rgba(180,10,20,${.22 * a})`); g0.addColorStop(1, `rgba(255,40,40,${.5 * a})`); ctx.fillStyle = g0; ctx.beginPath(); ctx.arc(0, 0, Math.max(2, r), 0, 7); ctx.fill();
+      ctx.globalAlpha = a; ctx.shadowColor = '#ff1a2a'; ctx.shadowBlur = 28; ctx.strokeStyle = '#ff3a3a'; ctx.lineWidth = 12 * k + 3; ctx.beginPath(); ctx.arc(0, 0, Math.max(2, r), 0, 7); ctx.stroke();
+      ctx.shadowBlur = 0; ctx.strokeStyle = '#ffb0a0'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, Math.max(2, r - 6), 0, 7); ctx.stroke();
+      ctx.strokeStyle = 'rgba(0,0,0,.85)'; ctx.lineWidth = 14 * k + 2; ctx.beginPath(); ctx.arc(0, 0, Math.max(2, r + 9), 0, 7); ctx.stroke();
+      const n = 16, tm = Math.floor(f.t / 2);
+      for (let i = 0; i < n; i++) { const base = i / n * 6.2832 + f.seed; let rr = r - 40; ctx.beginPath(); ctx.moveTo(Math.cos(base) * rr, Math.sin(base) * rr);
+        for (let j = 0; j < 6; j++) { rr += 14 + ((i * 7 + j * 13 + tm) % 9); const jt = (Math.sin(i * 12.9 + j * 4.1 + tm * 1.7)) * .09; ctx.lineTo(Math.cos(base + jt) * rr, Math.sin(base + jt) * rr); }
+        ctx.strokeStyle = 'rgba(255,26,42,.6)'; ctx.lineWidth = 7; ctx.stroke(); ctx.strokeStyle = '#050003'; ctx.lineWidth = 3; ctx.stroke(); }
+      ctx.restore();
+    } else if (f.type === 'sslash') {                                // nhát chém Bá Khí quét toàn màn hình
+      const pr = 1 - k, e = easeO(Math.min(1, pr * 1.6)), a = Math.min(1, k * 1.8), cx = camX + W / 2, cy = f.y; ctx.save(); ctx.translate(cx, cy); ctx.rotate(-.42); ctx.lineCap = 'round';
+      const L = W * 1.05 * e; ctx.globalAlpha = a; ctx.shadowColor = '#ff1a2a'; ctx.shadowBlur = 50;
+      ctx.strokeStyle = 'rgba(255,26,42,.55)'; ctx.lineWidth = 120 * k + 8; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(L, 0); ctx.stroke();
+      ctx.strokeStyle = '#ff5a4a'; ctx.lineWidth = 56 * k + 4; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(L, 0); ctx.stroke();
+      ctx.shadowBlur = 0; ctx.strokeStyle = '#fff2e8'; ctx.lineWidth = 20 * k + 2; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(L, 0); ctx.stroke();
+      ctx.strokeStyle = '#050003'; ctx.lineWidth = 3; for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.moveTo(-L, i * 14); for (let x = -L; x < L; x += 40) ctx.lineTo(x, i * 14 + Math.sin(x * .05 + i * 2 + f.t) * 10); ctx.stroke(); }
+      ctx.restore();
     } else if (f.type === 'cring') {                                 // vòng năng lượng thu lại khi boss gồng
       const pr = 1 - k, r = f.r * (1 - .82 * easeO(pr)); ctx.save(); ctx.globalAlpha = k * .85; ctx.strokeStyle = f.col; ctx.lineWidth = 3; ctx.shadowColor = f.col; ctx.shadowBlur = 10; ctx.beginPath(); ctx.arc(f.x, f.y, Math.max(4, r), 0, 7); ctx.stroke();
       ctx.globalAlpha = k * .5; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(f.x, f.y, Math.max(3, r * .86), 0, 7); ctx.stroke(); ctx.restore();
@@ -6818,7 +6886,7 @@ function drawDialog() {
 }
 
 function draw() {
-  const zoomK = ultCine ? cineZoom(ultCine.t) : 1;
+  const zoomK = ultCine ? (ultCine.ss ? cineZoomSS(ultCine.t) : cineZoom(ultCine.t)) : 1;
   ctx.save(); if (zoomK !== 1) { const fx = center(player).x - camX, fy = center(player).y - 10, kk = Math.min(1, (zoomK - 1) / .9), tx = fx + (W / 2 - fx) * kk, ty = fy + (H * .42 - fy) * kk; ctx.translate(tx, ty); ctx.scale(zoomK, zoomK); ctx.translate(-fx, -fy); }
   drawBg();
   const TH = world.theme;
@@ -6897,7 +6965,7 @@ function draw() {
     if (q.puff) { ctx.beginPath(); ctx.arc(q.x, q.y, q.s, 0, 7); ctx.fill(); } else { const z = 2 + Math.min(3, q.life / 10); ctx.fillRect(q.x - z / 2, q.y - z / 2, z, z); } }
   ctx.globalAlpha = 1;
   for (const b of bolts) { ctx.save(); ctx.globalAlpha = Math.min(1, b.t / 8); ctx.lineJoin = 'round'; ctx.shadowColor = b.col; ctx.shadowBlur = 20;
-    for (const [w, c] of (b.dark ? (b.red ? [[11, '#ff2a3a'], [6, '#2a0208'], [1.6, '#ffd0d0']] : [[11, '#8a2bd6'], [6, '#0a0210'], [1.6, '#ff3b6a']]) : [[7, b.col], [2.5, '#ffffff']])) { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(b.pts[0][0], b.pts[0][1]); for (const q of b.pts) ctx.lineTo(q[0], q[1]); ctx.stroke(); }
+    for (const [w, c] of (b.blk ? [[17, 'rgba(255,26,42,.45)'], [10, '#ff1a2a'], [7.5, '#000000'], [2, '#3a0010']] : b.dark ? (b.red ? [[11, '#ff2a3a'], [6, '#2a0208'], [1.6, '#ffd0d0']] : [[11, '#8a2bd6'], [6, '#0a0210'], [1.6, '#ff3b6a']]) : [[7, b.col], [2.5, '#ffffff']])) { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(b.pts[0][0], b.pts[0][1]); for (const q of b.pts) ctx.lineTo(q[0], q[1]); ctx.stroke(); }
     ctx.restore(); }
   for (const q of petals) { ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(q.rot); ctx.scale(q.s, q.s); ctx.globalAlpha = Math.min(1, q.life / 40);
     if (q.kind === 'sakura') { ctx.fillStyle = '#ffb8d8'; ctx.beginPath(); ctx.ellipse(0, 0, 6, 3.2, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#ff8ac0'; ctx.beginPath(); ctx.ellipse(2, 0, 2.4, 1.4, 0, 0, 7); ctx.fill(); }
@@ -7079,7 +7147,7 @@ function stageClear() {
   document.getElementById('endPanel').hidden = false;
 }
 function togglePause() {
-  if (state === 'play') { state = 'pause'; document.getElementById('pausePanel').hidden = false; for (const k in keys) keys[k] = false; }
+  if (state === 'play') { state = 'pause'; document.getElementById('pausePanel').hidden = false; { const tt = document.getElementById('trainTools'); tt.hidden = !(world && world.training); document.getElementById('trainNoCd2').checked = !!save.trainNoCd; } for (const k in keys) keys[k] = false; }
   else if (state === 'pause') { state = 'play'; document.getElementById('pausePanel').hidden = true; }
 }
 function toMenu() {
@@ -7110,6 +7178,7 @@ function renderMenu() {
   { const b = document.createElement('button'); b.className = 'stg train' + (selStage === TRAIN ? ' sel' : '');
     b.innerHTML = `<span class="num">🎯</span><span class="nm">Sân Đấu Tập<small class="tut">Bù nhìn vô hạn máu · có bẫy</small></span><span class="st"></span>`;
     b.addEventListener('click', () => { selStage = TRAIN; renderMenu(); }); sg.appendChild(b); }
+  if (selStage === TRAIN) { const o = document.createElement('label'); o.className = 'train-opt'; o.innerHTML = `<input type="checkbox" id="trainNoCd" ${save.trainNoCd ? 'checked' : ''}> <span>Miễn hồi chiêu <small>(thử chiêu không chờ)</small></span>`; sg.appendChild(o); o.querySelector('input').addEventListener('change', e => { save.trainNoCd = e.target.checked; persist(); }); }
   sg.insertAdjacentHTML('beforeend', `<div class="saga">${SAGA.name}</div>`);
   if (openChap === null) openChap = STAGES[selStage].chapter || 1;
   [1, 2, 3, 4, 'S2', 5, 6, 7].forEach(ch => {
@@ -7398,17 +7467,17 @@ STONES.pirate.src = ['👑 Lần đầu hạ mỗi boss Saga II: +3 viên (boss 
 const stoneNeed = c => FORMS[c].slice(1).map(F => `${TIER_REQ[F.rar].cost} (lên ${TIER[F.rar]})`).join(', ');
 const ycMul = () => 1 + (rank() >= 5 ? .1 : .08) * ((player.yc | 0));
 function pirateYc() { const p = player; if ((p.yc | 0) >= 5) return; p.yc = (p.yc | 0) + 1; const pc = center(p); popups.push({ text: 'Ý CHÍ ' + p.yc + '/5', x: pc.x, y: p.y - 22, t: 44, color: '#ffc83a' }); rings.push({ x: pc.x, y: pc.y, r: 6, max: 50, t: 14, color: '#ff3a3a' }); if (p.yc === 5) popups.push({ text: 'ĐÒN KẾ BÙNG NỔ!', x: pc.x, y: p.y - 40, t: 60, color: '#ff6a4a' }); }
-function ycBurstFx(p) { const pc = center(p); rings.push({ x: pc.x, y: pc.y, r: 8, max: 150, t: 20, color: '#ff3a3a' }); for (let i = 0; i < 5; i++) darkBolt(pc.x + (Math.random() - .5) * 60, pc.y - 90, pc.x + (Math.random() - .5) * 140, pc.y + 10, true); flashT = Math.max(flashT, 6); flashCol = '255,60,60'; shake = Math.max(shake, 10); }
+function ycBurstFx(p) { const pc = center(p); rings.push({ x: pc.x, y: pc.y, r: 8, max: 150, t: 20, color: '#ff3a3a' }); for (let i = 0; i < 5; i++) darkBolt(pc.x + (Math.random() - .5) * 60, pc.y - 90, pc.x + (Math.random() - .5) * 140, pc.y + 10, 'blk'); flashT = Math.max(flashT, 6); flashCol = '255,60,60'; shake = Math.max(shake, 10); }
 // ---------- combo 5 đòn: chém + đá ----------
 const COMBO_SS = { n: 5, win: 44, atk: [13, 12, 14, 14, 18], cd: [9, 9, 10, 11, 22], mul: [1, 1.1, 1.05, 1.3, 2], reach: [66, 62, 66, 76, 82], lunge: [2.4, 3.4, 2.4, 3, 3.6], pose: [1, 3, 1, 4, 2] };
 function comboFxSS(p, st) {
   const f = p.face, q = center(p), x = q.x + f * 12, y = q.y - 2, K = '#ff3a3a', G = '#ffd86a', W = '#ffffff', lo = q.y + 12;
-  const bolt = (dx, dy, n) => { for (let i = 0; i < n; i++) darkBolt(x + f * 6, y + dy, x + f * (dx + Math.random() * 30), y + dy + (Math.random() - .5) * 50, true); };
+  const bolt = (dx, dy, n) => { for (let i = 0; i < n; i++) darkBolt(x + f * 6, y + dy, x + f * (dx + Math.random() * 30), y + dy + (Math.random() - .5) * 50, 'blk'); };
   rings.push({ x, y: q.y, r: 4, max: 42, t: 10, color: K });
   if (st === 0) { cres(x, y, 68, -1.3, .6, 17, K, W, 13, f); strk(q.x - f * 6, y - 10, q.x + f * 80, y + 8, 8, K, W, 9); bolt(80, -6, 2); }
   else if (st === 1) { strk(q.x - f * 4, lo, q.x + f * 78, lo - 4, 14, K, W, 11); spark(q.x + f * 76, lo - 4, G); ripl(q.x + f * 70, p.y + p.h, 40, K, 12); bolt(80, 10, 2); }
   else if (st === 2) { cres(x, y + 8, 72, 1.5, -1.6, 19, K, G, 14, f); strk(q.x, y + 22, q.x + f * 70, y - 34, 9, K, W, 10); bolt(70, -14, 3); }
-  else if (st === 3) { cres(q.x, y + 6, 58, 0, 6.28, 16, K, W, 15, 1); ripl(q.x, p.y + p.h, 80, K, 16); for (let i = 0; i < 4; i++) { const a = i * 1.57 + .4; darkBolt(q.x, y, q.x + Math.cos(a) * 80, y + Math.sin(a) * 60, true); } shake = Math.max(shake, 4); }
+  else if (st === 3) { cres(q.x, y + 6, 58, 0, 6.28, 16, K, W, 15, 1); ripl(q.x, p.y + p.h, 80, K, 16); for (let i = 0; i < 4; i++) { const a = i * 1.57 + .4; darkBolt(q.x, y, q.x + Math.cos(a) * 80, y + Math.sin(a) * 60, 'blk'); } shake = Math.max(shake, 4); }
   else { cres(x, y, 78, -2.9, -.1, 24, K, G, 16, f); cres(x, y, 62, -2.6, -.3, 12, W, W, 14, f); strk(q.x + f * 10, y - 70, q.x + f * 100, y + 24, 12, K, W, 12); bolt(100, -30, 4); ripl(q.x + f * 70, p.y + p.h, 90, K, 18); rings.push({ x: q.x + f * 40, y: q.y, r: 8, max: 110, t: 18, color: G });
     shots.push({ type: 'wave', dark: true, color: '#2a1030', inner: K, x: q.x + f * 22 - 14, y: q.y - 30, w: 28, h: 56, vx: f * 11, face: f, life: 46, dmg: 2 * ycMul(), pierce: true, hits: new Set() }); flashT = Math.max(flashT, 4); flashCol = '255,60,60'; shake = Math.max(shake, 7); hitStop = Math.max(hitStop, 3); }
 }
@@ -7419,13 +7488,14 @@ const PFN_SS = [
       const side = v % 2 ? 1 : -1, ex = side > 0 ? camX + W - 10 : camX + 10, ey = 80 + v * 44; spark(ex, ey, '#ffb347'); strk(ex, ey, ex - side * 80, ey + 14, 12, '#ffb347', '#ffffff', 9); burst(ex - side * 20, ey, '#ff8a3a', 8, 7); shake = Math.max(shake, 3); }]), false); },
   () => { const p = player, f = p.face, t3 = tier(1) >= 3, dm = (4.5 + (t3 ? 1 : 0)) * ycMul(); p.atk = 14; p.atkId = newId(); pose(p, 1, 14);
     const mk = (dy, dl) => [dl, () => { const q = center(p); shots.push({ type: 'wave', dark: true, color: '#2a1030', inner: '#ffd86a', x: q.x + f * 20 - 22, y: q.y - 50 + dy, w: 48, h: 100, vx: f * 14, face: f, life: 80, dmg: dm, pierce: true, hits: new Set() });
-      cres(q.x + f * 30, q.y + dy * .5, 90, dy < 0 ? -2.4 : -.6, dy < 0 ? .4 : 2.2, 22, '#ffd86a', '#ffffff', 16, f); darkBolt(q.x, q.y + dy, q.x + f * 160, q.y + dy * 1.5, true); shake = Math.max(shake, 6); }];
+      cres(q.x + f * 30, q.y + dy * .5, 90, dy < 0 ? -2.4 : -.6, dy < 0 ? .4 : 2.2, 22, '#ffd86a', '#ffffff', 16, f); darkBolt(q.x, q.y + dy, q.x + f * 160, q.y + dy * 1.5, 'blk'); shake = Math.max(shake, 6); }];
     sc(p, [mk(-26, 0), mk(26, 8)], false); },
-  () => { const p = player, pc = center(p), t3 = tier(2) >= 3; pose(p, 5, 40);
-    for (const e of enemies) if (e.alive && onScreen(e)) { if (e.boss) e.slowT = Math.max(e.slowT || 0, 300); else e.stun = Math.max(e.stun || 0, t3 ? 360 : 300); const c = center(e); damage(e, 3 * ycMul(), '#ff3a3a'); darkBolt(pc.x, pc.y - 40, c.x, c.y, true); spark(c.x, c.y, '#ff3a3a'); }
-    for (let i = 0; i < 16; i++) { const x = camX + Math.random() * W; darkBolt(x + (Math.random() - .5) * 60, -10, x, GROUND_Y - 4, true); }
-    for (let k = 0; k < 3; k++) rings.push({ x: pc.x, y: pc.y, r: 10 + k * 14, max: 520 + k * 120, t: 26 + k * 6, color: k % 2 ? '#ffd86a' : '#ff3a3a' });
-    flashT = 12; flashCol = '255,40,40'; shake = Math.max(shake, 16); hitStop = Math.max(hitStop, 6); p.ssAura = 90; popups.push({ text: 'BÁ KHÍ VƯƠNG GIẢ!', x: pc.x, y: p.y - 34, t: 70, color: '#ff6a4a' }); },
+  () => { const p = player, pc = center(p), t3 = tier(2) >= 3; pose(p, 5, 50);
+    for (const e of enemies) if (e.alive && onScreen(e)) { if (e.boss) e.slowT = Math.max(e.slowT || 0, 300); else e.stun = Math.max(e.stun || 0, t3 ? 360 : 300); const c = center(e); damage(e, 3 * ycMul(), '#ff3a3a'); darkBolt(pc.x, pc.y - 40, c.x, c.y, 'blk'); darkBolt(c.x, c.y - 120, c.x, c.y, 'blk'); spark(c.x, c.y, '#ff3a3a'); }
+    const wave = (d, mx) => () => { fxList.push({ type: 'bakhi', x: center(p).x, y: center(p).y, r: mx, t: 70, max: 70, seed: Math.random() * 6 }); for (let i = 0; i < 6; i++) { const a = Math.random() * 6.283, r0 = 40 + Math.random() * 60; darkBolt(center(p).x + Math.cos(a) * r0, center(p).y + Math.sin(a) * r0, center(p).x + Math.cos(a) * (mx * .9), center(p).y + Math.sin(a) * (mx * .9), 'blk'); } shake = Math.max(shake, 8); };
+    sc(p, [[0, wave(0, 420)], [8, wave(8, 620)], [16, wave(16, 860)]], false);
+    for (let i = 0; i < 14; i++) { const x = camX + Math.random() * W; darkBolt(x + (Math.random() - .5) * 80, -10, x, GROUND_Y - 4, 'blk'); }
+    dimT = 46; dimCol = '40,0,6'; flashT = 10; flashCol = '255,30,40'; shake = Math.max(shake, 18); hitStop = Math.max(hitStop, 6); p.ssAura = 120; popups.push({ text: 'BÁ KHÍ VƯƠNG GIẢ!', x: pc.x, y: p.y - 34, t: 70, color: '#ff4a3a' }); },
   () => { const p = player, pc = center(p); p.ssCharge = { t: 0, t3: tier(3) >= 3 }; p.shield = 125; p.plant = 125; p.vx = 0; pose(p, 5, 126); popups.push({ text: 'VẬN SỨC...', x: pc.x, y: p.y - 30, t: 60, color: '#ffc83a' }); rings.push({ x: pc.x, y: pc.y, r: 8, max: 90, t: 20, color: '#ff3a3a' }); },
 ];
 // ---------- dữ liệu hình thái ----------
@@ -7490,17 +7560,19 @@ function formTick(p) {
     if (p.ssAura > 0) p.ssAura--;
     if (p.ssCharge) { const Z = p.ssCharge; Z.t++; p.vx = 0; p.shield = Math.max(p.shield | 0, 2); const sx = pc.x + f * 24, sy = pc.y - 30;
       if (Z.t % 9 === 0) fxList.push({ type: 'cring', x: sx, y: sy, r: 120 - Z.t * .5, col: '#ff3a3a', t: 16, max: 16 });
-      if (gTick % 3 === 0) darkBolt(sx + f * 2, sy - 30 + Math.random() * 10, sx + f * (10 + Math.random() * 34), sy + (Math.random() - .3) * 70, true);
+      if (gTick % 3 === 0) darkBolt(sx + f * 2, sy - 30 + Math.random() * 10, sx + f * (10 + Math.random() * 34), sy + (Math.random() - .3) * 70, 'blk');
       if (gTick % 2 === 0) particles.push({ x: sx + (Math.random() - .5) * 20, y: sy + 20, vx: (Math.random() - .5) * 1.2, vy: -2.5 - Math.random() * 2, life: 28, color: Math.random() < .5 ? '#ff3a3a' : '#ffd86a' });
       if (Z.t % 20 === 0) rings.push({ x: pc.x, y: pc.y, r: 10, max: 60 + Z.t * .5, t: 14, color: '#ff3a3a' });
-      if (Z.t >= 124) { const dm = (11 + (Z.t3 ? 2 : 0)) * ycMul(), K = '#ff2a2a', x0 = f > 0 ? pc.x - 30 : pc.x - 670;
-        hitB(x0, p.y - 130, 700, 210, dm, K, e => { if (!e.boss) e.stun = Math.max(e.stun || 0, 60); });
-        cres(pc.x + f * 60, pc.y, 150, -2.6, .8, 40, K, '#ffffff', 22, f); cres(pc.x + f * 60, pc.y, 110, -2.3, .5, 22, '#ffd86a', '#ffffff', 20, f);
-        strk(pc.x, pc.y - 20, pc.x + f * 640, pc.y + 10, 46, K, '#ffffff', 22);
-        for (let i = 0; i < 9; i++) darkBolt(pc.x + f * (60 + i * 70), p.y - 110 + Math.random() * 30, pc.x + f * (60 + i * 70) + (Math.random() - .5) * 60, p.y + p.h, true);
-        for (let k = 0; k < 3; k++) rings.push({ x: pc.x + f * 40, y: pc.y, r: 10 + k * 12, max: 220 + k * 70, t: 22 + k * 4, color: k % 2 ? '#ffd86a' : K });
-        ripl(pc.x + f * 200, p.y + p.h, 220, K, 26); burst(pc.x + f * 120, pc.y, K, 44, 14); flashT = 12; flashCol = '255,50,50'; shake = Math.max(shake, 20); hitStop = Math.max(hitStop, 9); pose(p, 1, 14);
-        popups.push({ text: 'BÁ KHÍ TRẢM!', x: pc.x, y: p.y - 34, t: 70, color: '#ff6a4a' }); p.ssCharge = null; p.shield = 8; p.plant = 0; p.ssAura = 40; } }
+      if (Z.t >= 124) { const dm = (13 + (Z.t3 ? 2 : 0)) * ycMul(), K = '#ff2a2a';
+        flashT = 16; flashCol = '255,235,225'; hitStop = Math.max(hitStop, 14); shake = Math.max(shake, 30);
+        fxList.push({ type: 'sslash', y: pc.y - 10, t: 50, max: 50 }); cres(camX + W / 2, pc.y, 380, -2.7, -.2, 70, K, '#ffffff', 28, 1); cres(camX + W / 2, pc.y, 300, -2.5, -.35, 34, '#ffd86a', '#ffffff', 26, 1);
+        let hits = 0;
+        for (const e of enemies) if (e.alive && !e.under && onScreen(e)) { hits++; const c = center(e); damage(e, dm, K); if (!e.boss) e.stun = Math.max(e.stun || 0, 90); else e.slowT = Math.max(e.slowT || 0, 120);
+          strk(c.x, GROUND_Y + 10, c.x, c.y - 150, 38, K, '#ffffff', 42); darkBolt(c.x - 30 + Math.random() * 60, c.y - 220, c.x, c.y, 'blk'); spark(c.x, c.y, '#ffffff'); ripl(c.x, Math.min(GROUND_Y, c.y + 30), 90, K, 22); burst(c.x, c.y, K, 18, 11); crack(c.x, Math.min(GROUND_Y, c.y + 40), 1.1); }
+        for (let i = 0; i < 26; i++) { const x = camX + Math.random() * W; darkBolt(x + (Math.random() - .5) * 90, -10, x + (Math.random() - .5) * 60, GROUND_Y - 4, 'blk'); }
+        for (let k = 0; k < 4; k++) rings.push({ x: pc.x + f * 40, y: pc.y, r: 10 + k * 12, max: 360 + k * 170, t: 26 + k * 5, color: k % 2 ? '#ffd86a' : K });
+        ripl(pc.x, p.y + p.h, 520, K, 30); burst(pc.x, pc.y, K, 60, 16); dimT = 70; dimCol = '60,0,8'; pose(p, 1, 16);
+        popups.push({ text: 'BÁ KHÍ TRẢM!', x: pc.x, y: p.y - 40, t: 90, color: '#ff6a4a' }); p.ssCharge = null; p.shield = 12; p.plant = 0; p.ssAura = 60; } }
   } else if (cls === 'samurai') {
     const sf = formOf('samurai'); if (!sf) return;
     if (p.sw2) { const Z = p.sw2; Z.t++;
@@ -7622,7 +7694,7 @@ function renderBtRow() {
   const b = $('btOpen'); if (b) b.addEventListener('click', () => openBt(c));
 }
 function renderMenuDots() { const n = btReadyCount(); const d = $('invDot'); if (d) d.textContent = n ? n : ''; }
-$('invBtn').addEventListener('click', openInv); $('invClose').addEventListener('click', toMenu);
+$('invBtn').addEventListener('click', openInv); document.getElementById('trainNoCd2').addEventListener('change', e => { save.trainNoCd = e.target.checked; persist(); }); $('invClose').addEventListener('click', toMenu);
 
 document.getElementById('shopBtn').addEventListener('click', () => { hideAll(); renderShop(); document.getElementById('shopPanel').hidden = false; });
 document.getElementById('shopClose').addEventListener('click', toMenu);
