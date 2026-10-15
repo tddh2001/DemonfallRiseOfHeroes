@@ -461,6 +461,42 @@
   .ctrlPanel .cp-btn.ok { background: #ffd166; color: #1a1408; border-color: #ffd166; margin-left: auto; }
   .ctrlPanel .cp-btn.ghost { opacity: .8; }
   .ctrlPanel .cp-btn:active, .ctrlPanel .cp-mini:active { transform: scale(.96); }
+  /* ---------- Túi đồ + Đột phá ---------- */
+  .inv-wrap { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; width: min(1060px, 100%); margin-top: 12px; text-align: left; }
+  .inv-grid { flex: 1 1 380px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; align-content: start; padding: 12px; border: 1px solid rgba(200,170,110,.5); border-radius: 12px; background: rgba(8,14,38,.8); }
+  .inv-slot { aspect-ratio: 1; border-radius: 10px; border: 2px solid rgba(255,255,255,.13); background: rgba(255,255,255,.04); position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .inv-slot canvas { width: 62%; image-rendering: pixelated; }
+  .inv-slot .n { position: absolute; right: 5px; bottom: 2px; font-size: 12px; font-weight: 800; text-shadow: 0 1px 2px #000; }
+  .inv-slot.r-a { border-color: #a070ff; background: linear-gradient(180deg, rgba(160,112,255,.18), rgba(255,255,255,.03)); }
+  .inv-slot.r-b { border-color: #4aa8ff; background: linear-gradient(180deg, rgba(74,168,255,.16), rgba(255,255,255,.03)); }
+  .inv-slot.r-s { border-color: #ffd166; background: linear-gradient(180deg, rgba(255,209,102,.22), rgba(255,255,255,.03)); }
+  .inv-slot.empty canvas { opacity: .35; } .inv-slot.sel { box-shadow: 0 0 0 3px #ffd166, 0 0 16px rgba(255,209,102,.6); }
+  .inv-detail { flex: 1 1 340px; padding: 16px; border: 1px solid rgba(200,170,110,.5); border-radius: 12px; background: rgba(8,14,38,.8); font-size: 14px; }
+  .inv-big { width: 90px; float: left; margin-right: 14px; image-rendering: pixelated; border: 2px solid #a070ff; border-radius: 12px; padding: 10px; background: rgba(160,112,255,.14); box-sizing: border-box; }
+  .inv-name { font-size: 20px; font-weight: 800; } .inv-sub { opacity: .8; font-size: 13px; } .inv-sub b { color: var(--lantern); } .inv-own { margin-top: 4px; font-size: 13px; } .inv-clear { clear: both; height: 10px; }
+  .inv-txt { line-height: 1.45; opacity: .9; margin-bottom: 8px; }
+  .inv-row { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; background: rgba(255,255,255,.05); margin-bottom: 5px; font-size: 13px; } .inv-row.dim { opacity: .55; } .inv-row .push { margin-left: auto; }
+  .ok { color: #7ee08a; font-weight: 800; } .bad { color: #ff7a7a; font-weight: 800; }
+  .inv-detail h4, .bt-cond h4, .bt-h4 { margin: 12px 0 6px; font-size: 13px; color: #c8aa6e; letter-spacing: .12em; font-weight: 600; text-align: left; }
+  .inv-btns { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .inv-b { font: 700 14px 'Be Vietnam Pro', sans-serif; padding: 9px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.08); color: #e8ecf7; cursor: pointer; }
+  .inv-b.gold { background: linear-gradient(180deg, #e8c878, #b08a3a); color: #1a1408; border-color: #ffe9a8; box-shadow: 0 0 16px rgba(255,209,102,.45); } .inv-b.big { font-size: 17px; padding: 11px 34px; } .inv-b:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; }
+  .bd { display: inline-block; padding: 0 8px; border-radius: 5px; font-weight: 800; border: 1px solid; font-size: 13px; } .b-c { color: #c8d0e0; border-color: #9aa4b8; } .b-b { color: #8fcaff; border-color: #4aa8ff; } .b-a { color: #c8a8ff; border-color: #a070ff; } .b-s { color: #ffe08a; border-color: #ffd166; }
+  .bt-box { width: min(1180px, 100%); padding: 16px 20px; border: 1px solid rgba(200,170,110,.55); border-radius: 12px; background: rgba(8,14,38,.9); text-align: left; }
+  .bt-title { font: 600 18px Oswald, sans-serif; letter-spacing: .12em; color: #d8c08a; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; } .bt-path { margin-left: auto; font: 600 13px 'Be Vietnam Pro', sans-serif; letter-spacing: 0; color: #e8ecf7; }
+  .bt-main { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin-top: 10px; }
+  .bt-card { width: 220px; text-align: center; } .bt-card canvas, .bt-max canvas { width: 200px; height: 200px; image-rendering: pixelated; background: radial-gradient(ellipse at 50% 90%, rgba(200,170,110,.25), transparent 65%); } .bt-card.nx canvas { background: radial-gradient(ellipse at 50% 90%, rgba(255,209,102,.35), transparent 65%); }
+  .bt-card .lbl { font-size: 11px; opacity: .8; letter-spacing: .1em; } .bt-card .gold { color: var(--lantern); opacity: 1; } .bt-card .nm { font-size: 18px; font-weight: 800; }
+  .bt-arrow { align-self: center; font-size: 38px; color: var(--lantern); text-shadow: 0 0 16px var(--lantern); }
+  .bt-cond { flex: 1 1 320px; min-width: 280px; } .bt-note { margin-top: 8px; font-size: 12px; line-height: 1.5; opacity: .85; } .bt-note b { color: var(--lantern); }
+  .bt-passive { margin-top: 8px; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,209,102,.35); font-size: 13px; } .bt-passive .old { text-decoration: line-through; opacity: .6; } .bt-passive small { opacity: .8; }
+  .bt-skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+  .bt-sk { padding: 10px 12px; border: 1px solid rgba(74,168,255,.5); border-radius: 10px; background: rgba(74,168,255,.08); } .bt-sk .old { font-size: 12px; opacity: .65; text-decoration: line-through; } .bt-sk .nw { font-weight: 800; color: #8fcaff; font-size: 14px; } .bt-sk .ds { font-size: 12px; opacity: .85; margin-top: 3px; line-height: 1.4; }
+  .bt-hint { margin-top: 8px; font-size: 12px; color: #ff9a9a; } .bt-max { text-align: center; padding: 20px; } .bt-big { font: 600 28px Oswald, sans-serif; color: var(--lantern); }
+  .stn canvas { width: 22px; image-rendering: pixelated; vertical-align: middle; }
+  .bt-row { margin-top: 8px; } .bt-open { font: 700 13px 'Be Vietnam Pro', sans-serif; padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,.3); background: rgba(10,16,40,.75); color: #e8ecf7; cursor: pointer; }
+  .bt-open.ready { background: linear-gradient(180deg, #e8c878, #b08a3a); color: #1a1408; border-color: #ffe9a8; box-shadow: 0 0 18px rgba(255,209,102,.6); animation: btPulse 1.4s ease-in-out infinite; } @keyframes btPulse { 50% { box-shadow: 0 0 28px rgba(255,209,102,.95); } }
+  .bt-fx { position: fixed; inset: 0; z-index: 90; background: #02040e; display: flex; align-items: center; justify-content: center; } .bt-fx canvas { width: min(100vw, 177vh); height: auto; image-rendering: pixelated; }
   body.talking .touch { opacity: .3; }
 </style>
 </head>
@@ -516,6 +552,7 @@
       <nav class="lb-nav">
         <button class="nav-btn" id="shopBtn"><i>🛒</i><span>Cửa hàng</span></button>
         <button class="nav-btn hot" id="summonBtn"><i>✨</i><span>Chiêu mộ</span><b class="dot" id="summonDot"></b></button>
+        <button class="nav-btn" id="invBtn"><i>🎒</i><span>Túi đồ</span><b class="dot" id="invDot"></b></button>
         <button class="nav-btn" id="achBtn"><i>🏆</i><span>Thành tựu</span><b class="dot" id="achDot"></b></button>
         <button class="nav-btn" id="libBtn"><i>📖</i><span>Thư viện</span></button>
         <button class="nav-btn" id="giftBtn"><i>🎁</i><span>Quà tặng</span></button>
@@ -539,6 +576,7 @@
           <div class="show-tags" id="showTags"></div>
           <h2 id="showName"></h2>
           <div class="show-title" id="showTitle"></div>
+          <div class="bt-row" id="btRow"></div>
         </div>
         <div class="show-side">
           <div class="show-stats" id="showStats"></div>
@@ -559,6 +597,12 @@
       <button class="lockin" id="playBtn">Khóa chọn</button>
     </footer>
   </div>
+  <div class="overlay" id="invPanel" hidden>
+    <h1>Túi đồ</h1>
+    <div class="inv-wrap"><div class="inv-grid" id="invGrid"></div><div class="inv-detail" id="invDetail"></div></div>
+    <div class="btns"><button class="btn" id="invClose">Xong</button></div>
+  </div>
+  <div class="overlay" id="btPanel" hidden><div class="bt-box" id="btBox"></div></div>
   <div class="overlay" id="shopPanel" hidden>
     <h1>Cửa hàng</h1>
     <p>Dùng đom đóm để nâng cấp. Đom đóm nhận được khi qua màn, hạ quái, đạt sao mới và mở thành tựu.</p>
@@ -1156,7 +1200,7 @@ const BOSS_DEFS = {
 const SAVE_KEY = 'bmvq-save-v1';
 const DEFAULT_SAVE = { cleared: 0, unlocked: ['warrior'], frags: [false, false, false, false], orb: false, xp: 0, cls: 'warrior',
   coins: 0, stars: {}, upg: {}, sk: {}, ach: {}, stats: { kills: 0, parries: 0, minis: {}, heroes: {}, sins: {} }, tutDone: false, giftUsed: {}, ver: 3, hxp: {},
-  gacha: { tickets: 3, pity: 0, legPity: 0, pulls: 0, shards: {}, rank: {} } };
+  gacha: { tickets: 3, pity: 0, legPity: 0, pulls: 0, shards: {}, rank: {} }, form: {}, inv: { stones: {}, dust: 0 } };
 const clone = o => JSON.parse(JSON.stringify(o));
 function loadSave() {
   try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s && typeof s === 'object') return Object.assign(clone(DEFAULT_SAVE), s); } catch (e) {}
@@ -1446,7 +1490,8 @@ function hurt(src) {
   if (cls === 'hound' && p.regressed && src && Math.random() < (rank() >= 5 ? .2 : .1)) {
     p.inv = 30; popups.push({ text: 'NÉ!', x: center(p).x, y: p.y - 10, t: 40, color: '#ff5a6a' }); trail.push({ x: p.x - p.face * 14, y: p.y, face: p.face, life: 12 }); if (src.isHaz && src.once) src.life = 0; return 'blocked';
   }
-  if (cls === 'warrior' && src && Math.random() < (rank() >= 5 ? 0.4 : 0.25)) {
+  if (cls === 'warrior' && src && formOf('warrior')) { const wr = warriorFormBlock(src); if (wr) return wr; }
+  if (cls === 'warrior' && !formOf('warrior') && src && Math.random() < (rank() >= 5 ? 0.4 : 0.25)) {
     p.inv = 40; popups.push({ text: 'CHẶN!', x: center(p).x, y: p.y - 10, t: 40, color: '#ffb347' });
     burst(center(p).x, center(p).y, '#ffb347', 12, 6); if (src.isHaz && src.once) src.life = 0; return 'blocked';
   }
@@ -1458,6 +1503,7 @@ function hurt(src) {
   if (src) { const dir = Math.sign(center(p).x - center(src).x) || -p.face; p.vx = dir * 6; p.vy = -6; p.pulled = 8; }
   p.charge = 0; p.thrust = 0; shake = Math.max(shake, 5 + dmgH * 3);
   updateHud();
+  if (p.hearts <= 0 && warriorUnyielding()) return;
   if (p.hearts <= 0 && wukongRevive()) return;
   if (p.hearts <= 0 && houndRegress()) return;
   if (p.hearts <= 0 && giongAwaken()) return;
@@ -2204,6 +2250,9 @@ Object.assign(COMBO, {
 });
 function comboAugment(p) {
   const C = COMBO[cls]; p.cStep = p.cWin > 0 ? (p.cStep + 1) % C.n : 0; p.cWin = C.win; const st = p.cStep;
+  if (cls === 'warrior') { const pc0 = center(p), f0 = p.face, ex = (K, dm = 2) => shots.push({ type: 'wave', color: K, x: pc0.x + f0 * 20 - 15, y: p.y - 8, w: 30, h: 46, vx: f0 * 9, face: f0, life: 40, dmg: dm, pierce: true, hits: new Set() });
+    if (p.kimEmp) { p.kimEmp = 0; p.atkMul = (p.atkMul || 1) * 2; ex('#ffe070'); }
+    if (p.sForm > 0) { p.atkMul = (p.atkMul || 1) * 1.3; ex('#fff2b0', 1.5); } }
   if (C.mul) { p.atkMul = (p.atkMul || 1) * C.mul[st]; p.atkCd = Math.max(4, Math.round(p.atkCd * C.cd[st])); p.vx += p.face * C.lunge[st]; pose(p, C.pose[st], 9); trail.push({ x: p.x, y: p.y, face: p.face, life: 8, col: CLASSES[cls].color }); }
   sc(p, [[2, () => COMBO_FX[cls](p, st)]], false);
 }
@@ -3245,7 +3294,7 @@ function update() {
     if (Math.random() < .5) particles.push({ x: p.x + Math.random() * p.w, y: p.y + p.h, vx: 0, vy: .5, life: 20, color: '#b69cff' });
     if (p.phase === 0) { p.inv = 30; jumpBuf = 0; }
   } else {
-    const maxV = (p.buff > 0 || p.trans > 0 ? 6.6 : 5) * (p.frenzy > 0 ? 1.35 : 1) * (cls === 'hound' && p.regressed ? 1.3 : 1) * (p.slowT > 0 ? .55 : 1) * (cls === 'samurai' ? (rank() >= 5 ? 1.25 : 1.15) : 1);
+    const maxV = (p.buff > 0 || p.trans > 0 ? 6.6 : 5) * (p.frenzy > 0 ? 1.35 : 1) * (cls === 'hound' && p.regressed ? 1.3 : 1) * (p.slowT > 0 ? .55 : 1) * (cls === 'samurai' && !formOf('samurai') ? (rank() >= 5 ? 1.25 : 1.15) : 1);
     // --- chạy ngang: tiến dần tới tốc độ mục tiêu, dừng gọn, đổi hướng nhanh ---
     const dirIn = rooted ? 0 : ((keys.right ? 1 : 0) - (keys.left ? 1 : 0)) * (p.charm > 0 ? -1 : 1);
     if (dirIn && p.thrust <= 0) p.face = dirIn;
@@ -3302,6 +3351,7 @@ function update() {
   if (NEWH.includes(cls)) mangaTick(p);
   else if (FXH.includes(cls)) { scTick(p); if (p.cWin > 0) p.cWin--; if (p.pz && p.pz.t > 0) p.pz.t--; }
   if (ORIGH.includes(cls)) polishTick(p);
+  if ((cls === 'warrior' || cls === 'samurai') && formOf(cls)) formTick(p);
   if (cls === 'moonbow') {
     if (p.flip > 0) p.flip--;
     if (p.moonRain) { const M = p.moonRain; M.t++; if (M.t % 3 === 0 && M.n > 0) { M.n--; const foes = enemies.filter(e => e.alive && onScreen(e)), tg = foes[Math.floor(Math.random() * foes.length)];
@@ -3489,7 +3539,7 @@ function update() {
         e.hitIds.add(p.atkId);
         let d = dmg + bonusDmg() + pb;
         if (cls === 'ninja' && Math.sign(center(e).x - center(p).x) === faceOf(e)) { d *= rank() >= 5 ? 3 : 2; popups.push({ text: 'ÁM KÍCH!', x: center(e).x, y: e.y - 16, t: 34, color: '#9aa8ff' }); }
-        damage(e, d, CLASSES[cls].color); spark(center(e).x, center(e).y, CLASSES[cls].color); if (cls === 'samurai') p.cds[1] = Math.max(0, p.cds[1] - 20);
+        damage(e, d, CLASSES[cls].color); spark(center(e).x, center(e).y, CLASSES[cls].color); if (cls === 'samurai') { if (formOf('samurai')) kiHit(p); else p.cds[1] = Math.max(0, p.cds[1] - 20); }
         if (cls === 'ancient') ancHit(e, p);
         if (bleedHit && (Math.random() < .3 || p.cStep === 3)) bleed(e, 150);
       }
@@ -3811,6 +3861,15 @@ function updateShots(p, pc) {
           if (q.y + q.h >= q.gy + 8) { q.y = q.gy + 8 - q.h; q.landed = true; q.life = 30; explode(q.x + q.w / 2, q.gy - 20, 38, q.dmg, '#ffd84d'); }
         }
         break;
+      case 'fsword': {
+        q.t++; let tg = q.tg && q.tg.alive ? q.tg : null; if (!tg) { tg = nearTo(q.x, q.y, 520); q.tg = tg; }
+        if (tg && q.t > q.delay) { const c = center(tg), a = Math.atan2(c.y - (q.y + 3), c.x - (q.x + 7)), sp = Math.hypot(q.vx, q.vy) || 10, ca = Math.atan2(q.vy, q.vx); let da = a - ca; da = Math.atan2(Math.sin(da), Math.cos(da)); const na = ca + Math.max(-.28, Math.min(.28, da)); q.vx = Math.cos(na) * sp; q.vy = Math.sin(na) * sp; }
+        q.x += q.vx; q.y += q.vy;
+        if (q.y > GROUND_Y + 30 || q.x < camX - 200 || q.x > camX + W + 200) { q.life = 0; break; }
+        strk(q.x + 7 - q.vx * 1.6, q.y + 3 - q.vy * 1.6, q.x + 7, q.y + 3, 6, q.col, '#ffffff', 6);
+        hitEnemies(q, q.col, e => { spark(center(e).x, center(e).y, q.col); });
+        break;
+      }
       case 'fistwave':
         q.x += q.vx;
         if (wallHit({ x: q.x + 10, y: q.y + 10, w: q.w - 20, h: q.h - 20 })) { q.life = 0; burst(q.x + q.w / 2, q.y + q.h / 2, '#ff7a59', 14); break; }
@@ -4689,11 +4748,112 @@ const CHAINH={cloth:'#3a1a22',clothHi:'#6a2a3a',clothLo:'#1e0c12',pants:'#1a1a24
  hair:(p,b,a)=>{blob(11,3+b,14,7,'#e8eaf2','#ffffff','#a8acc0');rc(9,8+b,4,10,'#e8eaf2');rc(8,14+b,3,8,'#a8acc0');rc(23,14+b,2,2,'#ff7a5a');},
  weapon:(p,b,a,H)=>{const n=7;for(let i=0;i<n;i++){const u=i/(n-1),x=H[0]+(H[2]-H[0])*u,y=H[1]+b+(H[3]-H[1])*u+Math.sin(u*3.14)*2;rc(x,y,2,2,i%2?'#ffcf5a':'#e8d08a');}rc(H[0]-1,H[1]+b-1,3,3,'#8a93a8');}};
 function dVo(p){dHum(p,VOLT);}function dSh(p){dHum(p,SHADE);}function dTi(p){dHum(p,TIDE);}function dSk(p){dHum(p,SKYH);}function dCh(p){dHum(p,CHAINH);}
-const RIDERCLS=new Set(['ancient','volt','shade','tide','sky','chain']);
+// ====== HÌNH THÁI ĐỘT PHÁ (Thạch B/A/S · Phong A/S) ======
+function auraP(cx,cy,r,col,n,sd){let a=sd||1;for(let i=0;i<n;i++){a=(a*9301+49297)%233280;const t=a/233280*6.283;a=(a*9301+49297)%233280;const rr=r*(.7+.5*a/233280);px(Math.round(cx+Math.cos(t)*rr),Math.round(cy+Math.sin(t)*rr*.9),col);}}
+
+function dia(x,y,c1,c2){px(x,y-1,c1);rc(x-1,y,3,1,c1);px(x,y+1,c1);px(x,y,c2);}
+
+const WH={H:[[27,23],[26,21],[27,22],[27,23]],T:[[35,12],[23,2],[39,21],[36,33]]};
+
+const SH={H:[[22,25],[25,22],[27,22],[27,23]],T:[[22,25],[12,2],[39,20],[35,33]]};
+
+const phaseOf=(p,mode)=>{const r=p.rider&&/^ph/.test(p.rider)?parseFloat(p.rider.slice(2)):null;return r!==null?r:(mode==='run'?p.f*1.7:mode==='atk'?2.4+p.f*.5:p.f*2.3);};
+
+function capeDraw(b,ph,K,mode){
+  // tấm áo choàng gắn ở vai, rộng dần về phía đuôi, gấu lượn sóng, bay theo gió
+  const run=mode==='run',atk=mode==='atk',L=run?17:atk?15:13,amp=run?2.6:atk?2.1:1.7,drop=run?.12:atk?.2:.38,x0=17,y0=20.5+b;
+  for(let d=0;d<=L;d++){
+    const u=d/L,cx=x0-d,wave=Math.sin(ph+d*.62)*amp*(.15+u*.85),cy=y0+2.2+d*drop+wave,t=Math.min(11,4.4+d*.62)+Math.sin(ph*1.3+d*.9)*(u>.6?1.1:0);
+    const y1=Math.round(cy-t/2),y2=Math.round(cy+t/2);
+    for(let y=y1;y<=y2;y++){
+      if(d>L-2&&(((y+d)&1)||y===y2))continue;
+      let col=K.base;if(y===y1)col=K.hi;else if(y>=y2-1)col=K.trim||K.lo;else if(y>=y2-3)col=K.lo;
+      if(((y*2+d)%7)===0&&y>y1&&y<y2-1)col=K.lo;if(K.lining&&d%4===0&&y>y1+1&&y<y2-2)col=K.lining;
+      px(cx,y,col);
+    }
+  }
+  const tx=x0-L-1,ty=Math.round(y0+2.2+L*drop+Math.sin(ph+L*.62)*amp);
+  px(tx,ty,K.hi);px(tx-2,ty-2,K.hi);px(tx-3,ty+1,K.hi);px(tx-5,ty-1,K.hi);px(tx-1,ty+3,K.lo);
+}
+
+const CP={B:{base:'#d8343c',hi:'#ff7a68',lo:'#8a1a28',trim:'#e8b83a'},A:{base:'#eef2fa',hi:'#ffffff',lo:'#b8c4e0',trim:'#e8b83a',lining:'#bcd0ff'},S:{base:'#fff0b8',hi:'#ffffff',lo:'#ffd04a',trim:'#ff9a30'}};
+
+function warriorB(p){const b=p.bob,a=p.pose==='atk'?p.f:-1,mode=p.pose==='run'?'run':a>=0?'atk':'idle';
+  capeDraw(b,phaseOf(p,mode),CP.B,mode);
+  legs(p,'#4a4e5e','#7a8094');
+  blob(15,20+b,9,8,'#9aa8bc','#e0e8f4','#5a6a82');rc(18,20+b,3,8,'#e8892a');rc(15,26+b,9,1,'#3a3a4a');rc(19,26+b,2,1,'#f0c040');
+  rc(14,19+b,3,3,'#cfd8e6');rc(14,19+b,3,1,'#ffffff');rc(15,20+b,2,2,'#e8b83a');px(15,20+b,'#ffe070');
+  face(b,'#f2c29a','#ffe0c0','#d49a74');
+  blob(13,6+b,14,7,'#b8c4d8','#eef2f8','#5a6a82');rc(13,12+b,14,1,'#5a6a82');rc(13,12+b,7,8,'#b8c4d8');rc(13,12+b,1,8,'#eef2f8');rc(19,12+b,1,8,'#5a6a82');rc(13,19+b,7,1,'#5a6a82');rc(26,12+b,1,4,'#b8c4d8');
+  const pw=Math.round(Math.sin(phaseOf(p,mode)+1)*1);rc(14,1+b,11,5,'#d8343c');rc(16,0+b,7,1,'#ff6a5a');rc(14,5+b,11,1,'#8a1a28');rc(11+pw,3+b,4,5,'#b8222e');px(10+pw,5+b,'#8a1a28');
+  disc(19,24+b,5,'#e8b83a','#3a6ad8','#7aa0ff');rc(18,23+b,2,2,'#f4f8ff');
+  const H=WH.H[a+1],T=WH.T[a+1];rc(22,21+b,5,3,'#9aa8bc');rc(22,21+b,5,1,'#e0e8f4');sword(H,T,b,'#b8c8e0','#f4f8ff','#6a3a22','#e8b83a');rc(H[0]-1,H[1]+b,3,3,'#f2c29a');
+  if(a===1){arc(28,22,12,-1.4,.6,'#ffffff',1);arc(28,22,10,-1.1,.4,'#9fd0ff',1);}if(a===2){arc(28,22,12,.2,1.2,'#ffffff',1);}}
+
+function warriorA(p){const b=p.bob,a=p.pose==='atk'?p.f:-1,mode=p.pose==='run'?'run':a>=0?'atk':'idle';
+  auraP(20,20,17,'#ffe8a0',10,3);capeDraw(b,phaseOf(p,mode),CP.A,mode);
+  legs(p,'#c8a040','#ffe070');
+  blob(15,20+b,9,8,'#e8b83a','#ffe070','#a8781a');rc(18,20+b,3,8,'#f4f8ff');rc(15,26+b,9,1,'#6a4a10');rc(19,26+b,2,1,'#ffffff');
+  rc(13,18+b,4,4,'#ffe070');rc(13,18+b,4,1,'#ffffff');px(14,17+b,'#ffe070');px(16,17+b,'#ffe070');rc(15,20+b,2,2,'#3a8aff');
+  face(b,'#f2c29a','#ffe0c0','#d49a74');
+  blob(13,6+b,14,7,'#e8b83a','#ffe070','#a8781a');rc(13,12+b,7,8,'#e8b83a');rc(13,12+b,1,8,'#ffe070');rc(19,12+b,1,8,'#a8781a');rc(26,12+b,1,4,'#e8b83a');
+  const w=Math.round(Math.sin(phaseOf(p,mode))*1);rc(14,2+b,11,4,'#ffffff');rc(16,1+b,7,1,'#ffffff');rc(14,5+b,11,1,'#c8d8ff');
+  rc(9,5+b+w,4,2,'#ffffff');rc(7,4+b+w,3,2,'#ffffff');rc(10,7+b+w,3,1,'#c8d8ff');rc(26,4+b-w,4,2,'#ffffff');
+  disc(19,24+b,5,'#ffe070','#3a8aff','#9fd0ff');rc(18,23+b,2,2,'#ffffff');px(18,22+b,'#ffffff');
+  const H=WH.H[a+1],T=WH.T[a+1];rc(22,21+b,5,3,'#ffe070');rc(22,20+b,5,1,'#ffffff');sword(H,T,b,'#bfe0ff','#ffffff','#e8b83a','#ffe070');rc(H[0]-1,H[1]+b,3,3,'#f2c29a');
+  if(a===1){arc(28,22,12,-1.4,.6,'#ffffff',1);arc(28,22,10,-1.1,.4,'#bfe0ff',1);}if(a===2){arc(28,22,12,.2,1.2,'#ffffff',1);}}
+
+function warriorS(p){const b=p.bob,a=p.pose==='atk'?p.f:-1,mode=p.pose==='run'?'run':a>=0?'atk':'idle',ph=phaseOf(p,mode);
+  auraP(20,19,19,'#fff2b0',22,5);auraP(20,19,15,'#ffffff',8,9);
+  dia(4,12+b+Math.round(Math.sin(ph)),'#ffe070','#ffffff');dia(33,6+b+Math.round(Math.sin(ph+2)),'#ffe070','#ffffff');dia(36,30+b+Math.round(Math.sin(ph+4)),'#ffd04a','#ffffff');
+  capeDraw(b,ph,CP.S,mode);
+  legs(p,'#e8c850','#fff2b0');
+  blob(15,20+b,9,8,'#f4f0e0','#ffffff','#c8b878');rc(15,20+b,9,2,'#e8b83a');rc(18,20+b,3,8,'#e8b83a');rc(15,26+b,9,1,'#e8b83a');rc(19,26+b,2,1,'#ffffff');
+  rc(12,17+b,5,5,'#ffe070');rc(12,17+b,5,1,'#ffffff');px(13,16+b,'#ffe070');px(15,16+b,'#ffe070');px(14,15+b,'#ffffff');rc(23,18+b,3,3,'#ffe070');
+  face(b,'#f2c29a','#ffe0c0','#d49a74');
+  blob(13,6+b,14,7,'#f4f0e0','#ffffff','#c8b878');rc(13,12+b,7,8,'#f4f0e0');rc(13,12+b,1,8,'#ffffff');rc(19,12+b,1,8,'#c8b878');rc(26,12+b,1,4,'#f4f0e0');rc(14,5+b,11,1,'#e8b83a');
+  const f2=Math.round(Math.sin(ph*1.4));rc(14,1+b,11,4,'#ffd04a');rc(16,0+b,7,1,'#ffffff');rc(15,-1+b,3,2,'#ff9a30');rc(19,-2+b+f2,3,3,'#ffd04a');rc(22,0+b-f2,2,2,'#ff9a30');
+  arc(20,2+b,8,Math.PI*1.08,Math.PI*1.92,'#ffe070',1);arc(20,2+b,9,Math.PI*1.12,Math.PI*1.88,'#ffffff',1);
+  rc(8,5+b,5,2,'#ffffff');rc(5,3+b+f2,4,2,'#ffffff');rc(2,2+b+f2,3,2,'#ffe8a0');rc(27,4+b,5,2,'#ffffff');
+  disc(19,24+b,5,'#fff2b0','#ffb030','#ffe8a0');rc(18,23+b,2,2,'#ffffff');
+  const H=WH.H[a+1],T=[[37,8],[22,-1],[40,21],[37,35]][a+1];rc(22,21+b,5,3,'#fff2b0');rc(22,20+b,5,1,'#ffffff');sword(H,T,b,'#fff6d0','#ffffff','#e8b83a','#ffe070');rc(H[0]-1,H[1]+b,3,3,'#f2c29a');
+  if(a===1){arc(28,22,13,-1.5,.7,'#ffffff',1);arc(28,22,11,-1.2,.5,'#ffe070',1);arc(28,22,9,-1.0,.3,'#ff9a30',1);}if(a===2){arc(28,22,13,.2,1.3,'#ffffff',1);arc(28,22,11,.3,1.1,'#ffe070',1);}}
+
+function dSamA(p){const b=p.bob,a=p.pose==='atk'?p.f:-1;
+  for(const [x,y,x2,y2] of [[8,11,2,5],[6,17,0,13]]){ln(x,y+b,x2,y2+b,'#e8b83a',1);rc(x-1,y+b,3,1,'#ffe070');}
+  ln(16,26+b,4,30+b,'#2a1a14',2);rc(3,29+b,2,2,'#e8b83a');
+  legs(p,'#3a1018','#6a2030');
+  blob(15,20+b,9,8,'#b8222e','#f05060','#6a1018');rc(18,20+b,3,8,'#1a1a2a');rc(15,26+b,9,1,'#e8b83a');rc(15,20+b,9,1,'#e8b83a');for(const [x,y] of [[16,23],[22,22]])px(x,y+b,'#ffe070');
+  face(b,'#f2c29a','#ffe0c0','#d49a74');
+  rc(13,5+b,14,6,'#1a1a2a');rc(12,8+b,5,10,'#1a1a2a');rc(21,7+b,6,3,'#1a1a2a');rc(15,2+b,6,3,'#1a1a2a');rc(16,0+b,3,3,'#1a1a2a');px(17,1+b,'#3a3a5a');
+  rc(13,10+b,14,2,'#e8b83a');rc(7,10+b,6,2,'#b8222e');rc(4,12+b,5,1,'#6a1018');
+  const H=SH.H[a+1],T=SH.T[a+1];rc(21,21+b,5,3,'#b8222e');rc(21,20+b,5,1,'#e8b83a');
+  if(a<0){rc(21,24+b,3,3,'#f2c29a');rc(19,24+b,3,2,'#14101a');}else{sword(H,T,b,'#ffb0a0','#ffffff','#1a1a2a','#e8b83a');rc(H[0]-1,H[1]+b,3,3,'#f2c29a');}
+  if(a===1){arc(28,22,12,-1.3,.5,'#ffffff',1);arc(28,22,10,-1.0,.3,'#ff6a6a',1);arc(28,22,14,-1.2,.4,'#ffe070',1);}if(a===2){arc(28,22,12,.2,1.1,'#ffffff',1);arc(28,22,14,.2,1.0,'#ff6a6a',1);}}
+
+function sharpEyes4(b){const SK='#f2c29a',D='#14101a';rc(20,11+b,7,6,SK);
+  for(const [x,y] of [[18,11],[19,11],[20,11],[21,12],[22,12],[23,13],[24,13],[20,12],[22,13]])px(x,y+b,D);
+  for(const [x,y] of [[19,14],[20,14],[21,14]])px(x,y+b,D);px(22,14+b,'#ffffff');px(23,14+b,'#ffe070');px(24,14+b,'#ff9a30');px(25,14+b,D);
+  for(const [x,y] of [[22,15],[23,15],[24,15]])px(x,y+b,D);px(18,13+b,D);}
+
+function dSamS(p){const b=p.bob,a=p.pose==='atk'?p.f:-1;
+  auraP(20,17,20,'#ffe8a0',16,2);
+  for(let i=0;i<5;i++){const ang=-2.6+i*.62,x2=Math.round(9+Math.cos(ang)*13),y2=Math.round(14+Math.sin(ang)*13);ln(9,18+b,x2,y2+b,i%2?'#ffffff':'#ffe070',1);rc(x2-1,y2+b,2,2,'#ffe070');px(9,18+b,'#e8b83a');}
+  arc(20,2+b,8,Math.PI*1.08,Math.PI*1.92,'#ffe070',1);arc(20,2+b,9,Math.PI*1.12,Math.PI*1.88,'#ffffff',1);
+  ln(16,26+b,4,30+b,'#f4f0e0',2);rc(3,29+b,2,2,'#e8b83a');
+  legs(p,'#f4f0e0','#ffe8a0');
+  blob(15,20+b,9,8,'#f8f4ea','#ffffff','#d8cca8');rc(15,20+b,9,2,'#e8b83a');rc(18,20+b,3,8,'#e8b83a');rc(15,26+b,9,1,'#e8b83a');rc(19,26+b,2,1,'#ffffff');rc(16,22+b,2,1,'#ffd04a');rc(21,24+b,2,1,'#ffd04a');
+  face(b,'#f2c29a','#ffe0c0','#d49a74');sharpEyes4(b);
+  rc(13,5+b,14,6,'#1a1a2a');rc(12,8+b,5,10,'#1a1a2a');rc(21,7+b,6,3,'#1a1a2a');rc(15,2+b,6,3,'#1a1a2a');rc(16,0+b,3,3,'#1a1a2a');rc(10,12+b,3,10,'#1a1a2a');rc(8,18+b,3,8,'#1a1a2a');rc(13,10+b,14,2,'#ffe070');rc(7,10+b,6,2,'#ffe070');rc(4,12+b,5,1,'#e8b83a');
+  const H=SH.H[a+1],T=SH.T[a+1];rc(21,21+b,5,3,'#f8f4ea');rc(21,20+b,5,1,'#e8b83a');
+  if(a<0){rc(21,24+b,3,3,'#f2c29a');rc(19,24+b,3,2,'#f8f4ea');}else{sword(H,T,b,'#fff2c0','#ffffff','#f8f4ea','#e8b83a');rc(H[0]-1,H[1]+b,3,3,'#f2c29a');}
+  if(a===1){arc(28,22,13,-1.4,.6,'#ffffff',1);arc(28,22,11,-1.1,.4,'#ffe070',1);arc(28,22,15,-1.3,.5,'#fff2c0',1);}if(a===2){arc(28,22,13,.2,1.2,'#ffffff',1);arc(28,22,15,.2,1.1,'#ffe070',1);}}
+
+const RIDERCLS=new Set(['ancient','volt','shade','tide','sky','chain','wB','wA','wS','sA','sS']);
 function silhC(c){const x=c.getContext('2d'),W=c.width,H=c.height,d=x.getImageData(0,0,W,H),a=d.data;for(let i=0;i<a.length;i+=4)if(a[i+3]>0){a[i]=26;a[i+1]=12;a[i+2]=44;}x.putImageData(d,0,0);x.fillStyle='#e06bff';x.fillRect(22,19,3,2);}
 function outlineC(c,col){const x=c.getContext('2d'),W=c.width,H=c.height,d=x.getImageData(0,0,W,H),a=d.data,op=(i,j)=>i>=0&&j>=0&&i<W&&j<H&&a[(j*W+i)*4+3]>0,out=[];for(let j=0;j<H;j++)for(let i=0;i<W;i++)if(!op(i,j)&&(op(i-1,j)||op(i+1,j)||op(i,j-1)||op(i,j+1)))out.push([i,j]);x.fillStyle=col||OUT;out.forEach(([i,j])=>x.fillRect(i,j,1,1));}
 function whitenC(c){const x=c.getContext('2d'),d=x.getImageData(0,0,c.width,c.height),a=d.data;for(let i=0;i<a.length;i+=4)if(a[i+3]>0){a[i]=240;a[i+1]=244;a[i+2]=244;}x.putImageData(d,0,0);}
-const HEROES={warrior:dW,mage:dM,samurai:dS,gunner:dGn,beast:dBt,brawler:dBr,ninja:dNj,king:dKg,wukong:dWk,pirate:dPr,giong:dG,hound:dH,aegis:dAg,moonbow:dMb,stargaze:dSt,ancient:dAn,volt:dVo,shade:dSh,tide:dTi,sky:dSk,chain:dCh};
+const HEROES={warrior:dW,mage:dM,samurai:dS,gunner:dGn,beast:dBt,brawler:dBr,ninja:dNj,king:dKg,wukong:dWk,pirate:dPr,giong:dG,hound:dH,aegis:dAg,moonbow:dMb,stargaze:dSt,ancient:dAn,volt:dVo,shade:dSh,tide:dTi,sky:dSk,chain:dCh,wB:warriorB,wA:warriorA,wS:warriorS,sA:dSamA,sS:dSamS};
 const BOSSES={wrath:bWrath,pride:bPride,greed:bGreed,glutton:bGlutton,lust:bLust,envy:bEnvy,sloth:bSloth,fist:bFist,sword:bSword,whip:bWhip,spear:bSpear,demon:bDemon1,demon2:bDemon2,treant:bTreant,priest:bPriest,crowlord:bCrow,butcher:bButcher,moonstatue:bMoon,hollowguard:bHollow};
 const BIGB=new Set(['sloth','demon2']);
 const cache=new Map(), anchors=new Map(), einfo=new Map();
@@ -4722,7 +4882,7 @@ return {hero,boss,enemy,enemyInfo,hasHero:c=>!!HEROES[c],hasBoss:id=>!!BOSSES[id
 
 // ======================= PIXEL ART: tướng & boss nhìn nghiêng =======================
 const PIXEL_ART = true, HERO_SC = 1.25;
-const BUILD = 44;
+const BUILD = 45;
 addEventListener('load', () => { const t = document.getElementById('buildTag'); if (t) t.textContent = `Bản ${BUILD} · ${PIXEL_ART ? 'Pixel art' : 'Vector'}`; });
 function heroPixPose(p) {
   const A = Date.now();
@@ -4751,7 +4911,8 @@ function heroPixPose(p) {
 }
 function drawHeroPix(p, alpha) {
   const cls = p.cls, [pose, f] = heroPixPose(p), holy = cls === 'giong' && (p.holy || p.gcharge > 0);
-  const cv = PIX.hero(cls, pose, f, holy, cls === 'ancient' ? ((p.awake > 0 ? 'awake' : 'base') + (p.aspear || p.sfist ? '-ns' : '')) : (p.holy ? 'holy' : 'base'));
+  const fk = FORM_SPR[cls] && FORM_SPR[cls][formOf(cls)];
+  const cv = fk ? PIX.hero(fk, pose, f, false, 'ph' + capePh()) : PIX.hero(cls, pose, f, holy, cls === 'ancient' ? ((p.awake > 0 ? 'awake' : 'base') + (p.aspear || p.sfist ? '-ns' : '')) : (p.holy ? 'holy' : 'base'));
   const cx = Math.round(p.x + p.w / 2), fy = Math.round(p.y + p.h), S = HERO_SC;
   ctx.save(); ctx.globalAlpha = alpha;
   const aura = (rgb, a = .4, r = 30) => glow(cx, p.y + p.h / 2, r, rgb, a);
@@ -4761,6 +4922,8 @@ function drawHeroPix(p, alpha) {
   if (cls === 'brawler') { if (p.fistEmp) aura('255,100,60', .5); if (p.iron > 0) aura('200,210,230', .5); }
   if (cls === 'pirate' && p.armed > 0) aura('255,60,60', .45);
   if (cls === 'samurai' && p.stack > 0) aura('120,255,220', .35 + p.stack * .08);
+  if (cls === 'warrior') { if (p.bich) aura('255,122,104', .4, 34); if (p.kim) aura('255,224,112', .5, 36); if (p.sForm > 0) aura('255,242,176', .7, 46); }
+  if (cls === 'samurai' && formOf('samurai') && (p.kiY | 0) > 0) aura('255,106,106', .25 + p.kiY * .1);
   if (cls === 'hound' && p.regressed) aura('224,48,60', .3);
   if (cls === 'aegis' && (p.shield > 0 || p.fort > 0)) aura('95,200,184', .6, 36);
   if (cls === 'ancient') { if (p.awake > 0) { aura('138,43,214', .6, 46); aura('20,4,30', .5, 30); } if (p.sfist) aura(p.sfist.aw ? '255,40,60' : '255,216,100', .5, 44); }
@@ -5675,6 +5838,7 @@ function drawShot(q) {
         while (yy < 30) { yy += 8; ctx.lineTo(-10 + Math.random() * 22, yy); } ctx.stroke(); } }
       ctx.restore(); break;
     }
+    case 'fsword': { ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(Math.atan2(q.vy, q.vx)); glow(0, 0, 18, hexRgb(q.col), .5); ctx.fillStyle = '#ffffff'; ctx.fillRect(-9, -1.5, 18, 3); ctx.fillStyle = q.col; ctx.fillRect(-9, -1, 12, 2); ctx.fillRect(-11, -3, 3, 6); ctx.restore(); break; }
     case 'holy': case 'ksword': {
       const a = q.landed ? Math.min(1, q.life / 25) : 1, big = q.type === 'holy';
       ctx.save(); ctx.globalAlpha = a;
@@ -6482,7 +6646,7 @@ function drawHud() {
     if (locked) { ctx.textAlign = 'center'; ctx.fillText(p.level < SKILL_LV[i] ? `Cấp ${SKILL_LV[i]}` : 'Hồi quy', sx + s / 2, sy + s - 5); ctx.textAlign = 'left'; }
     else ctx.fillText(SKILL_KEYS[i], sx + s - 11, sy + s - 5);
     if (cls === 'giong' && i === 0 && !locked) for (let k = 0; k < 5; k++) { ctx.fillStyle = k < p.qi ? '#ffd84d' : 'rgba(232,236,247,.25)'; ctx.beginPath(); ctx.arc(sx + 7 + k * 7, sy + s - 8, 2.6, 0, 7); ctx.fill(); }
-    if (cls === 'samurai' && i === 0 && !locked) for (let k = 0; k < 2; k++) { ctx.fillStyle = k < p.stack ? accent : 'rgba(232,236,247,.25)'; ctx.beginPath(); ctx.arc(sx + 8 + k * 9, sy + s - 8, 3, 0, 7); ctx.fill(); }
+    if (cls === 'samurai' && i === 0 && !locked) for (let k = 0; k < (formOf('samurai') ? 3 : 2); k++) { ctx.fillStyle = k < (formOf('samurai') ? (p.kiY | 0) : p.stack) ? accent : 'rgba(232,236,247,.25)'; ctx.beginPath(); ctx.arc(sx + 8 + k * 9, sy + s - 8, 3, 0, 7); ctx.fill(); }
     if ((cls === 'warrior' && i === 0 && p.empower) || (cls === 'brawler' && i === 0 && p.fistEmp > 0)) { ctx.strokeStyle = accent; ctx.lineWidth = 2; ctx.strokeRect(sx + 1, sy + 1, s - 2, s - 2); }
   }
   drawBossBar();
@@ -6793,7 +6957,7 @@ function advanceDialog() {
     if (f) f();
   }
 }
-function hideAll() { ['menuPanel', 'pausePanel', 'endPanel', 'shopPanel', 'achPanel', 'summonPanel', 'giftPanel', 'libPanel'].forEach(id => document.getElementById(id).hidden = true); }
+function hideAll() { ['menuPanel', 'pausePanel', 'endPanel', 'shopPanel', 'achPanel', 'summonPanel', 'giftPanel', 'libPanel', 'invPanel', 'btPanel'].forEach(id => document.getElementById(id).hidden = true); }
 function startStage(n, c) {
   stageNum = n; cls = c; save.cls = c; persist();
   document.documentElement.style.setProperty('--accent', CLASSES[c].color);
@@ -6860,6 +7024,9 @@ function stageClear() {
   if (save.unlocked.includes('king')) unlockAch('kingfree');
   if (n === LAST) unlockAch('demon');
   if (n === FORESHADOW_STAGE) unlockAch('mystery');
+  if (n > 0 && S.type === 'boss') { save.stats.stoneGot = save.stats.stoneGot || {};
+    if (!save.stats.stoneGot[n]) { save.stats.stoneGot[n] = true; for (const c of ['warrior', 'samurai']) save.inv.stones[c] = stoneN(c) + 1; msgs.push(`Lần đầu hạ boss: nhận ${STONES.warrior.name} ×1 và ${STONES.samurai.name} ×1`); }
+    else if (Math.random() < .15) { const c = Math.random() < .5 ? 'warrior' : 'samurai'; save.inv.stones[c] = stoneN(c) + 1; msgs.push(`Boss rơi ${STONES[c].name} ×1`); } }
   if (S.shrine && !save.ancientBanner) { save.ancientBanner = true; msgs.push('Đã mở trang chiêu mộ mới: Anh Linh Cổ Quốc!'); }
   if (n === LAST && !save.unlocked.includes('hound')) { save.unlocked.push('hound'); msgs.push('Mở khóa nhân vật mới: Huyết Kiếm Khuyển Vệ!'); }
   if (n === CH2_END && !save.unlocked.includes('ancient')) { save.unlocked.push('ancient'); msgs.push('Mở khóa nhân vật mới: Sun God!'); }
@@ -6957,7 +7124,7 @@ function renderMenu() {
   // ----- khu trưng bày -----
   $('showTags').innerHTML = tierBadge(selCls) + (FRANCHISE[selCls] ? `<span class="tag2 mv">${FRANCHISE[selCls]}</span>` : '') + ROLES[selCls].map(r => `<span class="tag2 role">${r}</span>`).join('') +
     (own ? `<span class="tag2 rank">${'◆'.repeat(rankOf(selCls))}${'◇'.repeat(5 - rankOf(selCls))}</span>` : `<span class="tag2 role">🔒 ${UNLOCK_HINT[selCls] || ''}</span>`);
-  $('showName').textContent = C.name;
+  $('showName').textContent = C.name; renderBtRow(); renderMenuDots();
   $('showTitle').textContent = `${C.hero} · ${TITLES[selCls]}`;
   const st = STATS[selCls];
   $('showStats').innerHTML = ['Sát thương', 'Sống sót', 'Kỹ năng', 'Độ khó'].map((l, i) =>
@@ -7086,10 +7253,280 @@ function renderShop() {
     d.appendChild(b); list.appendChild(d);
   });
 }
+save.form = save.form || {}; save.inv = save.inv || { stones: {}, dust: 0 }; save.inv.stones = save.inv.stones || {}; save.inv.dust = save.inv.dust || 0;
+// ======================= ĐỘT PHÁ: HÌNH THÁI MỚI · KỸ NĂNG · NỘI TẠI =======================
+const FORM_SPR = { warrior: [null, 'wB', 'wA', 'wS'], samurai: [null, 'sA', 'sS'] };
+const FORM_MAX = { warrior: 3, samurai: 2 };
+const RARITY_BASE = Object.assign({}, RARITY);
+const TIER_REQ = { rare: { cost: 3, lv: 30, coins: 2000 }, epic: { cost: 6, lv: 50, coins: 5000 }, leg: { cost: 12, lv: 70, coins: 12000 } };
+const STONES = { warrior: { name: 'Thạch Hồn Thạch', hero: 'Chiến binh Thạch', kind: 'thach' }, samurai: { name: 'Phong Linh Ngọc', hero: 'Kiếm sĩ Phong', kind: 'phong' } };
+const formOf = c => (save.form && save.form[c]) || 0;
+const stoneN = c => (save.inv && save.inv.stones && save.inv.stones[c]) || 0;
+const capePh = () => (Math.floor(Date.now() / 75) % 14 * Math.PI * 2 / 14).toFixed(3);
+const nearTo = (x, y, r) => { let best = null, bd = r; for (const e of enemies) if (e.alive && !e.under && onScreen(e)) { const c = center(e), d = Math.hypot(c.x - x, c.y - y); if (d < bd) { bd = d; best = e; } } return best; };
+function fswordMake(x, y, ang, sp, dmg, col, delay) { shots.push({ type: 'fsword', x: x - 7, y: y - 3, w: 14, h: 6, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: 110, dmg, pierce: false, hits: new Set(), col, delay: delay || 8, t: 0 }); }
+function kiHit(p) { p.kiN = (p.kiN || 0) + 1; if (p.kiN >= (rank() >= 5 ? 4 : 5)) { p.kiN = 0; if ((p.kiY | 0) < 3) { p.kiY = (p.kiY | 0) + 1; popups.push({ text: 'KIẾM Ý ' + p.kiY, x: center(p).x, y: p.y - 14, t: 36, color: '#ff8a8a' }); } } }
+// ---------- Chiến binh Thạch · B: Thạch Thiết Vệ ----------
+const WFN_B = [
+  () => { const p = player, t3 = tier(0) >= 3, K = '#ff7a68'; p.dash = 9; p.dashHits = new Set(); p.dashDmg = 2 + (t3 ? 1 : 0); p.dashColor = K; p.inv = Math.max(p.inv, 14);
+    sc(p, [[9, () => { const pc = center(p), f = p.face; for (let k = 0; k < 2; k++) shots.push({ type: 'wave', color: K, x: pc.x + f * 20 - 15, y: p.y - 14 + (k ? 18 : -18), w: 30, h: 50, vx: f * (9 + k * 2), face: f, life: 46, dmg: 2 + (t3 ? 1 : 0), pierce: true, hits: new Set() }); cres(pc.x + f * 20, pc.y, 72, -2.2, .8, 18, K, '#ffffff', 14, f); }]], false); },
+  () => { const p = player, t3 = tier(1) >= 3; p.shield = t3 ? 150 : 120; p.fSh = p.shield; p.fShR = t3 ? 4 : 3; burst(center(p).x, center(p).y, '#cfd8e6', 16, 6); },
+  () => { const p = player; p.spin = 240; p.spinR = tier(2) >= 3 ? 105 : 72; p.pull = 240; },
+  () => { const p = player, f = p.face, t3 = tier(3) >= 3; p.plant = 28;
+    sc(p, [90, 190, 290].map((d, i) => [i * 10, () => { const tx = center(p).x + f * d; shots.push({ type: 'holy', x: tx - 16, y: -220, w: 32, h: 160, vy: 6, gy: groundY(tx, p.y), life: 400, landed: false, dmg: 2, radius: t3 ? 120 : 100 }); }]), false); },
+];
+// ---------- A: Thạch Kim Hộ Pháp ----------
+const WFN_A = [
+  () => { const p = player, t3 = tier(0) >= 3; p.vy = -13.5; p.vx = p.face * 4.5; p.ground = false; p.jumping = false; p.coyote = 0; p.slam = { t: 0, dmg: 3 + (t3 ? 1 : 0) }; p.inv = Math.max(p.inv, 30); burst(center(p).x, p.y + p.h, '#ffe070', 14, 7); },
+  () => { const p = player, t3 = tier(1) >= 3; p.shield = 120; p.reflect = 120; const x = p.face > 0 ? p.x + p.w + 44 : p.x - 70; walls.push({ x, y: p.y + p.h - 130, w: 26, h: 130, life: t3 ? 300 : 240 }); burst(x + 13, p.y, '#ffe070', 20, 6); strk(x + 13, p.y + p.h, x + 13, p.y + p.h - 130, 18, '#ffe070', '#ffffff', 16); },
+  () => { const p = player, t3 = tier(2) >= 3; p.spin = 180; p.spinR = 84; p.pull = 0;
+    sc(p, [-70, 70, -150, 150].map((d, i) => [i * 6, () => { const tx = center(p).x + d; shots.push({ type: 'holy', x: tx - 16, y: -220, w: 32, h: 160, vy: 7, gy: groundY(tx, p.y), life: 400, landed: false, dmg: 2, radius: t3 ? 100 : 80 }); }]), false); },
+  () => { const p = player, t3 = tier(3) >= 3, K = '#ffe070';
+    for (const e of enemies) if (e.alive && onScreen(e)) { damage(e, 4 + (t3 ? 1 : 0), K); if (e.boss) e.slowT = Math.max(e.slowT || 0, 240); else e.stun = Math.max(e.stun || 0, 60); spark(center(e).x, center(e).y, K); }
+    for (let i = 0; i < 3; i++) strk(camX - 20, p.y - 120 + i * 60, camX + W + 20, p.y - 20 + i * 60, 34 - i * 6, K, '#ffffff', 22 + i * 4);
+    cres(camX + W / 2, p.y, 360, -2.6, -.5, 34, K, '#ffffff', 26, 1); flashT = 10; flashCol = '255,236,170'; shake = Math.max(shake, 14); hitStop = Math.max(hitStop, 8); popups.push({ text: 'THIÊN QUANG THẨM PHÁN!', x: center(p).x, y: p.y - 34, t: 60, color: K }); },
+];
+// ---------- S: Thạch Thánh Quang ----------
+const WFN_S = [
+  () => { const p = player, f = p.face, t3 = tier(0) >= 3, K = '#fff2b0'; p.atk = 14; p.atkId = newId();
+    sc(p, [-1, 0, 1].map((k, i) => [i * 4, () => { const pc = center(p); shots.push({ type: 'wave', color: K, x: pc.x + f * 20 - 15, y: p.y - 14 + k * 28, w: 30, h: 56, vx: f * 10, face: f, life: 50, dmg: 2.4 + (t3 ? 1 : 0), pierce: true, hits: new Set() }); cres(pc.x + f * 16, pc.y + k * 14, 70, -2.0 + k * .3, .8 + k * .3, 16, K, '#ffffff', 13, f); }]), false); },
+  () => { const p = player, t3 = tier(1) >= 3; p.shield = t3 ? 300 : 240; p.reflect = p.shield; rings.push({ x: center(p).x, y: center(p).y, r: 8, max: 80, t: 18, color: '#fff2b0' }); burst(center(p).x, center(p).y, '#fff2b0', 18, 7); },
+  () => { const p = player; p.sw8 = { t: 0, n: tier(2) >= 3 ? 10 : 8, fired: 0 }; },
+  () => { const p = player, pc = center(p); p.sForm = p.sFormMax = tier(3) >= 3 ? 900 : 720; popups.push({ text: 'THÁNH QUANG GIÁNG THẾ!', x: pc.x, y: p.y - 34, t: 70, color: '#fff2b0' }); flashT = 10; flashCol = '255,242,176'; rings.push({ x: pc.x, y: pc.y, r: 10, max: 160, t: 24, color: '#fff2b0' }); burst(pc.x, pc.y, '#ffffff', 40, 12); shake = Math.max(shake, 10); },
+];
+// ---------- Kiếm sĩ Phong · A: Hồng Y Kiếm Khách ----------
+const SFN_A = [
+  () => { const p = player, t3 = tier(0) >= 3, pc = center(p), f = p.face, n = 2 + (p.kiY | 0) + (t3 ? 1 : 0), base = f > 0 ? 0 : Math.PI; p.kiY = 0; p.atk = 12; p.atkId = newId();
+    for (let i = 0; i < n; i++) fswordMake(pc.x + f * 14, pc.y - 2, base + (i - (n - 1) / 2) * .4, 10, 2 + (t3 ? 1 : 0), '#ff6a6a', 8); },
+  () => { const p = player, tg = aimFoe(520), pc = center(p), K = '#ff6a6a'; let tx, ty; if (tg) { const c = center(tg); tx = c.x; ty = c.y; p.face = c.x > pc.x ? 1 : -1; } else { tx = pc.x + p.face * 220; ty = pc.y; }
+    const f = p.face, nx = clampX(tx - f * 40 - p.w / 2); strk(pc.x, pc.y, tx, ty, 14, K, '#ffffff', 12); trail.push({ x: p.x, y: p.y, face: f, life: 14, col: K }); p.x = nx; p.y = Math.min(floorY(nx), ty - 19); p.vx = 0; p.vy = 0; p.inv = Math.max(p.inv, 24);
+    hitC(tx, ty, 80, 3 + (tier(1) >= 3 ? 1 : 0), K, e => stunE(e, 20, 0)); strk(tx - 40, ty - 24, tx + 40, ty + 24, 9, K, '#fff', 10); strk(tx - 40, ty + 24, tx + 40, ty - 24, 9, K, '#fff', 10); spark(tx, ty, K); },
+  () => { const p = player; p.sw2 = { t: 0, max: tier(2) >= 3 ? 480 : 360 }; },
+  () => { const p = player, f = p.face, t3 = tier(3) >= 3, K = '#ff6a6a'; pose(p, 1, 16);
+    sc(p, [[0, () => { const q = center(p); cres(q.x + f * 40, q.y, 110, -2.5, .6, 26, K, '#ffffff', 18, f); strk(q.x - f * 10, q.y - 30, q.x + f * 200, q.y + 20, 20, K, '#ffffff', 14); hitB(f > 0 ? q.x : q.x - 220, q.y - 60, 220, 120, 5 + (t3 ? 1 : 0), K); }],
+      [10, () => { const q = center(p), x = q.x + f * 190; hitC(x, q.y, 110, 4 + (t3 ? 1 : 0), K); ripl(x, p.y + p.h, 120, K, 22); rings.push({ x, y: q.y, r: 8, max: 130, t: 20, color: K }); burst(x, q.y, K, 30, 12); shake = Math.max(shake, 12); hitStop = Math.max(hitStop, 6); }]], false); },
+];
+// ---------- S: Kiếm Tiên ----------
+const SFN_S = [
+  () => { const p = player, t3 = tier(0) >= 3, pc = center(p), f = p.face, n = t3 ? 7 : 5, base = f > 0 ? 0 : Math.PI; p.atk = 12; p.atkId = newId();
+    for (let i = 0; i < n; i++) fswordMake(pc.x + f * 10, pc.y - 4, base + (i - (n - 1) / 2) * .34, 10.5, 2.2, '#ffe070', 6 + i); },
+  () => { const p = player, tg = aimFoe(560), pc = center(p), K = '#ffe070'; let tx, ty; if (tg) { const c = center(tg); tx = c.x; ty = c.y; p.face = c.x > pc.x ? 1 : -1; } else { tx = pc.x + p.face * 240; ty = pc.y; }
+    const f = p.face, nx = clampX(tx - f * 40 - p.w / 2); strk(pc.x, pc.y, tx, ty, 16, K, '#ffffff', 14); trail.push({ x: p.x, y: p.y, face: f, life: 16, col: K }); p.x = nx; p.y = Math.min(floorY(nx), ty - 19); p.vx = 0; p.vy = 0; p.inv = Math.max(p.inv, 40);
+    const slash = k => () => { hitC(tx, ty, 90, 3 + (tier(1) >= 3 ? 1 : 0), K, e => stunE(e, 24, 0)); strk(tx - 46, ty - 28, tx + 46, ty + 28, 11, K, '#fff', 11); strk(tx - 46, ty + 28, tx + 46, ty - 28, 11, K, '#fff', 11); spark(tx, ty, K); if (k) { ripl(tx, p.y + p.h, 110, K, 20); shake = Math.max(shake, 8); } };
+    slash(0)(); sc(p, [[12, slash(1)]], false); },
+  () => { const p = player, pc = center(p); p.dom8 = { x: pc.x, y: pc.y, r: tier(2) >= 3 ? 170 : 150, t: 0, max: 240 }; rings.push({ x: pc.x, y: pc.y, r: 8, max: p.dom8.r, t: 20, color: '#ffe070' }); },
+  () => { const p = player, t3 = tier(3) >= 3, n = t3 ? 48 : 36; for (let i = 0; i < n; i++) { const tx = camX + 40 + Math.random() * (W - 80); shots.push({ type: 'ksword', x: tx - 8, y: -80 - i * 22, w: 16, h: 60, vy: 0, gy: groundY(tx, p.y), life: 300, landed: false, dmg: 2 }); }
+    flashT = 8; flashCol = '255,236,170'; popups.push({ text: 'VẠN KIẾM QUY TÔNG!', x: center(p).x, y: p.y - 34, t: 70, color: '#ffe070' }); shake = Math.max(shake, 8); },
+];
+const fl2 = k => p => flare(p, k);
+const SK = (name, cd, icon, desc) => ({ name, cd, icon, desc });
+// ---------- Dữ liệu các hình thái ----------
+const FORMS = { warrior: [], samurai: [] };
+function snapForm(c) { const C = CLASSES[c]; return { rar: RARITY[c], name: C.name, hero: C.hero, color: C.color, role: C.role, basic: C.basic, skills: C.skills, pass: PASSIVES[c], pass5: PASSIVE5[c], t3: T3_DESC[c], title: TITLES[c], stats: STATS[c], roles: ROLES[c], fn: SKILL_FN[c], dur: SKILL_DUR[c], polish: SKILL_POLISH[c] }; }
+FORMS.warrior[0] = snapForm('warrior'); FORMS.samurai[0] = snapForm('samurai');
+FORMS.warrior[1] = { rar: 'rare', name: 'Thạch Thiết Vệ', hero: 'Thạch', color: '#ff7a68', role: 'Hộ vệ giáp thép', basic: { name: 'Chém nặng', cd: 26 }, title: 'Giáp thép giữ làng', stats: [4, 4, 3, 2], roles: ['Đỡ đòn', 'Đấu sĩ'], fn: WFN_B, dur: [null, p => p.fSh, p => p.spin, null],
+  skills: [SK('Chém Sóng Liên Hoàn', 240, '⚔', 'Lao tới chém, để lại 2 sóng kiếm xuyên qua quái'), SK('Khiên Phản Chấn', 480, '◈', 'Miễn sát thương 2 giây, khi hết phóng sóng chấn hai bên'), SK('Lốc Kiếm Cuốn', 540, '↻', 'Xoay kiếm liên tục 4 giây và hút quái vào tâm'), SK('Thánh Kiếm Tam Giáng', 1500, '†', '3 thanh kiếm thánh lần lượt giáng xuống phía trước')],
+  pass: { name: 'Thiết Bích', desc: 'Cứ 8 giây tạo một lớp giáp chặn hoàn toàn 1 đòn đánh' }, pass5: 'Thiết Bích: lớp giáp hồi lại sau 6 giây',
+  t3: ['Chém và sóng mạnh thêm 1 sát thương', 'Khiên kéo dài, sóng chấn mạnh hơn', 'Lốc kiếm rộng hơn', 'Kiếm thánh nổ rộng hơn'], polish: [fl2('dash'), fl2('aura'), fl2('circle'), fl2('sky')] };
+FORMS.warrior[2] = { rar: 'epic', name: 'Thạch Kim Hộ Pháp', hero: 'Thạch', color: '#ffe070', role: 'Hộ pháp áo choàng vàng', basic: { name: 'Chém nặng', cd: 26 }, title: 'Ánh vàng bảo hộ', stats: [4, 5, 4, 3], roles: ['Đỡ đòn', 'Đấu sĩ'], fn: WFN_A, dur: [null, p => p.shield, p => p.spin, null],
+  skills: [SK('Phá Địa Kiếm', 360, '⤓', 'Nhảy chém xuống, vết nứt đất chạy về phía trước hất tung quái'), SK('Kim Giáp Thành', 420, '◈', 'Dựng tường ánh sáng chặn quái, bạn miễn thương và phản đạn 2 giây'), SK('Địa Chấn Luân', 540, '↻', 'Xoay kiếm và gọi 4 cột sáng giáng quanh người'), SK('Thiên Quang Thẩm Phán', 1800, '☀', 'Kiếm ánh sáng quét toàn màn hình, làm choáng quái và làm chậm boss')],
+  pass: { name: 'Kim Quang Hộ Thể', desc: 'Cứ 10 giây có một lớp giáp chặn 1 đòn; chặn thành công thì đòn đánh kế tiếp mạnh gấp đôi và phóng sóng vàng' }, pass5: 'Kim Quang Hộ Thể: lớp giáp hồi lại sau 8 giây',
+  t3: ['Phá Địa mạnh thêm 1 sát thương', 'Tường ánh sáng bền hơn', 'Cột sáng nổ rộng hơn', 'Thẩm Phán mạnh thêm 1 sát thương'], polish: [fl2('ground'), fl2('aura'), fl2('circle'), fl2('sky')] };
+FORMS.warrior[3] = { rar: 'leg', name: 'Thạch Thánh Quang', hero: 'Thạch', color: '#fff2b0', role: 'Kiếm thánh hào quang', basic: { name: 'Chém nặng', cd: 26 }, title: 'Thánh quang không tắt', stats: [5, 5, 4, 4], roles: ['Đỡ đòn', 'Đấu sĩ'], fn: WFN_S, dur: [null, p => p.shield, p => p.sw8 ? 60 : 0, p => p.sForm],
+  skills: [SK('Thánh Quang Trảm', 220, '✦', 'Vung 3 sóng kiếm thánh xếp thành hình quạt'), SK('Thánh Khiên Vĩnh Hằng', 420, '◈', 'Khiên thánh 4 giây: miễn thương và phản đạn'), SK('Bát Quái Thánh Kiếm', 500, '✺', '8 thanh kiếm bay vòng quanh rồi lao vào quái gần nhất'), SK('Thánh Quang Giáng Thế', 2100, '☀', 'Hóa thân thánh quang 12 giây: đánh thường mạnh hơn và phóng sóng, nửa số đòn bị né')],
+  pass: { name: 'Bất Khuất', desc: '1 lần mỗi màn: khi tim về 0 thì hồi 3 tim và miễn sát thương 3 giây' }, pass5: 'Bất Khuất: hồi 4 tim thay vì 3',
+  t3: ['Thánh Quang Trảm mạnh thêm 1 sát thương', 'Khiên kéo dài thêm 1 giây', 'Thêm 2 thanh kiếm', 'Hóa thân kéo dài 15 giây'], polish: [fl2('beam'), fl2('aura'), fl2('circle'), fl2('sky')] };
+FORMS.samurai[1] = { rar: 'epic', name: 'Hồng Y Kiếm Khách', hero: 'Phong', color: '#ff6a6a', role: 'Kiếm khách áo đỏ', basic: { name: 'Chém', cd: 20 }, title: 'Lưỡi kiếm đỏ thẫm', stats: [4, 3, 4, 4], roles: ['Sát thủ', 'Đấu sĩ'], fn: SFN_A, dur: [null, null, p => p.sw2 ? p.sw2.max - p.sw2.t : 0, null],
+  skills: [SK('Phi Kiếm Truy Tung', 90, '➳', 'Phóng phi kiếm tự tìm quái; mỗi Kiếm Ý thêm 1 thanh'), SK('Kiếm Ảnh Độn', 240, '»', 'Dịch chuyển tới quái được chỉ định rồi chém chữ X'), SK('Kiếm Trận', 480, '≋', '2 phi kiếm xoay quanh người 6 giây, cắt mọi quái chạm vào'), SK('Hồng Liên Trảm', 1800, '✕', 'Nhát chém đỏ rộng phía trước rồi nổ tung')],
+  pass: { name: 'Kiếm Ý', desc: 'Cứ 5 đòn đánh thường trúng quái được 1 Kiếm Ý (tối đa 3), dùng để tăng số phi kiếm của chiêu 1' }, pass5: 'Kiếm Ý: chỉ cần 4 đòn trúng',
+  t3: ['Thêm 1 phi kiếm và mạnh hơn', 'Chém X mạnh thêm 1 sát thương', 'Kiếm Trận kéo dài 8 giây', 'Hồng Liên mạnh thêm 1 sát thương'], polish: [fl2('beam'), fl2('dash'), fl2('aura'), fl2('slash')] };
+FORMS.samurai[2] = { rar: 'leg', name: 'Kiếm Tiên', hero: 'Phong', color: '#ffe070', role: 'Kiếm tiên vạn kiếm', basic: { name: 'Chém', cd: 20 }, title: 'Vạn kiếm quy tông', stats: [5, 4, 5, 5], roles: ['Sát thủ', 'Pháp sư'], fn: SFN_S, dur: [null, null, p => p.dom8 ? p.dom8.max - p.dom8.t : 0, null],
+  skills: [SK('Ngự Kiếm Phi', 120, '➳', 'Điều khiển 5 phi kiếm tỏa ra rồi lao vào quái'), SK('Thuấn Bộ Kiếm Ảnh', 240, '»', 'Dịch chuyển tới quái, chém chữ X hai lần liên tiếp'), SK('Kiếm Vực', 520, '◎', 'Lãnh địa kiếm 4 giây: quái bên trong bị chém liên tục và bị làm chậm'), SK('Vạn Kiếm Quy Tông', 2100, '✺', 'Mưa phi kiếm đổ xuống toàn màn hình')],
+  pass: { name: 'Vạn Kiếm Quy Tông', desc: 'Phi kiếm bay quanh người, cứ 70 khung hình tự bắn vào quái gần' }, pass5: 'Vạn Kiếm Quy Tông: phi kiếm tự bắn nhanh hơn',
+  t3: ['Thêm 2 phi kiếm', 'Mỗi nhát chém X mạnh thêm 1 sát thương', 'Kiếm Vực rộng hơn', 'Thêm 12 thanh kiếm trong mưa kiếm'], polish: [fl2('beam'), fl2('dash'), fl2('circle'), fl2('sky')] };
+function applyForm(c) {
+  const F = FORMS[c][formOf(c)]; if (!F) return;
+  Object.assign(CLASSES[c], { name: F.name, hero: F.hero, color: F.color, role: F.role, basic: F.basic, skills: F.skills });
+  RARITY[c] = F.rar; PASSIVES[c] = F.pass; PASSIVE5[c] = F.pass5; T3_DESC[c] = F.t3; TITLES[c] = F.title; STATS[c] = F.stats; ROLES[c] = F.roles; SKILL_FN[c] = F.fn; SKILL_DUR[c] = F.dur; SKILL_POLISH[c] = F.polish;
+}
+function applyAllForms() { for (const c in FORMS) applyForm(c); }
+applyAllForms();
+// ---------- Điều kiện đột phá ----------
+function btInfo(c) {
+  const f = formOf(c); if (!FORMS[c] || f >= FORM_MAX[c]) return null;
+  const nf = FORMS[c][f + 1], req = TIER_REQ[nf.rar], st = stoneN(c), rk = rankOf(c), lv = heroLv(c);
+  const ok = { rank: rk >= 5, stone: st >= req.cost, lv: lv >= req.lv, coins: save.coins >= req.coins };
+  return { c, f, nf, req, st, rk, lv, ok, ready: ok.rank && ok.stone && ok.lv && ok.coins && save.unlocked.includes(c) };
+}
+function doBreakthrough(c) {
+  const I = btInfo(c); if (!I || !I.ready) return false;
+  save.inv.stones[c] -= I.req.cost; save.coins -= I.req.coins; save.form[c] = I.f + 1; save.gacha.rank[c] = 1; applyForm(c);
+  if (I.f + 1 >= FORM_MAX[c]) { save.stats.btMax = save.stats.btMax || {}; save.stats.btMax[c] = true; }
+  persist(); return true;
+}
+const btReadyCount = () => Object.keys(FORMS).filter(c => { const I = btInfo(c); return I && I.ready; }).length;
+// ---------- Nội tại, trạng thái chiêu (mỗi khung hình) ----------
+function warriorFormBlock(src) {
+  const p = player, f = formOf('warrior'), K = CLASSES.warrior.color;
+  if ((f === 1 && p.bich) || (f === 2 && p.kim)) { if (f === 1) { p.bich = false; p.bichT = 0; } else { p.kim = false; p.kimT = 0; p.kimEmp = 1; }
+    p.inv = 40; popups.push({ text: f === 1 ? 'THIẾT BÍCH!' : 'KIM QUANG!', x: center(p).x, y: p.y - 10, t: 44, color: K }); rings.push({ x: center(p).x, y: center(p).y, r: 6, max: 56, t: 14, color: K }); burst(center(p).x, center(p).y, K, 14, 7); if (src.isHaz && src.once) src.life = 0; return 'blocked'; }
+  if (f === 3 && p.sForm > 0 && Math.random() < .5) { p.inv = 20; popups.push({ text: 'THÁNH QUANG!', x: center(p).x, y: p.y - 10, t: 40, color: K }); burst(center(p).x, center(p).y, K, 10, 6); if (src.isHaz && src.once) src.life = 0; return 'blocked'; }
+  return null;
+}
+function warriorUnyielding() {
+  const p = player; if (formOf('warrior') !== 3 || p.bkUsed) return false;
+  p.bkUsed = true; p.hearts = Math.min(p.maxHearts, rank() >= 5 ? 4 : 3); p.inv = 180; updateHud();
+  const pc = center(p); popups.push({ text: 'BẤT KHUẤT!', x: pc.x, y: p.y - 24, t: 70, color: '#fff2b0' }); rings.push({ x: pc.x, y: pc.y, r: 10, max: 200, t: 26, color: '#fff2b0' }); burst(pc.x, pc.y, '#ffffff', 40, 12); flashT = 10; flashCol = '255,242,176'; shake = Math.max(shake, 10);
+  return true;
+}
+function formTick(p) {
+  const pc = center(p), f = p.face;
+  if (cls === 'warrior') {
+    const wf = formOf('warrior'); if (!wf) return;
+    if (wf === 1 && !p.bich && ++p.bichT >= (rank() >= 5 ? 360 : 480)) { p.bich = true; popups.push({ text: 'Thiết Bích sẵn sàng', x: pc.x, y: p.y - 14, t: 40, color: '#ff7a68' }); }
+    if (wf === 2 && !p.kim && ++p.kimT >= (rank() >= 5 ? 480 : 600)) { p.kim = true; popups.push({ text: 'Kim Quang sẵn sàng', x: pc.x, y: p.y - 14, t: 40, color: '#ffe070' }); }
+    if (p.bichT === undefined) p.bichT = 0; if (p.kimT === undefined) p.kimT = 0;
+    if (p.fSh > 0 && --p.fSh === 0) { const K = '#cfd8e6'; for (const d of [-1, 1]) shots.push({ type: 'pshock', x: pc.x - 16, y: p.y + p.h - 34, w: 32, h: 34, vx: d * 10, face: d, life: 50, dmg: p.fShR || 3, pierce: true, hits: new Set(), col: K, col2: '#ffffff', rgb: '207,216,230' }); ripl(pc.x, p.y + p.h, 110, K, 20); rings.push({ x: pc.x, y: pc.y, r: 8, max: 120, t: 20, color: K }); shake = Math.max(shake, 6); }
+    if (p.pull > 0) { p.pull--; if (p.spin > 0 && gTick % 4 === 0) for (const e of enemies) if (e.alive && !e.under && !e.boss && Math.abs(center(e).x - pc.x) < 190 && Math.abs(center(e).y - pc.y) < 90) e.x += Math.sign(pc.x - center(e).x) * 5; }
+    if (p.slam) { const Sm = p.slam; Sm.t++; if (p.vy > 0) p.vy += .9;
+      if (Sm.t > 6 && p.ground) { const gy = p.y + p.h, K = '#ffe070'; hitC(pc.x, gy - 20, 100, Sm.dmg, K, e => { if (!e.boss) { e.lift = 30; e.stun = Math.max(e.stun || 0, 40); } });
+        shots.push({ type: 'pshock', x: pc.x - 16, y: gy - 34, w: 32, h: 34, vx: f * 12, face: f, life: 55, dmg: 3, pierce: true, hits: new Set(), col: K, col2: '#ffffff', rgb: '255,224,112' });
+        ripl(pc.x, gy, 130, K, 22); rings.push({ x: pc.x, y: gy, r: 8, max: 130, t: 20, color: K }); burst(pc.x, gy, K, 22, 10); crack(pc.x, gy, 1.2); shake = Math.max(shake, 10); hitStop = Math.max(hitStop, 5); p.slam = null; }
+      else if (Sm.t > 90) p.slam = null; }
+    if (p.sw8) { const Z = p.sw8; Z.t++;
+      if (Z.t < 40) { if (gTick % 2 === 0) for (let i = 0; i < Z.n; i++) { const a = Z.t * .22 + i * Math.PI * 2 / Z.n, x = pc.x + Math.cos(a) * 46, y = pc.y + Math.sin(a) * 30, dx = Math.cos(a + 1.57) * 6, dy = Math.sin(a + 1.57) * 6; strk(x - dx, y - dy, x + dx, y + dy, 5, '#fff2b0', '#ffffff', 4); } }
+      else if (Z.t % 3 === 0 && Z.fired < Z.n) { const a = Z.fired * Math.PI * 2 / Z.n + Z.t * .22, x = pc.x + Math.cos(a) * 46, y = pc.y + Math.sin(a) * 30, tg = nearTo(pc.x, pc.y, 520);
+        if (tg) { const c = center(tg); damage(tg, 2, '#fff2b0'); strk(x, y, c.x, c.y, 8, '#fff2b0', '#ffffff', 9); spark(c.x, c.y, '#fff2b0'); } else { const tx = pc.x + f * (80 + Z.fired * 22); strk(x, y, tx, p.y + p.h, 8, '#fff2b0', '#ffffff', 9); ripl(tx, p.y + p.h, 30, '#fff2b0', 12); }
+        Z.fired++; }
+      if (Z.fired >= Z.n) p.sw8 = null; }
+    if (p.sForm > 0) { p.sForm--; if (gTick % 6 === 0) particles.push({ x: pc.x + (Math.random() - .5) * 24, y: p.y + p.h, vx: 0, vy: -2.4, life: 26, color: '#fff2b0' }); if (gTick % 40 === 0) rings.push({ x: pc.x, y: pc.y, r: 8, max: 60, t: 14, color: '#fff2b0' }); if (p.sForm === 0) p.toast = { text: 'Thánh quang lắng xuống', color: '#fff2b0', t: 70 }; }
+  } else if (cls === 'samurai') {
+    const sf = formOf('samurai'); if (!sf) return;
+    if (p.sw2) { const Z = p.sw2; Z.t++;
+      for (let i = 0; i < 2; i++) { const a = Z.t * .16 + i * Math.PI, x = pc.x + Math.cos(a) * 48, y = pc.y + Math.sin(a) * 34, dx = Math.cos(a + 1.57) * 7, dy = Math.sin(a + 1.57) * 7;
+        if (gTick % 2 === 0) strk(x - dx, y - dy, x + dx, y + dy, 5, '#ff6a6a', '#ffffff', 5);
+        for (const e of enemies) if (e.alive && !e.under && !(e._swCd > 0) && Math.hypot(center(e).x - x, center(e).y - y) < 22 + e.w / 3) { damage(e, 1.3, '#ff6a6a'); e._swCd = 14; spark(center(e).x, center(e).y, '#ff6a6a'); } }
+      for (const e of enemies) if (e._swCd > 0) e._swCd--; if (Z.t >= Z.max) p.sw2 = null; }
+    if (p.dom8) { const D = p.dom8; D.t++;
+      if (D.t % 8 === 0) for (const e of enemies) if (e.alive && !e.under && Math.hypot(center(e).x - D.x, (center(e).y - D.y) * 1.1) < D.r) { damage(e, 1.2, '#ffe070'); if (e.boss) e.slowT = Math.max(e.slowT || 0, 20); else e.stun = Math.max(e.stun || 0, 10); }
+      if (gTick % 3 === 0) { const a = D.t * .3 + Math.random() * 6.28, r = D.r * (.4 + Math.random() * .6), x = D.x + Math.cos(a) * r, y = D.y + Math.sin(a) * r * .8; strk(x - 8, y - 14, x + 8, y + 14, 4, '#ffe070', '#ffffff', 7); }
+      if (D.t % 24 === 0) ripl(D.x, D.y + 20, D.r, '#ffe070', 20); if (D.t >= D.max) p.dom8 = null; }
+    if (sf === 2 && gTick % (rank() >= 5 ? 50 : 70) === 0) { const tg = nearTo(pc.x, pc.y, 320); if (tg) fswordMake(pc.x, pc.y - 14, -1.5 + (Math.random() - .5) * .8, 9, 1.5, '#ffe070', 4); }
+  }
+}
+
+// ======================= TÚI ĐỒ + MÀN ĐỘT PHÁ =======================
+function itemIcon(kind, sz = 16) {
+  const c = document.createElement('canvas'); c.width = c.height = sz; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; const R = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+  if (kind === 'thach') { R(4, 3, 8, 2, '#bdb4a8'); R(3, 5, 10, 6, '#8a8076'); R(4, 11, 8, 2, '#5a524a'); R(4, 5, 3, 3, '#cfc6ba'); R(8, 7, 2, 5, '#ff8a3a'); R(7, 8, 1, 3, '#ffb070'); R(10, 6, 2, 2, '#ffb070'); R(5, 13, 6, 1, '#2a2622'); }
+  if (kind === 'phong') { R(5, 2, 6, 2, '#ffe9a8'); R(3, 4, 10, 8, '#e0505a'); R(4, 12, 8, 2, '#8a1a28'); R(5, 4, 3, 3, '#ffb0a8'); R(9, 6, 2, 2, '#8a1a28'); R(7, 8, 2, 3, '#ff8a8a'); R(2, 6, 1, 4, '#ffd04a'); R(13, 6, 1, 4, '#ffd04a'); }
+  if (kind === 'ticket') { R(2, 4, 12, 8, '#e8b83a'); R(2, 4, 12, 1, '#ffe070'); R(2, 11, 12, 1, '#a8781a'); R(7, 4, 2, 8, '#a8781a'); R(4, 6, 2, 1, '#fff6d0'); R(10, 8, 2, 1, '#fff6d0'); R(1, 7, 1, 2, '#101830'); R(14, 7, 1, 2, '#101830'); }
+  if (kind === 'piece') { R(4, 5, 8, 8, '#c8aa6e'); R(6, 3, 4, 2, '#c8aa6e'); R(12, 7, 2, 4, '#c8aa6e'); R(2, 7, 2, 4, '#a8884e'); R(5, 6, 3, 3, '#ffe9a8'); R(4, 12, 8, 1, '#7a5a22'); }
+  if (kind === 'dust') { R(6, 3, 4, 2, '#d8b8ff'); R(4, 5, 8, 6, '#a070ff'); R(5, 11, 6, 2, '#6a40c0'); R(5, 5, 3, 3, '#e8d4ff'); R(9, 8, 2, 2, '#6a40c0'); R(2, 3, 1, 1, '#e8d4ff'); R(13, 9, 1, 1, '#e8d4ff'); }
+  return c;
+}
+const ITEM_RAR = { thach: 'a', phong: 'a', dust: 'a', ticket: 'b', piece: 's' };
+let invSel = 'st_warrior';
+function invItems() {
+  return [{ id: 'st_warrior', kind: 'thach', name: STONES.warrior.name, n: stoneN('warrior'), c: 'warrior' }, { id: 'st_samurai', kind: 'phong', name: STONES.samurai.name, n: stoneN('samurai'), c: 'samurai' },
+    { id: 'dust', kind: 'dust', name: 'Bụi Linh Hồn', n: save.inv.dust }, { id: 'ticket', kind: 'ticket', name: 'Vé chiêu mộ', n: save.gacha.tickets }, { id: 'frag', kind: 'piece', name: 'Mảnh phong ấn', n: save.frags.filter(Boolean).length, max: 4 }];
+}
+function openInv() { hideAll(); $('invPanel').hidden = false; renderInv(); }
+function exchangeDust(c) { if (save.inv.dust < 100) return; save.inv.dust -= 100; save.inv.stones[c] = stoneN(c) + 1; persist(); renderInv(); renderMenuDots(); }
+function renderInv() {
+  const items = invItems(), it = items.find(x => x.id === invSel) || items[0], grid = $('invGrid'); grid.innerHTML = '';
+  for (let i = 0; i < 18; i++) {
+    const d = document.createElement('div'), x = items[i]; d.className = 'inv-slot' + (x ? ' r-' + ITEM_RAR[x.kind] + (x.n <= 0 ? ' empty' : '') + (x.id === it.id ? ' sel' : '') : '');
+    if (x) { d.appendChild(itemIcon(x.kind)); const n = document.createElement('span'); n.className = 'n'; n.textContent = x.max ? `${x.n}/${x.max}` : '×' + x.n; d.appendChild(n); d.addEventListener('click', () => { invSel = x.id; renderInv(); }); }
+    grid.appendChild(d);
+  }
+  const det = $('invDetail'); det.innerHTML = ''; const big = itemIcon(it.kind); big.className = 'inv-big r-' + ITEM_RAR[it.kind]; det.appendChild(big);
+  let html = `<div class="inv-name">${it.name}</div>`;
+  if (it.c) {
+    const C0 = STONES[it.c], I = btInfo(it.c), F = FORMS[it.c][formOf(it.c)];
+    html += `<div class="inv-sub">Đá đột phá riêng của <b>${C0.hero}</b></div><div class="inv-own">Sở hữu: <b>${it.n}</b></div><div class="inv-clear"></div>`;
+    html += `<div class="inv-txt">Dùng để đột phá <b>${C0.hero}</b> lên hạng cao hơn khi đã đạt bậc 5. Số đá cần: 3 (lên B), 6 (lên A), 12 (lên S).</div>`;
+    if (I) html += `<div class="inv-row"><span>Hiện tại:</span><span class="bd b-${TIER[F.rar].toLowerCase()}">${TIER[F.rar]}</span> → <span class="bd b-${TIER[I.nf.rar].toLowerCase()}">${TIER[I.nf.rar]}</span> <b>${I.req.cost} viên</b> <span class="${I.ok.stone ? 'ok' : 'bad'}">${I.ok.stone ? '✓ đủ' : `✗ thiếu ${I.req.cost - I.st}`}</span></div>`;
+    else html += `<div class="inv-row"><span class="ok">Đã đạt hạng tối đa (S)</span></div>`;
+    html += `<h4>NƠI NHẬN</h4><div class="inv-row">👑 Lần đầu hạ mỗi boss: +1 viên</div><div class="inv-row">🎲 Boss đã hạ rồi: ~15% rơi</div><div class="inv-row">💜 Đổi từ Bụi Linh Hồn: 100 bụi = 1 viên</div><div class="inv-row dim">🏔 Hầm Đá riêng từng tướng · sắp ra mắt</div>`;
+    html += `<div class="inv-btns">${I ? `<button class="inv-b gold" id="invBt">⚡ Đột phá${I.ready ? '' : ' (chưa đủ)'}</button>` : ''}${save.inv.dust >= 100 ? `<button class="inv-b" id="invEx">Đổi 100 bụi → 1 viên</button>` : ''}</div>`;
+  } else if (it.id === 'dust') {
+    html += `<div class="inv-sub">Nguyên liệu</div><div class="inv-own">Sở hữu: <b>${it.n}</b></div><div class="inv-clear"></div><div class="inv-txt">Khi chiêu mộ trúng tướng trùng mà tướng đó đã đạt bậc 5, mảnh thừa hóa thành Bụi Linh Hồn. 100 bụi đổi được 1 đá đột phá tùy chọn.</div>`;
+    html += `<div class="inv-btns"><button class="inv-b" id="invEx0" ${it.n < 100 ? 'disabled' : ''}>Đổi → ${STONES.warrior.name}</button><button class="inv-b" id="invEx1" ${it.n < 100 ? 'disabled' : ''}>Đổi → ${STONES.samurai.name}</button></div>`;
+  } else if (it.id === 'ticket') {
+    html += `<div class="inv-sub">Vé</div><div class="inv-own">Sở hữu: <b>${it.n}</b></div><div class="inv-clear"></div><div class="inv-txt">Dùng để chiêu mộ tướng. Nhận từ thành tựu và phần thưởng.</div><div class="inv-btns"><button class="inv-b gold" id="invSum">✨ Đến Chiêu mộ</button></div>`;
+  } else html += `<div class="inv-sub">Vật phẩm cốt truyện</div><div class="inv-own">Sở hữu: <b>${it.n}/${it.max}</b></div><div class="inv-clear"></div><div class="inv-txt">Mảnh phong ấn để mở cánh cổng cuối của Thiên Vương.</div>`;
+  det.insertAdjacentHTML('beforeend', html);
+  const q = id => document.getElementById(id);
+  if (q('invBt')) q('invBt').addEventListener('click', () => openBt(it.c)); if (q('invEx')) q('invEx').addEventListener('click', () => exchangeDust(it.c));
+  if (q('invEx0')) q('invEx0').addEventListener('click', () => exchangeDust('warrior')); if (q('invEx1')) q('invEx1').addEventListener('click', () => exchangeDust('samurai'));
+  if (q('invSum')) q('invSum').addEventListener('click', () => $('summonBtn').click());
+}
+// ---------- màn Đột phá ----------
+let btHero = 'warrior', btRaf = 0;
+const formSprKey = (c, fi) => FORM_SPR[c][fi] || c;
+function drawFormSprite(cv, c, fi, sc = 5) {
+  const g = cv.getContext('2d'), key = formSprKey(c, fi), src = fi ? PIX.hero(key, 'idle', 0, false, 'ph' + capePh()) : PIX.hero(c, 'idle', 0, false, 'base');
+  g.imageSmoothingEnabled = false; g.clearRect(0, 0, cv.width, cv.height); g.drawImage(src, 0, 0, 40 * sc, 40 * sc);
+}
+function openBt(c) { btHero = c; hideAll(); $('btPanel').hidden = false; renderBt(); cancelAnimationFrame(btRaf); const loop = () => { if ($('btPanel').hidden) return; const a = $('btCv0'), b = $('btCv1'); const I = btInfo(btHero); if (a && b && I) { drawFormSprite(a, btHero, I.f); drawFormSprite(b, btHero, I.f + 1); } btRaf = requestAnimationFrame(loop); }; loop(); }
+function closeBt() { cancelAnimationFrame(btRaf); toMenu(); }
+function renderBt(result) {
+  const c = btHero, I = btInfo(c), box = $('btBox'); const own = save.unlocked.includes(c);
+  if (!I) { box.innerHTML = `<div class="bt-title">⚡ ĐỘT PHÁ · ${CLASSES[c].name.toUpperCase()}</div><div class="bt-max"><canvas id="btCv0" width="200" height="200"></canvas><div class="bt-big">Đã đạt hạng tối đa</div><div>${CLASSES[c].name} · <span class="bd b-s">S</span></div></div><div class="inv-btns"><button class="inv-b gold" id="btBack">Xong</button></div>`; $('btBack').addEventListener('click', closeBt); drawFormSprite($('btCv0'), c, formOf(c)); return; }
+  const F = FORMS[c][I.f], NF = I.nf, Ct = TIER[F.rar], Nt = TIER[NF.rar], stn = STONES[c];
+  const row = (ok, label, val) => `<div class="inv-row"><span>${label}</span><b class="push">${val}</b><span class="${ok ? 'ok' : 'bad'}">${ok ? '✓' : '✗'}</span></div>`;
+  const skills = [0, 1, 2, 3].map(i => `<div class="bt-sk"><div class="old">${F.skills[i].name}</div><div class="nw">➜ ${NF.skills[i].name}</div><div class="ds">${NF.skills[i].desc}</div></div>`).join('');
+  box.innerHTML = `<div class="bt-title">⚡ ĐỘT PHÁ · ${stn.hero.toUpperCase()} <span class="bt-path">Hạng <span class="bd b-${Ct.toLowerCase()}">${Ct}</span> → <span class="bd b-${Nt.toLowerCase()}">${Nt}</span></span></div>
+  <div class="bt-main"><div class="bt-card"><div class="lbl">HIỆN TẠI</div><canvas id="btCv0" width="200" height="200"></canvas><div class="nm">${F.name}</div><div><span class="bd b-${Ct.toLowerCase()}">${Ct}</span> <small>${RARITY_NAME[F.rar]}</small></div></div>
+  <div class="bt-arrow">➜</div>
+  <div class="bt-card nx"><div class="lbl gold">SAU ĐỘT PHÁ</div><canvas id="btCv1" width="200" height="200"></canvas><div class="nm">${NF.name}</div><div><span class="bd b-${Nt.toLowerCase()}">${Nt}</span> <small>${RARITY_NAME[NF.rar]}</small></div></div>
+  <div class="bt-cond"><h4>ĐIỀU KIỆN</h4>${row(I.ok.rank, '★ Bậc sao', `${I.rk} / 5`)}<div class="inv-row"><span class="stn"></span><span>${stn.name}</span><b class="push">${I.st} / ${I.req.cost}</b><span class="${I.ok.stone ? 'ok' : 'bad'}">${I.ok.stone ? '✓' : '✗'}</span></div>${row(I.ok.lv, '⬆ Cấp nhân vật', `${I.lv} / ${I.req.lv}`)}${row(I.ok.coins, '✦ Phí đột phá', `${save.coins} / ${I.req.coins}`)}
+  <div class="bt-note"><b>Giữ lại:</b> cấp độ, mảnh tướng, bậc kỹ năng.<br><b>Đổi mới:</b> ngoại hình, nội tại, 4 kỹ năng.<br><b>Bậc sao về 1/5</b>, tăng lại theo hạng ${Nt}. <b>Không thể quay lại hình thái cũ.</b></div>
+  <div class="bt-passive"><span class="old">${F.pass.name}</span> ➜ <b>${NF.pass.name}</b><br><small>${NF.pass.desc}</small></div></div></div>
+  <h4 class="bt-h4">KỸ NĂNG THAY ĐỔI</h4><div class="bt-skills">${skills}</div>
+  <div class="inv-btns"><button class="inv-b" id="btBack">Quay lại</button><button class="inv-b gold big" id="btGo" ${I.ready ? '' : 'disabled'}>⚡ ĐỘT PHÁ</button></div>${I.ready ? '' : `<div class="bt-hint">${!own ? 'Bạn chưa sở hữu tướng này.' : 'Chưa đủ điều kiện (dấu ✗ ở trên).'}</div>`}`;
+  const sc = box.querySelector('.stn'); if (sc) sc.appendChild(itemIcon(stn.kind, 16));
+  $('btBack').addEventListener('click', closeBt); $('btGo').addEventListener('click', () => btCutscene(c));
+}
+function btCutscene(c) {
+  const I = btInfo(c); if (!I || !I.ready) return; const f0 = I.f, f1 = I.f + 1, K = FORMS[c][f1].color, nm = FORMS[c][f1].name, tr = TIER[FORMS[c][f1].rar];
+  doBreakthrough(c); cancelAnimationFrame(btRaf);
+  const ov = document.createElement('div'); ov.className = 'bt-fx'; const cv = document.createElement('canvas'); cv.width = 800; cv.height = 450; ov.appendChild(cv); document.body.appendChild(ov);
+  const g = cv.getContext('2d'), T0 = performance.now(), DUR = 3200, parts = [];
+  const mkSp = fi => { const s = document.createElement('canvas'); s.width = s.height = 240; drawFormSprite(s, c, fi, 6); return s; };
+  const A = mkSp(f0);
+  const step = now => {
+    const t = now - T0, u = Math.min(1, t / DUR); g.clearRect(0, 0, 800, 450); g.fillStyle = 'rgba(2,4,14,.92)'; g.fillRect(0, 0, 800, 450);
+    const cx = 400, cy = 250; const rg = g.createRadialGradient(cx, cy, 10, cx, cy, 260); rg.addColorStop(0, K + 'aa'); rg.addColorStop(1, 'rgba(0,0,0,0)'); g.globalAlpha = Math.min(1, u * 2.5); g.fillStyle = rg; g.fillRect(0, 0, 800, 450); g.globalAlpha = 1;
+    const B = mkSp(f1); const mix = t < 1200 ? 0 : t < 1800 ? (t - 1200) / 600 : 1, shake = t > 900 && t < 1300 ? (Math.random() - .5) * 8 : 0;
+    g.imageSmoothingEnabled = false; g.globalAlpha = 1 - mix; g.drawImage(A, cx - 120 + shake, cy - 150); g.globalAlpha = mix; g.drawImage(B, cx - 120, cy - 150); g.globalAlpha = 1;
+    if (t > 1000 && t < 1900) { const r = (t - 1000) * .6; g.strokeStyle = K; g.lineWidth = 5; g.globalAlpha = Math.max(0, 1 - (t - 1000) / 900); g.beginPath(); g.arc(cx, cy, r, 0, 7); g.stroke(); g.globalAlpha = 1; }
+    if (t > 1100 && t < 1500) { g.fillStyle = 'rgba(255,255,255,' + (1 - Math.abs(t - 1300) / 200) * .85 + ')'; g.fillRect(0, 0, 800, 450); }
+    if (t > 600 && parts.length < 160) for (let i = 0; i < 3; i++) parts.push({ x: cx + (Math.random() - .5) * 120, y: cy + 80, vy: -1.5 - Math.random() * 3, vx: (Math.random() - .5) * 1.5, l: 60 + Math.random() * 30, m: 90, s: 2 + Math.random() * 3 });
+    for (const p of parts) { p.x += p.vx; p.y += p.vy; p.l--; g.globalAlpha = Math.max(0, p.l / p.m); g.fillStyle = Math.random() < .5 ? K : '#ffffff'; g.fillRect(p.x, p.y, p.s, p.s); } g.globalAlpha = 1;
+    if (t > 1700) { const a = Math.min(1, (t - 1700) / 500); g.globalAlpha = a; g.textAlign = 'center'; g.fillStyle = '#ffffff'; g.font = '700 30px Oswald, sans-serif'; g.fillText('ĐỘT PHÁ THÀNH CÔNG', cx, 70); g.fillStyle = K; g.font = '700 44px Oswald, sans-serif'; g.fillText(`${tr} · ${nm}`, cx, 125); g.globalAlpha = 1; }
+    if (t < DUR + 400) requestAnimationFrame(step); else { ov.remove(); persist(); renderBt(); openBtAfter(); }
+  };
+  requestAnimationFrame(step);
+}
+function openBtAfter() { cancelAnimationFrame(btRaf); const loop = () => { if ($('btPanel').hidden) return; const a = $('btCv0'), b = $('btCv1'), I = btInfo(btHero); if (a) drawFormSprite(a, btHero, formOf(btHero)); if (b && I) drawFormSprite(b, btHero, I.f + 1); btRaf = requestAnimationFrame(loop); }; loop(); }
+// ---------- nút trong sảnh ----------
+function renderBtRow() {
+  const row = $('btRow'); if (!row) return; const c = selCls, own = save.unlocked.includes(c);
+  if (!FORMS[c] || !own) { row.innerHTML = ''; return; }
+  const I = btInfo(c);
+  row.innerHTML = I ? `<button class="bt-open${I.ready ? ' ready' : ''}" id="btOpen">⚡ Đột phá → ${TIER[I.nf.rar]}${I.ready ? ' · sẵn sàng!' : ''}</button>` : `<span class="tag2 tier-S">Hạng tối đa</span>`;
+  const b = $('btOpen'); if (b) b.addEventListener('click', () => openBt(c));
+}
+function renderMenuDots() { const n = btReadyCount(); const d = $('invDot'); if (d) d.textContent = n ? n : ''; }
+$('invBtn').addEventListener('click', openInv); $('invClose').addEventListener('click', toMenu);
+
 document.getElementById('shopBtn').addEventListener('click', () => { hideAll(); renderShop(); document.getElementById('shopPanel').hidden = false; });
 document.getElementById('shopClose').addEventListener('click', toMenu);
 
 // ======================= CHIÊU MỘ =======================
+function dupResult(hero) { const rar = RARITY_BASE[hero]; if (rankOf(hero) >= 5 && FORMS[hero]) { const d = DUP_SHARDS[rar] * 5; save.inv.dust += d; return { kind: 'dup', hero, rar, n: d, dust: true }; } addShards(hero, DUP_SHARDS[rar]); return { kind: 'dup', hero, rar, n: DUP_SHARDS[rar] }; }
 function addShards(c, n) { save.gacha.shards[c] = (save.gacha.shards[c] || 0) + n; }
 const LEG_POOL = ['king', 'wukong', 'pirate', 'giong', 'hound', 'ancient', 'shade', 'tide'],
   // Nhà vua chỉ mở khóa qua cốt truyện; chưa sở hữu thì không ra trong chiêu mộ (kể cả mảnh)
@@ -7110,7 +7547,7 @@ function rollAncient() {
   if (g.alegPity >= 60) hero = 'aegis';
   else { const r = Math.random(); if (r < .03) hero = 'aegis'; else if (r < .15 || g.apity >= 10) hero = Math.random() < .5 ? 'moonbow' : 'stargaze'; }
   if (hero) { g.apity = 0; if (hero === 'aegis') { g.alegPity = 0; unlockAch('gachaLeg'); }
-    const rar = RARITY[hero]; if (save.unlocked.includes(hero)) { addShards(hero, DUP_SHARDS[rar]); return { kind: 'dup', hero, rar, n: DUP_SHARDS[rar] }; }
+    const rar = RARITY[hero]; if (save.unlocked.includes(hero)) return dupResult(hero);
     save.unlocked.push(hero); return { kind: 'new', hero, rar }; }
   g.pulls--; g.pity--; g.legPity--; const res = rollOnce(true); return res;
 }
@@ -7123,9 +7560,9 @@ function rollOnce(itemsOnly) {
   else if (g.pity >= 10 || Math.random() < 0.31) hero = pickHero();
   if (itemsOnly) { g.pity = Math.max(0, g.pity); g.legPity = Math.max(0, g.legPity); } // bảo hiểm tướng sau 10 lượt
   if (hero) {
-    g.pity = 0; if (RARITY[hero] === 'leg') { g.legPity = 0; unlockAch('gachaLeg'); }
+    g.pity = 0; if (RARITY_BASE[hero] === 'leg') { g.legPity = 0; unlockAch('gachaLeg'); }
     const rar = RARITY[hero];
-    if (save.unlocked.includes(hero)) { addShards(hero, DUP_SHARDS[rar]); return { kind: 'dup', hero, rar, n: DUP_SHARDS[rar] }; }
+    if (save.unlocked.includes(hero)) return dupResult(hero);
     save.unlocked.push(hero); return { kind: 'new', hero, rar };
   }
   const r = Math.random();
@@ -7179,7 +7616,7 @@ function renderSummon(results) {
       if (r.kind === 'new' || r.kind === 'dup') {
         d.className = 'pull ' + r.rar;
         d.appendChild(heroPortrait(r.hero));
-        d.insertAdjacentHTML('beforeend', `${r.kind === 'new' ? '<span class="badge">MỚI!</span>' : ''}<b style="color:${CLASSES[r.hero].color}">${CLASSES[r.hero].name}</b><small>${RARITY_NAME[r.rar]}${r.kind === 'dup' ? ` · +${r.n} mảnh` : ''}</small>`);
+        d.insertAdjacentHTML('beforeend', `${r.kind === 'new' ? '<span class="badge">MỚI!</span>' : ''}<b style="color:${CLASSES[r.hero].color}">${CLASSES[r.hero].name}</b><small>${RARITY_NAME[r.rar]}${r.kind === 'dup' ? ` · +${r.n} ${r.dust ? 'bụi linh hồn' : 'mảnh'}` : ''}</small>`);
       } else {
         d.className = 'pull';
         const ico = r.kind === 'coins' ? '✦' : r.kind === 'xp' ? '📘' : '🧩';
@@ -7653,7 +8090,7 @@ function updateTouchUI() {
     const locked = p.level < SKILL_LV[i] || (cls === 'hound' && i === 3 && !p.regressed), cd = p.cds[i], base = skillCd(i) || CLASSES[cls].skills[i].cd || 1;
     const ratio = locked ? 0 : Math.min(1, cd / base);
     const secs = !locked && cd > 60 ? Math.ceil(cd / 60) : '';
-    const pips = cls === 'samurai' && i === 0 ? p.stack : -1;
+    const pips = cls === 'samurai' && i === 0 ? (formOf('samurai') ? (p.kiY | 0) : p.stack) : -1;
     const glowOn = (cls === 'pirate' && i < 2 && p.armed > 0) || (cls === 'wukong' && (i === 0 || i === 2) && p.cloud > 0) || (cls === 'brawler' && i === 0 && p.fistEmp > 0) || (cls === 'warrior' && i === 0 && p.empower) || (cls === 'samurai' && i === 0 && p.stack >= 2) || (cls === 'king' && p.trans > 0) || (cls === 'giong' && i === 0 && p.qi >= 5);
     const key = [locked, p.regressed, sk[i].icon, Math.round(ratio * 40), secs, pips, glowOn, cls === 'giong' && i === 0 ? p.qi : 0].join('|');
     if (key === skCache[i]) continue;
@@ -7664,7 +8101,7 @@ function updateTouchUI() {
     b.style.setProperty('--cd', ratio.toFixed(3));
     b.innerHTML = locked ? `<span class="ic">${p.level < SKILL_LV[i] ? `Cấp ${SKILL_LV[i]}` : '🔒'}</span>` : (cls === 'giong' && i === 0 && p.qi > 0) ? `<span class="ic">${sk[i].icon}</span>${secs ? `<span class="cdt">${secs}</span>` : ''}<span class="num">${p.qi}/5</span>`
       : `<span class="ic">${sk[i].icon}</span>${secs ? `<span class="cdt">${secs}</span>` : ''}<span class="num">${i + 1}</span>` +
-        (pips >= 0 ? `<span class="pips"><i class="${pips > 0 ? 'on' : ''}"></i><i class="${pips > 1 ? 'on' : ''}"></i></span>` : '');
+        (pips >= 0 ? `<span class="pips"><i class="${pips > 0 ? 'on' : ''}"></i><i class="${pips > 1 ? 'on' : ''}"></i>${formOf('samurai') ? `<i class="${pips > 2 ? 'on' : ''}"></i>` : ''}</span>` : '');
   }
 }
 
