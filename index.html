@@ -4882,7 +4882,7 @@ return {hero,boss,enemy,enemyInfo,hasHero:c=>!!HEROES[c],hasBoss:id=>!!BOSSES[id
 
 // ======================= PIXEL ART: tướng & boss nhìn nghiêng =======================
 const PIXEL_ART = true, HERO_SC = 1.25;
-const BUILD = 45;
+const BUILD = 46;
 addEventListener('load', () => { const t = document.getElementById('buildTag'); if (t) t.textContent = `Bản ${BUILD} · ${PIXEL_ART ? 'Pixel art' : 'Vector'}`; });
 function heroPixPose(p) {
   const A = Date.now();
@@ -7899,7 +7899,8 @@ function redeemCode(raw) {
     save.cleared = Math.max(save.cleared, S2_LAST); save.tutDone = true; save.ancientBanner = true;
     save.orb = true; save.frags = [true, true, true, true]; save.stats.kingSealBroken = true;
     save.seen = save.seen || {}; for (const k of Object.keys(LIB_ENEMY)) save.seen['e:' + k] = true; for (const k of LIB_BOSS_ORDER) save.seen['b:' + k] = true;
-    got.push(`<b>mở khóa toàn bộ ${CLASS_ORDER.length} tướng</b>`, `<b>mọi màn chơi</b>`, `<b>tất cả tướng cấp ${MAX_LV}</b>`);
+    for (const c of Object.keys(STONES)) save.inv.stones[c] = stoneN(c) + 30;
+    got.push(`<b>mở khóa toàn bộ ${CLASS_ORDER.length} tướng</b>`, `<b>mọi màn chơi</b>`, `<b>tất cả tướng cấp ${MAX_LV}</b>`, `<b>+30 ${STONES.warrior.name}</b> và <b>+30 ${STONES.samurai.name}</b>`);
   }
   if (g.shardsAll) { CLASS_ORDER.forEach(c => addShards(c, g.shardsAll)); got.push(`<b>+${g.shardsAll} 🧩</b> mảnh cho mọi tướng`); }
   if (!g.reusable) save.giftUsed[h] = true;
