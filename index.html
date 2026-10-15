@@ -2207,7 +2207,7 @@ function comboAugment(p) {
   if (C.mul) { p.atkMul = (p.atkMul || 1) * C.mul[st]; p.atkCd = Math.max(4, Math.round(p.atkCd * C.cd[st])); p.vx += p.face * C.lunge[st]; pose(p, C.pose[st], 9); trail.push({ x: p.x, y: p.y, face: p.face, life: 8, col: CLASSES[cls].color }); }
   sc(p, [[2, () => COMBO_FX[cls](p, st)]], false);
 }
-function spark(x, y, col) { fxList.push({ type: 'spark', x, y, col, t: 9, max: 9, rot: Math.random() * 3 }); }
+function spark(x, y, col) { fxList.push({ type: 'ispark', x, y, col, t: 9, max: 9, rot: Math.random() * 3 }); }
 const hk = () => CLASSES[cls].color;
 Object.assign(COMBO_FX, {
   warrior(p, st) { const f = p.face, q = center(p), K = hk(), W = '#fff3d8', x = q.x + f * 12, y = q.y - 2;
@@ -2286,6 +2286,43 @@ function polishTick(p) {
   if (p.armed > 0 && gTick % 8 === 0) particles.push({ x: pc.x + (Math.random() - .5) * 20, y: pc.y + (Math.random() - .5) * 30, vx: 0, vy: -1.6, life: 20, color: '#ff3b3b' });
   for (const q of shots) { const col = SHOT_COL[q.type] || (q.type === 'wave' ? q.color : null); if (!col || q.vx === undefined) continue;
     const cx = q.x + q.w / 2, cy = q.y + q.h / 2; if (q._px != null && Math.abs(cx - q._px) + Math.abs(cy - q._py) < 160) strk(q._px, q._py, cx, cy, q.big || q.type === 'bigorb' ? 11 : q.type === 'bullet' ? 4 : 6, col, W, 6); q._px = cx; q._py = cy; }
+}
+// ======================= BOSS: TƯ THẾ RA ĐÒN + HIỆU ỨNG =======================
+const BOSS_STYLE = { fist: 'fist', m9: 'fist', m12: 'fist', sword: 'sword', m10: 'sword', whip: 'whip', m11: 'whip', spear: 'spear', m13: 'spear' };
+const SKIPHAZ = new Set(['zone', 'beam', 'mark', 'ring', 'fring', 'tide', 'shock', 'pool']);
+function bossPoseXform(b, t) {
+  let lean = 0, sx = 1, sy = 1, dx = 0;
+  if (b.stunT > 0) { lean = Math.sin(t / 70) * .07; sy = .97; }
+  else if (b.state === 'tele') { const u = 1 - b.timer / (b.teleMax || 30), e = easeO(Math.min(1, u * 1.25)); lean = -.12 * e; sy = 1 - .07 * e; sx = 1 + .05 * e; dx = -5 * e + Math.sin(t / 28) * 1.5 * u * u; }
+  else if (b.state === 'act') { const a = b.at || 0, e = Math.max(0, 1 - a / 26), s0 = Math.min(1, a / 3); lean = .2 * e * s0; sy = 1 + .06 * e; sx = 1 - .05 * e; dx = 9 * e * s0; }
+  else if (b.state === 'idle') { sy = 1 + Math.sin(t / 380) * .012; if (b.flash > 3) { dx = -3; lean = -.05; } }
+  if (Math.abs(b.vx || 0) > 6) lean = Math.max(lean, .18);
+  return { lean, sx, sy, dx };
+}
+function bossTeleFx(b) {                      // gồng: vòng năng lượng thu lại + hạt hội tụ
+  const D = BOSS_DEFS[b.id], c = center(b);
+  if (b.timer % 9 === 0) fxList.push({ type: 'cring', x: c.x, y: c.y, r: Math.max(64, b.w * 1.7), col: D.color, t: 16, max: 16 });
+  if (Math.random() < .7) { const a = Math.random() * 6.28, r = 70 + Math.random() * 40; particles.push({ x: c.x + Math.cos(a) * r, y: c.y + Math.sin(a) * r * .7, vx: -Math.cos(a) * 3.2, vy: -Math.sin(a) * 2.2, life: 18, color: Math.random() < .5 ? D.color : '#ffffff' }); }
+}
+function bossStrikeFx(b) {                    // vào đòn: bùng nổ theo loại vũ khí
+  const D = BOSS_DEFS[b.id], c = center(b), f = b.face, K = D.color, W = '#ffffff', gy = b.y + b.h, st = BOSS_STYLE[b.id] || D.weapon || 'aura', ox = c.x + f * (b.w / 2 + 8);
+  if (st === 'fist') { ripl(ox + f * 24, gy, 96, K, 20); rings.push({ x: ox, y: c.y, r: 6, max: 76, t: 14, color: K }); spark(ox + f * 20, c.y, K); burst(ox + f * 20, gy, K, 12, 8); shake = Math.max(shake, 3); }
+  else if (st === 'sword') { cres(ox, c.y, 92, -2.4, .7, 21, K, W, 17, f); cres(ox, c.y, 70, -2.2, .5, 10, W, '#ffffff', 15, f); strk(c.x - f * 6, c.y - 20, c.x + f * 130, c.y + 14, 12, K, W, 12); }
+  else if (st === 'whip') { for (let i = 0; i < 3; i++) cres(ox - f * 6, c.y - 10 + i * 12, 118 + i * 22, -.9 + i * .22, .7 - i * .1, 7, K, W, 16, f); burst(ox + f * 60, c.y, K, 8, 7); }
+  else if (st === 'spear') { strk(c.x, c.y - 4, c.x + f * 190, c.y - 4, 11, K, W, 13); spark(c.x + f * 170, c.y - 4, K); ripl(ox + f * 70, gy, 40, K, 12); }
+  else { rings.push({ x: c.x, y: c.y, r: 6, max: 110, t: 18, color: K }); rings.push({ x: c.x, y: c.y, r: 3, max: 64, t: 12, color: W }); burst(c.x, c.y, K, 14, 9); }
+}
+function bossLandFx(b) { const D = BOSS_DEFS[b.id], c = center(b), gy = b.y + b.h; ripl(c.x, gy, 90 + b.w, D.color, 18); burst(c.x, gy, '#c8b89a', 10, 6); shake = Math.max(shake, 4); }
+function hazPolish() {
+  let spawned = 0, many = fxList.length > 240;
+  for (const h of hazards) {
+    if (!h.boss || h.delay > 0 || !BOSS_DEFS[h.boss.id]) continue;
+    const col = h.color || BOSS_DEFS[h.boss.id].color, c = center(h), sk = SKIPHAZ.has(h.type);
+    if (!h._seen) { h._seen = 1; if (!sk && spawned < 3 && Math.max(h.w, h.h) >= 14) { spawned++; rings.push({ x: c.x, y: c.y, r: 4, max: 34, t: 9, color: col }); burst(c.x, c.y, col, 4, 5); } }
+    if (!sk && !many && gTick % 2 === 0 && Math.abs(h.vx) + Math.abs(h.vy) > 2.5 && h._px != null && Math.abs(c.x - h._px) + Math.abs(c.y - h._py) < 140) strk(h._px, h._py, c.x, c.y, Math.min(14, Math.max(5, Math.max(h.w, h.h) * .45)), col, '#ffffff', 7);
+    h._px = c.x; h._py = c.y;
+  }
+  for (const b of enemies) if (b.alive && b.boss && BOSS_DEFS[b.id] && !b.transforming && (b.phase === 2 || b.enraged) && gTick % 6 === 0) { const c = center(b); particles.push({ x: c.x + (Math.random() - .5) * b.w, y: b.y + b.h * Math.random(), vx: 0, vy: -1.8, life: 26, color: BOSS_DEFS[b.id].color }); if (gTick % 36 === 0) rings.push({ x: c.x, y: c.y, r: 8, max: b.w * 1.4, t: 18, color: BOSS_DEFS[b.id].color }); }
 }
 // ======================= SPIDER-MAN (chiến đấu bằng tơ) =======================
 const WB = '#e8f0ff', WB2 = '#9fb2d8';
@@ -2984,6 +3021,7 @@ function bossAmbient(b) {
 const bossAI = b => (b.id === 'demon' && b.phase === 2) ? BOSS_AI.demon2 : BOSS_AI[b.id];
 function updateBoss(b) {
   if (b.transforming) return;
+  b._pvy = b.vy; b._pg = b.ground;
   const D = BOSS_DEFS[b.id], pc = center(player), c = center(b);
   const ph = b.phase === 2 ? 0.55 : 1;
   if (b.flash > 0) b.flash--;
@@ -2999,13 +3037,13 @@ function updateBoss(b) {
     if (--b.timer <= 0) {
       const nSk = bossAI(b).length; let i; do { i = Math.floor(Math.random() * nSk); } while (i === b.last && nSk > 1);
       b.last = i; b.skill = i; b.state = 'tele'; b.vx = 0;
-      b.timer = Math.round(30 * ph) + 4;
+      b.timer = Math.round(30 * ph) + 4; b.teleMax = b.timer;
       const names = b.phase === 2 ? D.skills2 : D.skills;
       b.label = { text: names[i], t: 80 };
     }
   } else if (b.state === 'tele') {
-    b.vx = 0; b.face = pc.x < c.x ? -1 : 1;
-    if (--b.timer <= 0) { b.state = 'act'; b.at = 0; }
+    b.vx = 0; b.face = pc.x < c.x ? -1 : 1; bossTeleFx(b);
+    if (--b.timer <= 0) { b.state = 'act'; b.at = 0; bossStrikeFx(b); }
   } else if (b.state === 'act') {
     curBoss = b; const done = bossAI(b)[b.skill](b, b.at); curBoss = null;
     b.at++;
@@ -3019,6 +3057,7 @@ function updateBoss(b) {
   if (b.x < world.arenaL + T) { b.x = world.arenaL + T; b.atWall = true; }
   if (b.x + b.w > world.arenaR - T) { b.x = world.arenaR - T - b.w; b.atWall = true; }
   if (!b.float && !b.fly && b.y + b.h >= GROUND_Y) { b.y = GROUND_Y - b.h; b.vy = 0; b.ground = true; } else b.ground = false;
+  if (b.ground && !b._pg && b._pvy > 5) bossLandFx(b);
 }
 
 function bossDown(b) {
@@ -3498,6 +3537,7 @@ function update() {
   if (state !== 'play') return;
   if (!tsk) updateHazards(p, pc);
   if (state !== 'play') return;
+  hazPolish();
 
   for (const e of enemies) {
     if (!e.alive) continue;
@@ -4682,7 +4722,7 @@ return {hero,boss,enemy,enemyInfo,hasHero:c=>!!HEROES[c],hasBoss:id=>!!BOSSES[id
 
 // ======================= PIXEL ART: tướng & boss nhìn nghiêng =======================
 const PIXEL_ART = true, HERO_SC = 1.25;
-const BUILD = 43;
+const BUILD = 44;
 addEventListener('load', () => { const t = document.getElementById('buildTag'); if (t) t.textContent = `Bản ${BUILD} · ${PIXEL_ART ? 'Pixel art' : 'Vector'}`; });
 function heroPixPose(p) {
   const A = Date.now();
@@ -4789,6 +4829,7 @@ function drawBossPix(b, c, pid) {
   ctx.translate(Math.round(c.x), Math.round(b.y + b.h)); ctx.scale(b.face || 1, 1);
   let bob = 0; if (b.state === 'idle' && Math.abs(b.vx || 0) > .3 && b.ground) bob = -Math.abs(Math.sin(t / 110)) * 3;
   const tint = bossTint(b, pid); if (tint !== 'none' && pose !== 'hit') ctx.filter = tint;
+  { const X = bossPoseXform(b, t); ctx.translate(X.dx, 0); ctx.rotate(X.lean); ctx.scale(X.sx, X.sy); }
   ctx.drawImage(cv, -cv.ax * S, -cv.fy * S + bob, cv.width * S, cv.height * S);
   ctx.filter = 'none';
 }
@@ -5506,7 +5547,10 @@ function drawFxList() {
         for (let pass = 0; pass < 2; pass++) { ctx.strokeStyle = pass ? f.col2 : f.col; for (let i = 1; i < pts.length; i++) { const u = i / pts.length, w = f.w * Math.sin(Math.PI * Math.min(1, u * 1.05)) * (pass ? .35 : 1) * Math.min(1, k * 1.5);
             ctx.globalAlpha = Math.min(1, k * 1.4) * (.25 + .75 * u); ctx.lineWidth = Math.max(.5, w); ctx.beginPath(); ctx.moveTo(pts[i - 1][0], pts[i - 1][1]); ctx.lineTo(pts[i][0], pts[i][1]); ctx.stroke(); } }
         ctx.restore(); }
-    } else if (f.type === 'spark') {                                 // tia lửa va chạm
+    } else if (f.type === 'cring') {                                 // vòng năng lượng thu lại khi boss gồng
+      const pr = 1 - k, r = f.r * (1 - .82 * easeO(pr)); ctx.save(); ctx.globalAlpha = k * .85; ctx.strokeStyle = f.col; ctx.lineWidth = 3; ctx.shadowColor = f.col; ctx.shadowBlur = 10; ctx.beginPath(); ctx.arc(f.x, f.y, Math.max(4, r), 0, 7); ctx.stroke();
+      ctx.globalAlpha = k * .5; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(f.x, f.y, Math.max(3, r * .86), 0, 7); ctx.stroke(); ctx.restore();
+    } else if (f.type === 'ispark') {                                // tia lửa va chạm (8 cánh)
       const pr = 1 - k, r0 = 4 + 10 * pr, r1 = 10 + 22 * easeO(pr); ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rot); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = k; ctx.lineCap = 'round';
       for (let i = 0; i < 8; i++) { const an = i * Math.PI / 4, rr = i % 2 ? r1 * .7 : r1; ctx.strokeStyle = f.col; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(Math.cos(an) * r0, Math.sin(an) * r0); ctx.lineTo(Math.cos(an) * rr, Math.sin(an) * rr); ctx.stroke(); }
       ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, 3 * k + 1, 0, 7); ctx.fill(); ctx.restore();
