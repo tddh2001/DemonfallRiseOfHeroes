@@ -494,6 +494,24 @@
   .bt-sk { padding: 10px 12px; border: 1px solid rgba(74,168,255,.5); border-radius: 10px; background: rgba(74,168,255,.08); } .bt-sk .old { font-size: 12px; opacity: .65; text-decoration: line-through; } .bt-sk .nw { font-weight: 800; color: #8fcaff; font-size: 14px; } .bt-sk .ds { font-size: 12px; opacity: .85; margin-top: 3px; line-height: 1.4; }
   .bt-hint { margin-top: 8px; font-size: 12px; color: #ff9a9a; } .bt-max { text-align: center; padding: 20px; } .bt-big { font: 600 28px Oswald, sans-serif; color: var(--lantern); }
   .train-opt { display: flex; align-items: center; gap: 8px; margin: 6px 4px 2px; padding: 7px 10px; border: 1px solid rgba(159,240,216,.45); border-radius: 8px; background: rgba(10,30,28,.55); font-size: 13px; cursor: pointer; text-align: left; } .train-opt input { width: 18px; height: 18px; accent-color: #9ff0d8; } .train-opt small { opacity: .7; }
+  /* ---------- Giải đấu ---------- */
+  .tn-box { width: min(1240px, 100%); max-height: 92vh; overflow: auto; padding: 14px 18px 16px; border: 1px solid rgba(200,170,110,.55); border-radius: 12px; background: rgba(8,14,38,.93); text-align: left; }
+  .tn-title { font: 600 22px Oswald, sans-serif; letter-spacing: .12em; color: #d8c08a; margin-bottom: 6px; } .tn-sub { font-size: 13px; line-height: 1.5; opacity: .9; margin-bottom: 6px; } .tn-sub b { color: #ffd166; }
+  .tn-box h4 { margin: 12px 0 6px; font-size: 13px; color: #c8aa6e; letter-spacing: .12em; font-weight: 600; } .tn-hint { margin-top: 8px; font-size: 12px; opacity: .7; }
+  .tn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+  .tn-pick { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px 6px; border: 2px solid rgba(255,255,255,.14); border-radius: 10px; background: rgba(255,255,255,.04); color: #e8ecf7; cursor: pointer; font: 600 12px 'Be Vietnam Pro', sans-serif; }
+  .tn-pick.sel { border-color: #ffd166; background: rgba(255,209,102,.14); box-shadow: 0 0 14px rgba(255,209,102,.45); } .tn-crown { position: absolute; top: 2px; right: 4px; font-style: normal; font-size: 11px; color: #ffd166; }
+  .tn-av canvas { display: block; image-rendering: pixelated; border-radius: 8px; }
+  .tn-opts { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; margin-top: 12px; font-size: 13px; } .tn-opts select { background: #0c1434; color: #e8ecf7; border: 1px solid rgba(255,255,255,.3); border-radius: 6px; padding: 4px 6px; } .tn-chk { cursor: pointer; }
+  .tn-bracket { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 12px; margin-top: 8px; } .tn-col { display: flex; flex-direction: column; justify-content: space-around; gap: 6px; } .tn-col h5 { margin: 0 0 2px; text-align: center; font-size: 12px; color: #c8aa6e; letter-spacing: .1em; }
+  .tn-match { border: 1px solid rgba(255,255,255,.18); border-radius: 8px; background: rgba(255,255,255,.04); overflow: hidden; } .tn-match.live { border-color: #ffd166; box-shadow: 0 0 12px rgba(255,209,102,.6); }
+  .tn-row { display: flex; align-items: center; gap: 6px; padding: 3px 6px; font-size: 12px; min-height: 34px; } .tn-row + .tn-row { border-top: 1px solid rgba(255,255,255,.1); } .tn-row .nm { flex: 1; } .tn-row .nm.dim { opacity: .4; } .tn-row b { color: #ffd166; font-size: 12px; }
+  .tn-row.win { background: rgba(126,224,138,.16); } .tn-row.win .nm { font-weight: 800; color: #9fe8a8; } .tn-row.lose { opacity: .5; } .tn-row.me { box-shadow: inset 3px 0 0 #ffd166; }
+  .tn-champ { display: flex; align-items: center; gap: 16px; padding: 10px 14px; margin: 6px 0 8px; border: 1px solid #ffd166; border-radius: 12px; background: radial-gradient(ellipse at 20% 50%, rgba(255,209,102,.25), transparent 70%); }
+  .tn-champ b { display: block; font: 600 28px Oswald, sans-serif; color: #ffe08a; } .tn-champ small { display: block; opacity: .8; } .tn-champ em { display: block; margin-top: 4px; font-style: normal; font-size: 13px; color: #9fe8a8; }
+  .tn-rank { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 4px 14px; } .tn-rk { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 6px; background: rgba(255,255,255,.04); font-size: 13px; } .tn-rk i { width: 22px; font-style: normal; color: #ffd166; font-weight: 800; } .tn-rk span { flex: 1; } .tn-rk em { font-style: normal; opacity: .7; font-size: 11px; } .tn-rk b { color: #ffd166; min-width: 46px; text-align: right; } .tn-rk.me { outline: 1px solid #ffd166; }
+  .tn-skip { position: fixed; right: 14px; top: 96px; z-index: 60; font: 700 13px 'Be Vietnam Pro', sans-serif; padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,.4); background: rgba(10,16,40,.85); color: #e8ecf7; cursor: pointer; } .tn-skip[hidden] { display: none; }
+  body.tournLive .touch { display: none !important; }
   .stn canvas { width: 22px; image-rendering: pixelated; vertical-align: middle; }
   .tier-SS { color: #fff; border-color: #ffe9a8; background: linear-gradient(90deg, #7a0e1a, #c8861a, #7a0e1a); box-shadow: 0 0 14px rgba(255,100,60,.7); text-shadow: 0 1px 2px #000; font-weight: 800; letter-spacing: .1em; }
   .champ .rb.SS { background: linear-gradient(90deg, #7a0e1a, #ffd76a, #ff3a3a, #ffd76a, #7a0e1a); }
@@ -556,6 +574,7 @@
       <nav class="lb-nav">
         <button class="nav-btn" id="shopBtn"><i>🛒</i><span>Cửa hàng</span></button>
         <button class="nav-btn hot" id="summonBtn"><i>✨</i><span>Chiêu mộ</span><b class="dot" id="summonDot"></b></button>
+        <button class="nav-btn" id="tnBtn"><i>⚔</i><span>Giải đấu</span></button>
         <button class="nav-btn" id="invBtn"><i>🎒</i><span>Túi đồ</span><b class="dot" id="invDot"></b></button>
         <button class="nav-btn" id="achBtn"><i>🏆</i><span>Thành tựu</span><b class="dot" id="achDot"></b></button>
         <button class="nav-btn" id="libBtn"><i>📖</i><span>Thư viện</span></button>
@@ -606,6 +625,8 @@
     <div class="inv-wrap"><div class="inv-grid" id="invGrid"></div><div class="inv-detail" id="invDetail"></div></div>
     <div class="btns"><button class="btn" id="invClose">Xong</button></div>
   </div>
+  <div class="overlay" id="tnPanel" hidden><div class="tn-box" id="tnBox"></div></div>
+  <button class="tn-skip" id="tnSkip" hidden>⏭ Bỏ qua trận này (Esc)</button>
   <div class="overlay" id="btPanel" hidden><div class="bt-box" id="btBox"></div></div>
   <div class="overlay" id="shopPanel" hidden>
     <h1>Cửa hàng</h1>
@@ -1233,13 +1254,13 @@ save.hxp = save.hxp || {};
 if (!save.seen) { save.seen = {};
   for (let n = 1; n <= Math.min(save.cleared, LAST); n++) { const S = STAGES[n]; for (const k of enemyPool(S.d)) save.seen['e:' + k] = true; if (S.boss) save.seen['b:' + S.boss] = true; }
   if (save.cleared >= LAST) save.seen['b:demon2'] = true; }
-const upgLv = id => save.upg[id] || 0;
+const upgLv = id => (world && world.tourn) ? 0 : (save.upg[id] || 0);
 const tierOf = (c, i) => ((save.sk[c] || [1, 1, 1, 1])[i]) || 1;
-const tier = i => tierOf(cls, i);
+const tier = i => (world && world.tourn) ? 3 : tierOf(cls, i);
 const rankOf = c => (save.gacha.rank[c] || 1);
-const rank = () => rankOf(cls);
+const rank = () => (world && world.tourn) ? 5 : rankOf(cls);
 const bonusDmg = () => upgLv('dmg') + (rank() >= 3 ? 1 : 0);
-const maxHearts = () => MAX_HEARTS + upgLv('hearts') + (rank() >= 2 ? 1 : 0) + lvHearts(heroLv(cls));
+const maxHearts = () => MAX_HEARTS + upgLv('hearts') + (rank() >= 2 ? 1 : 0) + lvHearts((world && world.tourn) ? 100 : heroLv(cls));
 const totalStars = () => Object.values(save.stars).reduce((a, m) => a + (m & 1) + ((m >> 1) & 1) + ((m >> 2) & 1), 0);
 function unlockAch(id) {
   if (save.ach[id]) return;
@@ -1269,6 +1290,7 @@ let state = 'menu', particles = [], trail = [], popups = [], ult = null, shake =
 let boss = null, bossStarted = false, reward = null, goalTaken = false, gate = null;
 let actionId = 0;
 const newId = () => ++actionId;
+let tournRun = null, tournBuildFlag = false;
 const keys = { left: false, right: false, jump: false, down: false, atk: false, s1: false, s2: false, s3: false, s4: false };
 const pressed = { atk: false, s1: false, s2: false, s3: false, s4: false };
 let jumpHeld = false, jumpBuf = 0, dropReq = false, trainLog = [];
@@ -1327,6 +1349,7 @@ function buildTraining() {
   return { G, cols, len: cols, spawn: [[14, 9, 'dummy'], [48, 9, 'dummy']], flies: [], cps: [6], goalCol: 999, isBoss: false, n: TRAIN, d: 1, signs, training: true, tick: 0 };
 }
 function buildStage(n) {
+  if (tournBuildFlag) return buildTourn();
   if (n === 0) return buildTutorial();
   if (STAGES[n].type === 'training') return buildTraining();
   const S = STAGES[n], rnd = mulberry32(n * 7919 + 17), d = S.d;
@@ -1470,7 +1493,7 @@ const LIGHT_HAZ = new Set(['heart', 'rose', 'pool', 'cloud', 'bubble', 'yawn', '
 const hazDmg = h => !h.boss ? 1 : h.type === 'beam' ? 3 : (LIGHT_HAZ.has(h.type) && !h.big) ? 1 : 2;
 
 function gainXp(n, x, y) {
-  const p = player; if (!p || (world && world.training)) return;
+  const p = player; if (!p || (world && (world.training || world.tourn))) return;
   p.xp += n; save.hxp[cls] = p.xp;
   if (x !== undefined) popups.push({ text: `+${n} KN`, x, y: y - 14, t: 30, color: '#9ff0d8' });
   let up = false;
@@ -1574,8 +1597,7 @@ const faceOf = e => e.boss ? e.face : (e.dir || e.face || 0);
 function doParry(src) {
   const p = player, pc = center(p);
   p.parryWin = 0; p.inv = 30; hitStop = 8;
-  save.stats.parries = (save.stats.parries || 0) + 1;
-  unlockAch('parry1'); if (save.stats.parries >= 30) unlockAch('parry30');
+  if (!world.tourn) { save.stats.parries = (save.stats.parries || 0) + 1; unlockAch('parry1'); if (save.stats.parries >= 30) unlockAch('parry30'); }
   popups.push({ text: 'ĐỠ ĐÒN!', x: pc.x, y: p.y - 14, t: 45, color: '#ffffff' });
   rings.push({ x: pc.x, y: pc.y, r: 6, max: 70, t: 16, color: '#ffffff' });
   burst(pc.x, pc.y, '#ffffff', 18, 8); shake = Math.max(shake, 6);
@@ -1606,6 +1628,7 @@ function damage(e, dmg, color) {
   if (!e.alive || e.transforming || e.under) return;
   dmg = Math.round(dmg * lvDmgMul(player ? player.level : 1) * 10) / 10;
   if (e.mark > 0 && cls === 'chain') dmg += rank() >= 5 ? 2 : 1;
+  if (world.tourn && e.kind !== 'dummy') world.tourn.dmg += Math.min(dmg, Math.max(0, e.hp));
   e.hp -= dmg; e.flash = 8;
   if (e.kind === 'dummy') { e.hp = e.maxHp; e.wob = 14; if (world.training) { trainLog.push({ t: world.tick, d: dmg }); world.trainTotal = (world.trainTotal || 0) + dmg; } }
   if (!e.boss) e.stun = Math.max(e.stun, 12);
@@ -1617,11 +1640,11 @@ function damage(e, dmg, color) {
     if (e.boss) { bossDown(e); return; }
     e.alive = false; burst(c.x, c.y, '#b69cff', 20, 7); gainXp(e.xp, c.x, e.y);
     if (e.kind === 'U') { haz({ type: 'mark', x: c.x - 44, y: e.y + e.h - 6, w: 88, h: 6, life: 18, color: '#b06bff' }); haz({ type: 'erupt', x: c.x - 40, y: e.y + e.h - 70, w: 80, h: 70, delay: 18, life: 14, once: true, color: '#b06bff' }); }
-    player.kills++; save.stats.kills = (save.stats.kills || 0) + 1;
+    player.kills++; if (!world.tourn) save.stats.kills = (save.stats.kills || 0) + 1;
     if (cls === 'shade') shadeSoul(c.x, e.y + e.h);
     if (cls === 'giong' && player.holy) player.holyDrain = Math.min(player.holyDrain + 120, 240);
     if (cls === 'beast' && ++player.killHeal >= (rank() >= 5 ? 5 : 8)) { player.killHeal = 0; if (player.hearts < player.maxHearts) { player.hearts++; updateHud(); popups.push({ text: '+1 ♥', x: center(player).x, y: player.y - 12, t: 40, color: '#e0a060' }); } }
-    unlockAch('kill1'); if (save.stats.kills >= 100) unlockAch('kill100'); if (save.stats.kills >= 500) unlockAch('kill500');
+    if (!world.tourn) { unlockAch('kill1'); if (save.stats.kills >= 100) unlockAch('kill100'); if (save.stats.kills >= 500) unlockAch('kill500'); }
   }
 }
 function explode(x, y, r, dmg, color) {
@@ -4962,7 +4985,7 @@ return {hero,boss,enemy,enemyInfo,hasHero:c=>!!HEROES[c],hasBoss:id=>!!BOSSES[id
 
 // ======================= PIXEL ART: tướng & boss nhìn nghiêng =======================
 const PIXEL_ART = true, HERO_SC = 1.25;
-const BUILD = 48;
+const BUILD = 49;
 addEventListener('load', () => { const t = document.getElementById('buildTag'); if (t) t.textContent = `Bản ${BUILD} · ${PIXEL_ART ? 'Pixel art' : 'Vector'}`; });
 function heroPixPose(p) {
   const A = Date.now();
@@ -7017,6 +7040,7 @@ function draw() {
   if (dimT > 0) { ctx.fillStyle = `rgba(${dimCol},${Math.min(.5, dimT / 24)})`; ctx.fillRect(0, 0, W, H); dimT--; }
   if (flashT > 0) { ctx.fillStyle = `rgba(${flashCol},${Math.min(1, flashT / 14)})`; ctx.fillRect(0, 0, W, H); flashT--; if (flashT <= 0) flashCol = '255,236,220'; }
   if (cutin) drawCutin();
+  if (tournRun && tournRun.live) drawTournHud();
   drawHud();
   if (dialog) drawDialog();
 }
@@ -7033,10 +7057,10 @@ function loop(now) {
   let steps = 0;
   while (stepAcc >= STEP_MS && steps < 5) {
     stepAcc -= STEP_MS; steps++;
-    if (state === 'play' && !dialog) { if (ultCine) tickCine(); else if (hitStop > 0) hitStop--; else update(); }
+    if (state === 'play' && !dialog) { if (tournRun) { if (tournRun.live) tournLive(); } else if (ultCine) tickCine(); else if (hitStop > 0) hitStop--; else update(); }
   }
   if (steps >= 5) stepAcc = 0;
-  if (world && state !== 'menu') draw();
+  if (world && state !== 'menu' && !(tournRun && !tournRun.live)) draw();
   if (state === 'menu' && !$('menuPanel').hidden) drawShowcase();
   requestAnimationFrame(loop);
 }
@@ -7059,7 +7083,7 @@ function advanceDialog() {
     if (f) f();
   }
 }
-function hideAll() { ['menuPanel', 'pausePanel', 'endPanel', 'shopPanel', 'achPanel', 'summonPanel', 'giftPanel', 'libPanel', 'invPanel', 'btPanel'].forEach(id => document.getElementById(id).hidden = true); }
+function hideAll() { ['menuPanel', 'pausePanel', 'endPanel', 'shopPanel', 'achPanel', 'summonPanel', 'giftPanel', 'libPanel', 'invPanel', 'btPanel', 'tnPanel'].forEach(id => document.getElementById(id).hidden = true); }
 function startStage(n, c) {
   stageNum = n; cls = c; save.cls = c; persist();
   document.documentElement.style.setProperty('--accent', CLASSES[c].color);
@@ -7070,6 +7094,7 @@ function startStage(n, c) {
   showDialog(STORY[n] && STORY[n].intro);
 }
 function gameOver() {
+  if (world && world.tourn) { world.tourn.dead = true; world.tourn.diedAt = world.tourn.t; return; }
   state = 'over'; save.hxp[cls] = player.xp;
   const keep = Math.floor(collected / 2); save.coins += keep; persist();
   document.getElementById('endTitle').textContent = 'Gục ngã rồi';
@@ -7696,6 +7721,139 @@ function renderBtRow() {
 function renderMenuDots() { const n = btReadyCount(); const d = $('invDot'); if (d) d.textContent = n ? n : ''; }
 $('invBtn').addEventListener('click', openInv); document.getElementById('trainNoCd2').addEventListener('change', e => { save.trainNoCd = e.target.checked; persist(); }); $('invClose').addEventListener('click', toMenu);
 
+// ======================= GIẢI ĐẤU (TOURNAMENT) =======================
+const TN_FRAMES = 4800, TN_WAVE = 520, TN_ROUNDS = ['Vòng 16', 'Tứ kết', 'Bán kết', 'Chung kết'];
+const TN_RANGE = { mage: 230, gunner: 240, moonbow: 250, stargaze: 220, chain: 150, sky: 90, shade: 90, tide: 90, volt: 80 };
+function buildTourn() {
+  const cols = 44, G = Array.from({ length: ROWS }, () => Array(cols).fill(' '));
+  for (let x = 0; x < cols; x++) for (let y = 10; y < ROWS; y++) G[y][x] = '#';
+  for (let x = 0; x < 2; x++) for (let y = 0; y < 10; y++) G[y][x] = '#';
+  for (let x = cols - 2; x < cols; x++) for (let y = 0; y < 10; y++) G[y][x] = '#';
+  return { G, cols, len: cols, spawn: [], flies: [], cps: [], goalCol: 999, isBoss: false, n: TRAIN, d: 1, signs: [], tick: 0, tourn: { t: 0, dmg: 0, wave: 0, dead: false, diedAt: 0, done: false } };
+}
+function tournBegin(hero, seed) {
+  tournBuildFlag = true; stageNum = TRAIN; cls = hero; buildWorld(TRAIN); tournBuildFlag = false;
+  fxList.length = 0; hitStop = 0; flashT = 0; dimT = 0; gTick = 0;
+  const p = player; p.level = 100; p.inv = 0; p.hearts = p.maxHearts; p.x = 20 * T; p.y = GROUND_Y - p.h - 2; camX = Math.max(0, p.x - W / 2);
+  world.tourn.rng = mulberry32(seed); world.tourn.hero = hero; state = 'play'; $('stageName').textContent = '⚔ Giải đấu';
+}
+const TN_CFG = { hpBase: 8, hpWave: 4, cnt0: 4, cntW: 1.5, cap: 22, nBase: 2, nWave: .9 };
+function tournSpawn(Tn) {
+  const rng = Tn.rng, w = Tn.wave, n = TN_CFG.nBase + w * TN_CFG.nWave; if (enemies.filter(e => e.alive).length > TN_CFG.cap) return;
+  const pool = ['e', 'e', 'a', 'b']; if (w >= 1) pool.push('E', 'j'); if (w >= 3) pool.push('c', 'm', 'g'); if (w >= 5) pool.push('w', 's', 'u', 'f', 'n', 'r');
+  const cnt = TN_CFG.cnt0 + Math.floor(w * TN_CFG.cntW), pc = center(player), hm = TN_CFG.hpBase + w * TN_CFG.hpWave;
+  for (let i = 0; i < cnt; i++) { const k = pool[Math.floor(rng() * pool.length)], side = rng() < .5 ? -1 : 1, x = Math.max(3 * T, Math.min((world.cols - 3) * T, pc.x + side * (300 + rng() * 380)));
+    const en = makeEnemy(k, Math.floor(x / T), ETYPES[k].fly ? 3 + Math.floor(rng() * 3) : 9, n); en.hp = en.maxHp = Math.round(en.hp * hm); en.xp = 0; enemies.push(en); }
+}
+function tournBot(p) {
+  for (const k of ['left', 'right', 'jump', 'down']) keys[k] = false;
+  const pc = center(p), foes = enemies.filter(e => e.alive && !e.under && e.kind !== 'dummy');
+  let tg = null, bd = 1e9; for (const e of foes) { const c = center(e), d = Math.abs(c.x - pc.x) + Math.abs(c.y - pc.y) * .5; if (d < bd) { bd = d; tg = e; } }
+  p.target = tg; const want = TN_RANGE[cls] != null ? TN_RANGE[cls] : MELEE[cls] ? Math.round(MELEE[cls].reach * .7) : 58;
+  if (tg) {
+    const c = center(tg), dx = c.x - pc.x, ad = Math.abs(dx), dir = dx > 0 ? 1 : -1;
+    if (ad > want + 24) keys[dir > 0 ? 'right' : 'left'] = true;
+    else if (want >= 150 && ad < want * .55) keys[dir > 0 ? 'left' : 'right'] = true;
+    else if (p.face !== dir) keys[dir > 0 ? 'right' : 'left'] = true;
+    if (ad < want + 120 || want >= 150) pressed.atk = true;
+    const near = foes.filter(e => Math.abs(center(e).x - pc.x) < 360).length;
+    for (let i = 0; i < 4; i++) { if (p.cds[i] > 0 || p.level < SKILL_LV[i]) continue; if (i === 3 ? !(near >= 3 || p.hearts <= 2) : Math.abs(dx) > 420) continue; pressed['s' + (i + 1)] = true; break; }
+  } else { const mid = (world.cols / 2) * T; if (Math.abs(pc.x - mid) > 120) keys[pc.x < mid ? 'right' : 'left'] = true; }
+  for (const h of hazards) { if (!h.vx || !p.ground) continue; const hc = center(h); if (Math.abs(hc.y - pc.y) < 44 && Math.abs(hc.x - pc.x) < 90 && Math.sign(h.vx) === Math.sign(pc.x - hc.x)) { keys.jump = true; break; } }
+}
+function tournStep() {
+  const Tn = world.tourn, p = player; if (Tn.done) return;
+  if (!ultCine && !(hitStop > 0)) { if (Tn.t % TN_WAVE === 0) { tournSpawn(Tn); Tn.wave++; } tournBot(p); }
+  if (ultCine) tickCine(); else if (hitStop > 0) hitStop--; else { update(); Tn.t++; }
+  if (Tn.dead || p.hearts <= 0 || Tn.t >= TN_FRAMES) Tn.done = true;
+}
+function tournResult() {
+  const Tn = world.tourn, p = player, surv = Math.min(1, (Tn.dead ? Tn.diedAt : Tn.t) / TN_FRAMES);
+  return { hero: Tn.hero, dmg: Math.round(Tn.dmg), kills: p.kills, dead: !!Tn.dead, secs: Math.round((Tn.dead ? Tn.diedAt : Tn.t) / 60), hearts: Tn.dead ? 0 : p.hearts, score: Math.round((Tn.dmg + 15 * p.kills) * (.5 + .5 * surv) + (Tn.dead ? 0 : p.hearts * 3)) };
+}
+function tournEnd() {
+  const r = tournResult(), res = tournRun && tournRun.resolve; tournRun = null; state = 'menu'; document.body.classList.remove('playing', 'tournLive'); const sk = $('tnSkip'); if (sk) sk.hidden = true;
+  if (res) res(r);
+}
+function tournLive() { const Tn = world.tourn, steps = tournRun.skip ? 1e6 : tournRun.speed; for (let i = 0; i < steps && !Tn.done; i++) tournStep(); if (Tn.done) tournEnd(); }
+function tournTrial(hero, seed, live) {
+  return new Promise(resolve => {
+    tournBegin(hero, seed); const Tn = world.tourn; tournRun = { hero, live, speed: 3, skip: false, resolve, label: tn ? `${TN_ROUNDS[tn.round] || ''}` : '' };
+    if (live) { hideAll(); document.body.classList.add('playing', 'tournLive'); $('tnSkip').hidden = false; return; }
+    const chunk = () => { try { for (let i = 0; i < 500 && !Tn.done; i++) tournStep(); } catch (err) { console.error(err); Tn.done = true; }
+      if (Tn.done) tournEnd(); else setTimeout(chunk, 0); };
+    chunk();
+  });
+}
+function drawTournHud() {
+  const Tn = world.tourn, sc = Math.round(Tn.dmg + 15 * player.kills), left = Math.max(0, Math.ceil((TN_FRAMES - Tn.t) / 60));
+  ctx.save(); ctx.fillStyle = 'rgba(8,10,22,.78)'; ctx.beginPath(); ctx.roundRect(W / 2 - 190, 50, 380, 40, 9); ctx.fill(); ctx.strokeStyle = 'rgba(255,209,102,.6)'; ctx.stroke(); ctx.textAlign = 'center';
+  ctx.font = '700 14px "Baloo 2", sans-serif'; ctx.fillStyle = '#ffd166'; ctx.fillText(`GIẢI ĐẤU · ${tournRun.label} · ${CLASSES[tournRun.hero].name}`, W / 2, 68);
+  ctx.fillStyle = '#e8ecf7'; ctx.fillText(`Điểm ${sc}   ·   Hạ ${player.kills}   ·   Còn ${left}s`, W / 2, 85); ctx.restore();
+}
+// ---------- bốc thăm + vòng đấu ----------
+let tn = null, tnSel = 'warrior';
+const tnShuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function tournNew(my) {
+  const pool = tnShuffle(CLASS_ORDER.filter(c => c !== my)).slice(0, 15), field = tnShuffle(pool.concat([my]));
+  tn = { my, field, rounds: [], round: 0, status: 'ready', trials: +($('tnTrials') ? $('tnTrials').value : 2) || 2, live: !!($('tnLive') && $('tnLive').checked), board: {}, cancel: false, cur: null, msg: '' };
+  field.forEach(c => tn.board[c] = { hero: c, reached: 0, total: 0, n: 0 });
+}
+async function tournMatch(m, r, mi) {
+  const N = tn.trials; let sa = 0, sb = 0, ka = 0, kb = 0;
+  for (let k = 0; k < N; k++) {
+    const seed = 1000 + r * 97 + mi * 13 + k * 5; tn.msg = `${TN_ROUNDS[r]} · trận ${mi + 1}/${tn.rounds[r].length} · lượt ${k + 1}/${N}`;
+    tn.round = r; tnRender();
+    const ra = await tournTrial(m.a, seed, tn.live && m.a === tn.my); if (tn.cancel) return false;
+    const rb = await tournTrial(m.b, seed, tn.live && m.b === tn.my); if (tn.cancel) return false;
+    sa += ra.score; sb += rb.score; ka += ra.kills; kb += rb.kills; tn.board[m.a].total += ra.score; tn.board[m.a].n++; tn.board[m.b].total += rb.score; tn.board[m.b].n++;
+    toMenuTn(); await new Promise(r2 => setTimeout(r2, 0));
+  }
+  m.sa = Math.round(sa / N); m.sb = Math.round(sb / N); m.w = sa > sb ? m.a : sb > sa ? m.b : (ka >= kb ? m.a : m.b); return true;
+}
+async function tournPlay() {
+  tn.status = 'running'; let cur = tn.field.slice();
+  for (let r = 0; r < 4; r++) {
+    tn.rounds[r] = []; for (let i = 0; i < cur.length; i += 2) tn.rounds[r].push({ a: cur[i], b: cur[i + 1], sa: null, sb: null, w: null }); cur.forEach(c => tn.board[c].reached = r + 1);
+    for (let mi = 0; mi < tn.rounds[r].length; mi++) { tn.cur = tn.rounds[r][mi]; tnRender(); if (!(await tournMatch(tn.rounds[r][mi], r, mi))) { tn.status = 'cancel'; tnRender(); return; } tnRender(); }
+    cur = tn.rounds[r].map(m => m.w);
+  }
+  tn.champ = cur[0]; tn.board[tn.champ].reached = 5; tn.status = 'done'; tn.cur = null;
+  const st = (save.stats.tourn = save.stats.tourn || { runs: 0, champ: {} }); st.runs++; st.champ[tn.champ] = (st.champ[tn.champ] || 0) + 1; persist(); player = null; tnRender();
+}
+function toMenuTn() { $('tnPanel').hidden = false; document.body.classList.remove('playing'); }
+// ---------- giao diện ----------
+function tnCard(c, size) { const d = document.createElement('div'); d.className = 'tn-av'; try { const cv = heroPortrait(c, size); d.appendChild(cv); } catch (e) {} return d; }
+function tnOpen() { hideAll(); $('tnPanel').hidden = false; tn = null; tnRender(); }
+function tnClose() { if (tn && tn.status === 'running') tn.cancel = true; tn = null; player = null; world = null; toMenu(); }
+function tnRender() {
+  const box = $('tnBox'); if (!box) return; box.innerHTML = '';
+  if (!tn) {
+    const st = save.stats.tourn || { runs: 0, champ: {} };
+    box.insertAdjacentHTML('beforeend', `<div class="tn-title">⚔ GIẢI ĐẤU</div><div class="tn-sub">16 tướng đấu loại trực tiếp để tìm ra tướng mạnh nhất. Tướng bạn chọn được xếp cùng 15 tướng ngẫu nhiên, <b>không trùng lặp</b>. Mỗi trận, hai tướng chạy cùng một bài thử trong đấu trường (cấp 100, bậc 5, chiêu cấp 3, cùng chuỗi quái); điểm cao hơn đi tiếp.</div><h4>CHỌN TƯỚNG CỦA BẠN</h4><div class="tn-grid" id="tnGrid"></div>`);
+    const g = $('tnGrid'); for (const c of CLASS_ORDER) { const b = document.createElement('button'); b.className = 'tn-pick' + (c === tnSel ? ' sel' : ''); b.appendChild(tnCard(c, 44)); b.insertAdjacentHTML('beforeend', `<span>${CLASSES[c].name}</span>${st.champ[c] ? `<i class="tn-crown">👑${st.champ[c]}</i>` : ''}`); b.addEventListener('click', () => { tnSel = c; tnRender(); }); g.appendChild(b); }
+    box.insertAdjacentHTML('beforeend', `<div class="tn-opts"><label>Số lượt thử mỗi trận <select id="tnTrials"><option value="1">1 (nhanh)</option><option value="2" selected>2</option><option value="3">3 (chính xác hơn)</option></select></label><label class="tn-chk"><input type="checkbox" id="tnLive"> Xem trực tiếp các trận của tướng bạn (tốc độ ×3)</label></div><div class="inv-btns"><button class="inv-b gold big" id="tnStart">⚔ Bốc thăm & bắt đầu</button><button class="inv-b" id="tnX">Đóng</button></div>${st.runs ? `<div class="tn-hint">Đã tổ chức ${st.runs} giải.</div>` : ''}`);
+    $('tnStart').addEventListener('click', () => { tournNew(tnSel); tnRender(); tournPlay(); }); $('tnX').addEventListener('click', tnClose); return;
+  }
+  const done = tn.status === 'done', head = done ? `🏆 NHÀ VÔ ĐỊCH: ${CLASSES[tn.champ].name.toUpperCase()}` : tn.status === 'cancel' ? 'Giải đấu đã dừng' : `⚔ GIẢI ĐẤU · ${tn.msg || 'đang bốc thăm...'}`;
+  box.insertAdjacentHTML('beforeend', `<div class="tn-title">${head}</div>`);
+  if (done) { const ch = document.createElement('div'); ch.className = 'tn-champ'; ch.appendChild(tnCard(tn.champ, 96)); ch.insertAdjacentHTML('beforeend', `<div><b>${CLASSES[tn.champ].name}</b><small>${CLASSES[tn.champ].title || TITLES[tn.champ] || ''}</small><span class="bd b-${TIER[RARITY[tn.champ]].toLowerCase()}">${TIER[RARITY[tn.champ]]}</span>${tn.champ === tn.my ? '<em>Tướng bạn chọn đã vô địch!</em>' : `<em>Tướng bạn chọn: ${CLASSES[tn.my].name} · dừng ở ${TN_ROUNDS[Math.max(0, tn.board[tn.my].reached - 1)] || 'Vòng 16'}</em>`}</div>`); box.appendChild(ch); }
+  const br = document.createElement('div'); br.className = 'tn-bracket';
+  for (let r = 0; r < 4; r++) { const col = document.createElement('div'); col.className = 'tn-col'; col.insertAdjacentHTML('beforeend', `<h5>${TN_ROUNDS[r]}</h5>`);
+    const ms = tn.rounds[r] || Array.from({ length: 8 >> r }, () => ({ a: null, b: null }));
+    ms.forEach(m => { const card = document.createElement('div'); card.className = 'tn-match' + (m === tn.cur ? ' live' : '');
+      for (const [side, sc] of [['a', 'sa'], ['b', 'sb']]) { const c = m[side], row = document.createElement('div'); row.className = 'tn-row' + (m.w && m.w === c ? ' win' : m.w ? ' lose' : '') + (c && c === tn.my ? ' me' : ''); if (c) { row.appendChild(tnCard(c, 28)); row.insertAdjacentHTML('beforeend', `<span class="nm">${CLASSES[c].name}</span><b>${m[sc] != null ? m[sc] : ''}</b>`); } else row.insertAdjacentHTML('beforeend', `<span class="nm dim">…</span>`); card.appendChild(row); }
+      col.appendChild(card); }); br.appendChild(col); }
+  box.appendChild(br);
+  if (done) {
+    const rows = Object.values(tn.board).sort((x, y) => y.reached - x.reached || (y.total / Math.max(1, y.n)) - (x.total / Math.max(1, x.n)));
+    let t = '<h4>BẢNG XẾP HẠNG SỨC MẠNH</h4><div class="tn-rank">'; rows.forEach((b, i) => { t += `<div class="tn-rk${b.hero === tn.my ? ' me' : ''}"><i>${i + 1}</i><span>${CLASSES[b.hero].name}</span><em>${b.reached >= 5 ? 'Vô địch' : TN_ROUNDS[b.reached - 1]}</em><b>${Math.round(b.total / Math.max(1, b.n))}</b></div>`; }); t += '</div>';
+    br.insertAdjacentHTML('beforebegin', t + '<h4>BẢNG ĐẤU</h4>'); box.insertAdjacentHTML('beforeend', `<div class="inv-btns"><button class="inv-b gold" id="tnAgain">🔄 Giải mới (bốc thăm lại)</button><button class="inv-b" id="tnChange">Đổi tướng</button><button class="inv-b" id="tnX">Xong</button></div>`);
+    $('tnAgain').addEventListener('click', () => { tournNew(tn.my); tnRender(); tournPlay(); }); $('tnChange').addEventListener('click', () => { tn = null; tnRender(); }); $('tnX').addEventListener('click', tnClose);
+  } else box.insertAdjacentHTML('beforeend', `<div class="inv-btns"><button class="inv-b" id="tnStop">${tn.status === 'cancel' ? 'Đóng' : 'Dừng giải đấu'}</button></div><div class="tn-hint">Điểm = (sát thương + 15 × số quái hạ) × hệ số sống sót + tim còn lại. Điểm trong bảng là trung bình các lượt thử.</div>`), $('tnStop').addEventListener('click', tnClose);
+}
+$('tnBtn').addEventListener('click', tnOpen); $('tnSkip').addEventListener('click', () => { if (tournRun) tournRun.skip = true; });
+
 document.getElementById('shopBtn').addEventListener('click', () => { hideAll(); renderShop(); document.getElementById('shopPanel').hidden = false; });
 document.getElementById('shopClose').addEventListener('click', toMenu);
 
@@ -8122,6 +8280,7 @@ function press(k) {
   keys[k] = true;
 }
 addEventListener('keydown', e => {
+  if (tournRun) { if (e.code === 'Escape' && tournRun.live) tournRun.skip = true; return; }
   if (e.code === 'Escape' || e.code === 'KeyP') { if (state === 'play' || state === 'pause') { e.preventDefault(); togglePause(); } return; }
   if (state === 'play' && dialog) {
     if (['Enter', 'Space', 'KeyJ', 'NumpadEnter'].includes(e.code)) { e.preventDefault(); if (!e.repeat) advanceDialog(); }
@@ -8136,7 +8295,7 @@ addEventListener('blur', () => { for (const k in keys) keys[k] = false; if (stat
 document.querySelectorAll('.touch .tb').forEach(b => {
   const k = b.dataset.k;
   const on = e => {
-    if (CTRL.editing) return;
+    if (CTRL.editing || tournRun) return;
     e.preventDefault();
     if (state !== 'play') return;
     if (dialog) { advanceDialog(); return; }
@@ -8157,7 +8316,7 @@ function dpadSync() {
   dpL.classList.toggle('on', l); dpR.classList.toggle('on', rt);
 }
 dpad.addEventListener('pointerdown', e => {
-  if (CTRL.editing) return;
+  if (CTRL.editing || tournRun) return;
   e.preventDefault();
   if (state !== 'play') return;
   if (dialog) { advanceDialog(); return; }
