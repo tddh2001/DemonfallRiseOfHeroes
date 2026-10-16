@@ -2208,7 +2208,7 @@ const COMBO_COL = { hound: () => '#e0303c', pirate: () => player.armed > 0 ? '#f
 function comboStart(p) {
   const C = COMBO[cls]; p.cStep = p.cWin > 0 ? (p.cStep + 1) % C.n : 0; p.cWin = C.win; const st = p.cStep;
   p.atk = C.atk[st]; p.atkId = newId(); p.atkEmp = false; p.atkMul = C.mul[st];
-  if (cls === 'pirate' && formOf('pirate')) { p.atkMul *= ycMul(); if ((p.yc | 0) >= 5) { p.atkMul *= 2; p.yc = 0; ycBurstFx(p); } }
+  if (cls === 'pirate' && formOf('pirate')) { const up = ycTake(); p.atkMul *= up.mul * (up.on ? 2 : 1); p.ycUpAtk = up.on; }
   p.atkCd = Math.round(C.cd[st] * (cls === 'pirate' && p.armed > 0 ? .8 : 1));
   if (cls === 'giong') { p.atkKind = 'thrust'; p.qiGot = false; }
   p.vx += p.face * C.lunge[st]; pose(p, C.pose[st], 9);
@@ -2239,7 +2239,7 @@ const COMBO_FX = {
     if (st === 1) cres(x, y + 8, 56, -.4, 1.8, 14, K, W, 13, f);
     else { const yy = q.y + (st === 2 ? 8 : -4); strk(q.x - f * 8, yy, q.x + f * (st === 2 ? 120 : 102), yy, st === 2 ? 12 : 9, K, W, 11); cres(x + f * 48, yy, 28, -1, 1, 8, K, W, 10, f);
       if (st === 2) { ripl(q.x + f * 80, p.y + p.h, 56, K, 14); shake = Math.max(shake, 4); } }
-    if (aw) darkBolt(x, y - 40, x + f * 82, y + (st === 1 ? 14 : 0), st === 2); },
+    if (aw) darkBolt(x, y - 40, x + f * 82, y + (st === 1 ? 14 : 0), 'blk', 12, (st === 2) ? 'red' : 'violet'); },
 };
 const SKILL_POLISH = {
   hound: [
@@ -2505,14 +2505,14 @@ function darkStrike(x, gy, red) {
   bolts.push({ pts, t: 20, col: red ? '#ff2a3a' : '#8a2bd6', dark: true, red }); burst(x, gy, red ? '#ff2a3a' : '#8a2bd6', 10, 6); burst(x, gy, red ? '#2a0208' : '#14041e', 8, 5);
   rings.push({ x, y: gy, r: 6, max: 46, t: 12, color: red ? '#ff2a3a' : '#8a2bd6' }); shake = Math.max(shake, 6);
 }
-function darkBolt(x1, y1, x2, y2, red, life) {
+function darkBolt(x1, y1, x2, y2, red, life, edge) {
   if (red === 'blk') {                                   // sét đen: mảnh, nhiều đốt, có nhánh nhỏ
     const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1, nx = -dy / len, ny = dx / len, seg = Math.max(5, Math.round(len / 13)), pts = [[x1, y1]]; let off = 0;
     for (let i = 1; i < seg; i++) { const k = i / seg, env = Math.sin(k * Math.PI) * .9 + .1; off = (off + (Math.random() - .5) * 15) * .72; pts.push([x1 + dx * k + nx * off * env, y1 + dy * k + ny * off * env]); }
     pts.push([x2, y2]); const br = [], nb = len > 90 ? 2 : len > 40 ? 1 : 0;
     for (let i = 0; i < nb; i++) { const idx = 1 + Math.floor(Math.random() * (pts.length - 2)), bx = pts[idx][0], by = pts[idx][1], ang = Math.atan2(dy, dx) + (Math.random() < .5 ? -1 : 1) * (.45 + Math.random() * .45), bl = len * (.13 + Math.random() * .13), bp = [[bx, by]];
       for (let j = 1; j <= 3; j++) { const a2 = ang + (Math.random() - .5) * .7; bp.push([bx + Math.cos(a2) * bl * j / 3, by + Math.sin(a2) * bl * j / 3]); } br.push(bp); }
-    const L = life || 14; bolts.push({ pts, br, t: L, max: L, col: '#ff3a4a', dark: true, red: 'blk', blk: true }); return;
+    const L = life || 14; bolts.push({ pts, br, t: L, max: L, col: '#ff3a4a', dark: true, red: 'blk', blk: true, pal: edge === 'violet' ? ['#8a2bd6', '#b878ff'] : ['#ff2a3a', '#ff5868'] }); return;
   }
   const pts = [[x1, y1]], n = 6;
   for (let i = 1; i < n; i++) { const k = i / n; pts.push([x1 + (x2 - x1) * k + (Math.random() - .5) * 24, y1 + (y2 - y1) * k + (Math.random() - .5) * 24]); }
@@ -2523,8 +2523,8 @@ function drawBlkBolt(b) {
   const all = [[b.pts, 1]]; for (const q of (b.br || [])) all.push([q, .55]);
   const stroke = pts => { const n = Math.max(2, Math.ceil(pts.length * grow)); ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < n; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.stroke(); };
   ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-  for (const [pts, k] of all) { ctx.globalAlpha = a * .3 * flick; ctx.strokeStyle = '#ff2a3a'; ctx.lineWidth = 5.2 * k; stroke(pts); }
-  for (const [pts, k] of all) { ctx.globalAlpha = a * .85 * flick; ctx.strokeStyle = '#ff5868'; ctx.lineWidth = 2.5 * k; stroke(pts); }
+  for (const [pts, k] of all) { ctx.globalAlpha = a * .3 * flick; ctx.strokeStyle = b.pal ? b.pal[0] : '#ff2a3a'; ctx.lineWidth = 5.2 * k; stroke(pts); }
+  for (const [pts, k] of all) { ctx.globalAlpha = a * .85 * flick; ctx.strokeStyle = b.pal ? b.pal[1] : '#ff5868'; ctx.lineWidth = 2.5 * k; stroke(pts); }
   for (const [pts, k] of all) { ctx.globalAlpha = a; ctx.strokeStyle = '#06000a'; ctx.lineWidth = 1.2 * k + .3; stroke(pts); }
   ctx.restore();
 }
@@ -2533,7 +2533,7 @@ function ancStepM(p) { return [{ reach: 80, dmg: 2 }, { reach: 58, dmg: 2 }, { r
 function ancHit(e, p) {
   const st = p.ancStep || 0, c = center(e);
   if (st === 1 && e.alive && !e.boss) { e.x += p.face * 20; e.stun = Math.max(e.stun || 0, 28); }      // cú đá hất lùi
-  if (p.awake > 0) { darkBolt(c.x - 24 + Math.random() * 48, Math.max(0, c.y - 90), c.x, c.y); if (e.alive) damage(e, 1, '#a04bff'); }
+  if (p.awake > 0) { darkBolt(c.x - 24 + Math.random() * 48, Math.max(0, c.y - 90), c.x, c.y, 'blk', 11, 'violet'); if (e.alive) damage(e, 1, '#a04bff'); }
 }
 function ancHakiFx(p) {
   const pc = center(p);
@@ -2547,7 +2547,7 @@ function ancCounter(src) {
     if (Math.hypot(c.x - pc.x, c.y - pc.y) < R + Math.max(e.w, e.h) / 2) {
       damage(e, dmg, aw ? '#a04bff' : '#fff6d8');
       if (e.alive && !e.boss) { e.stun = Math.max(e.stun || 0, 40); e.x += Math.sign(c.x - pc.x || 1) * 26; }
-      if (aw) darkBolt(c.x - 26 + Math.random() * 52, Math.max(0, c.y - 160), c.x, c.y);
+      if (aw) darkBolt(c.x - 26 + Math.random() * 52, Math.max(0, c.y - 160), c.x, c.y, 'blk', 12, 'violet');
     } }
   if (src && src.isHaz && src.once) src.life = 0;
   fxList.push({ type: 'garc', x: pc.x, y: pc.y, face: p.face, r: R * .7, color: aw ? '#a04bff' : '#fff6d8', t: 16, max: 16 });
@@ -2569,7 +2569,7 @@ function ancLand(A) {
     if (Math.abs(c.x - pc.x) < R + e.w / 2 && Math.abs(c.y - (gy - 24)) < 220) {
       damage(e, dmg, aw ? '#a04bff' : '#fff6d8');
       if (e.alive && !e.boss) { e.lift = 36; e.stun = Math.max(e.stun || 0, 50); }
-      if (aw && e.alive) darkBolt(c.x + (Math.random() - .5) * 40, Math.max(0, c.y - 220), c.x, c.y);
+      if (aw && e.alive) darkBolt(c.x + (Math.random() - .5) * 40, Math.max(0, c.y - 220), c.x, c.y, 'blk', 12, 'violet');
     } }
   rings.push({ x: pc.x, y: gy, r: 10, max: R, t: 24, color: aw ? '#8a2bd6' : '#fff6d8' }); rings.push({ x: pc.x, y: gy, r: 6, max: R * .6, t: 16, color: aw ? '#14041e' : '#ffd166' });
   burst(pc.x, gy, aw ? '#8a2bd6' : '#fff6d8', 30, 10); crack(pc.x, gy, aw ? 1.6 : 1.1); shake = Math.max(shake, aw ? 18 : 12); hitStop = Math.max(hitStop, aw ? 8 : 5);
@@ -2584,7 +2584,7 @@ function ancientTick(p) {
     if (foes.length) { p.hakiT = 0; for (const e of foes) e.stun = Math.max(e.stun || 0, 60); ancHakiFx(p); }
   }
   if (p.awake > 0) { p.awake--;
-    if (p.awake % 6 === 0) { const pc = center(p); darkBolt(pc.x + (Math.random() - .5) * 60, pc.y - 40 - Math.random() * 30, pc.x + (Math.random() - .5) * 50, pc.y + 10 + Math.random() * 20); }
+    if (p.awake % 6 === 0) { const pc = center(p); darkBolt(pc.x + (Math.random() - .5) * 60, pc.y - 40 - Math.random() * 30, pc.x + (Math.random() - .5) * 50, pc.y + 10 + Math.random() * 20, 'blk', 10, 'violet'); }
     if (p.awake === 0) p.toast = { text: 'Nhật thực lắng xuống', color: '#c8a8ff', t: 70 }; }
   if (p.aspear && !shots.some(q => q.type === 'aspear')) p.aspear = 0;
 }
@@ -2595,7 +2595,7 @@ function ancFistLand(F) {
     if (Math.abs(c.x - pc.x) < R + e.w / 2 && Math.abs(c.y - (gy - 30)) < 260) {
       damage(e, dmg, col);
       if (e.alive) { if (e.boss) { if (!e.float && !e.transforming) { e.stunT = aw ? 60 : 40; e.state = 'stun'; e.vx = 0; e.warn = false; } } else { e.lift = 40; e.stun = Math.max(e.stun || 0, aw ? 110 : 80); } }
-      if (aw && e.alive) darkBolt(c.x + (Math.random() - .5) * 50, Math.max(0, c.y - 240), c.x, c.y, true);
+      if (aw && e.alive) darkBolt(c.x + (Math.random() - .5) * 50, Math.max(0, c.y - 240), c.x, c.y, 'blk', 12, 'red');
     } }
   hazards = hazards.filter(h => !(h.blockable && Math.abs(h.x + (h.w || 0) / 2 - pc.x) < R));
   for (let i = 0; i < 3; i++) rings.push({ x: pc.x, y: gy, r: 10 + i * 18, max: R * (1 + i * .35), t: 22 + i * 5, color: i === 1 ? '#ffffff' : col });
@@ -2649,7 +2649,7 @@ SKILL_FN.ancient = [
     if (tg) { const c = center(tg); ang = Math.atan2(c.y - pc.y, c.x - pc.x); p.face = c.x < pc.x ? -1 : 1; }
     p.aspear = 1; p.atk = 12; p.atkId = newId(); p.ancStep = 0; p.ancWin = 0;
     shots.push({ type: 'aspear', x: pc.x - 14, y: pc.y - 6, w: 28, h: 12, vx: Math.cos(ang) * 16, vy: Math.sin(ang) * 16, life: 260, dmg: (aw ? 5 : 3) + (tier(0) >= 3 ? 1 : 0), pierce: true, hits: new Set(), back: false, travel: 0, retT: 0, max: tier(0) >= 3 ? 520 : 400, dark: aw });
-    burst(pc.x + p.face * 22, pc.y, aw ? '#8a2bd6' : '#fff6d8', 10, 7); if (aw) darkBolt(pc.x, pc.y - 40, pc.x + p.face * 70, pc.y); },
+    burst(pc.x + p.face * 22, pc.y, aw ? '#8a2bd6' : '#fff6d8', 10, 7); if (aw) darkBolt(pc.x, pc.y - 40, pc.x + p.face * 70, pc.y, 'blk', 12, 'violet'); },
   () => { const p = player, pc = center(p), tg = getTarget(), aw = p.awake > 0;     // Nhảy Giáng
     if (p.aleap) return false;
     const reachX = tg ? center(tg).x : pc.x + p.face * 220;
@@ -3344,7 +3344,7 @@ function update() {
       if (F.t % 2 === 0) trail.push({ x: p.x, y: p.y, face: p.face, life: 9 }); if (F.t >= 16) { F.phase = 'charge'; F.t = 0; } }
     else if (F.phase === 'charge') { const k = Math.min(1, F.t / 28); F.size = .7 + k * k; p.y = F.apex + Math.sin(F.t / 3) * 1.5;
       const c3 = Math.max(2, Math.round(4 * F.size * (F.big ? 1.2 : 1) * 2) / 2), pc3 = center(p), fx = pc3.x + p.face * (26 + 6 * c3), fy = Math.max(12 * c3 + 8, p.y - 8 * c3);
-      if (F.aw) { shake = Math.max(shake, 7 + k * 7); if (F.t % 3 === 0) darkBolt(fx, fy - 40, fx + (Math.random() - .5) * 150, fy + 60 + Math.random() * 40, true); if (F.t % 7 === 0) rings.push({ x: fx, y: fy + 16, r: 6, max: 60, t: 10, color: '#ff3b4a' }); }
+      if (F.aw) { shake = Math.max(shake, 7 + k * 7); if (F.t % 3 === 0) darkBolt(fx, fy - 40, fx + (Math.random() - .5) * 150, fy + 60 + Math.random() * 40, 'blk', 10, 'red'); if (F.t % 7 === 0) rings.push({ x: fx, y: fy + 16, r: 6, max: 60, t: 10, color: '#ff3b4a' }); }
       else if (F.t % 3 === 0) particles.push({ x: fx + (Math.random() - .5) * 40, y: fy + 20, vx: 0, vy: -2, life: 16, color: '#ffd84d' });
       if (F.t >= 28) { F.phase = 'slam'; F.t = 0; popups.push({ text: 'ĐẤM!', x: pc3.x, y: p.y - 10, t: 40, color: F.aw ? '#ff7a8a' : '#ffd84d' }); } }
     else if (F.phase === 'slam') { p.y += 28; F.size = 1.7; let landed = false;
@@ -3363,7 +3363,7 @@ function update() {
     p.x = A.x0 + (A.x1 - A.x0) * k; p.y = A.y0 + (A.y1 - A.y0) * e2 - Math.sin(Math.PI * k) * A.h; p.vx = 0; p.vy = 0; p.ground = false; p.inv = Math.max(p.inv, 4);
     if (A.t % 2 === 0) trail.push({ x: p.x, y: p.y, face: p.face, life: 10, col: A.aw ? '#8a2bd6' : '#ffb347' });
     strk((A.lx == null ? p.x : A.lx) + 13, (A.ly == null ? p.y : A.ly) + 19, p.x + 13, p.y + 19, 12, A.aw ? '#7a2bd6' : '#ffb347', A.aw ? '#e0c8ff' : '#fff6d8', 8); A.lx = p.x; A.ly = p.y;
-    if (A.aw && A.t % 3 === 0) { const c = center(p); darkBolt(c.x, c.y - 30, c.x + (Math.random() - .5) * 70, c.y + 20); }
+    if (A.aw && A.t % 3 === 0) { const c = center(p); darkBolt(c.x, c.y - 30, c.x + (Math.random() - .5) * 70, c.y + 20, 'blk', 10, 'violet'); }
     if (A.t >= A.dur) { p.x = A.x1; p.y = A.y1; p.aleap = null; p.ground = true; p.vy = 0; ancLand(A); }
   } else if (p.gcharge > 0) {
     p.gcharge--; p.vx = p.face * (p.gchargeFire ? 10 : 9); if (p.gcharge % 2 === 0) { trail.push({ x: p.x, y: p.y, face: p.face, life: 10, col: p.gchargeFire ? '#ff6a2a' : '#cfe0ff' }); strk(p.x + 13 - p.face * 10, p.y + 22, p.x + 13 - p.face * 72, p.y + 22, 10, p.gchargeFire ? '#ff6a2a' : '#cfe0ff', '#ffffff', 8); } p.vy = Math.min(p.vy + 0.6, 13);
@@ -3910,7 +3910,7 @@ function updateShots(p, pc) {
           q.vx = dx / d * sp; q.vy = dy / d * sp; q.x += q.vx; q.y += q.vy;
           if (d < 28) { q.life = 0; p.aspear = 0; burst(pc2.x, pc2.y, q.dark ? '#8a2bd6' : '#fff6d8', 12, 6); }
         }
-        hitEnemies(q, q.dark ? '#a04bff' : '#fff6d8', e => { if (q.dark) { const c2 = center(e); darkBolt(c2.x - 20 + Math.random() * 40, Math.max(0, c2.y - 100), c2.x, c2.y); } });
+        hitEnemies(q, q.dark ? '#a04bff' : '#fff6d8', e => { if (q.dark) { const c2 = center(e); darkBolt(c2.x - 20 + Math.random() * 40, Math.max(0, c2.y - 100), c2.x, c2.y, 'blk', 11, 'violet'); } });
         if (Math.random() < .6) particles.push({ x: q.x + q.w / 2, y: q.y + q.h / 2, vx: 0, vy: 0, life: 12, color: q.dark ? (Math.random() < .5 ? '#8a2bd6' : '#14041e') : '#ffb347' });
         strk(q.x + q.w / 2 - q.vx * 2.6, q.y + q.h / 2 - q.vy * 2.6, q.x + q.w / 2, q.y + q.h / 2, 9, q.dark ? '#7a2bd6' : '#ffb347', q.dark ? '#e0c8ff' : '#fff6d8', 7);
         break;
@@ -3946,7 +3946,7 @@ function updateShots(p, pc) {
         // chỉ kiểm tra va tường ở dải giữa, để phần đáy chạm mặt đất không làm sóng kiếm biến mất
         if (wallHit({ x: q.x + q.w * .3, y: q.y + q.h * .2, w: q.w * .4, h: q.h * .5 })) { q.life = 0; burst(q.x + q.w / 2, q.y + q.h / 2, q.color, 12); break; }
         hitEnemies(q, q.dark ? '#ff3b3b' : q.color);
-        particles.push({ x: q.x + q.w / 2, y: q.y + Math.random() * q.h, vx: -q.vx * .1, vy: 0, life: 12, color: q.dark ? (Math.random() < .5 ? '#ff3b3b' : '#b06bff') : '#fff1d6' });
+        particles.push({ x: q.x + q.w / 2, y: q.y + Math.random() * q.h, vx: -q.vx * .1, vy: 0, life: 12, color: q.dark ? (Math.random() < .5 ? '#ff3b3b' : q.red ? '#ff8a7a' : '#b06bff') : '#fff1d6' });
         break;
       case 'holy':
         if (!q.landed) {
@@ -5008,7 +5008,7 @@ return {hero,boss,enemy,enemyInfo,hasHero:c=>!!HEROES[c],hasBoss:id=>!!BOSSES[id
 
 // ======================= PIXEL ART: tướng & boss nhìn nghiêng =======================
 const PIXEL_ART = true, HERO_SC = 1.25;
-const BUILD = 51;
+const BUILD = 52;
 addEventListener('load', () => { const t = document.getElementById('buildTag'); if (t) t.textContent = `Bản ${BUILD} · ${PIXEL_ART ? 'Pixel art' : 'Vector'}`; });
 function heroPixPose(p) {
   const A = Date.now();
@@ -5048,7 +5048,7 @@ function drawHeroPix(p, alpha) {
   if (cls === 'brawler') { if (p.fistEmp) aura('255,100,60', .5); if (p.iron > 0) aura('200,210,230', .5); }
   if (cls === 'pirate' && p.armed > 0) aura('255,60,60', .45);
   if (cls === 'samurai' && p.stack > 0) aura('120,255,220', .35 + p.stack * .08);
-  if (cls === 'pirate' && formOf('pirate')) aura('255,50,50', (p.atk > 0 || p.ssCharge || p.ssAura > 0) ? .8 : .4, p.ssCharge ? 58 : 42);
+  if (cls === 'pirate' && formOf('pirate')) aura((p.yc | 0) >= 5 ? '255,120,70' : '255,50,50', (p.atk > 0 || p.ssCharge || p.ssBarrage || p.ssAura > 0 || (p.yc | 0) >= 5) ? .85 : .4, (p.ssCharge || p.ssBarrage) ? 58 : (p.yc | 0) >= 5 ? 50 : 42);
   if (cls === 'warrior') { if (p.bich) aura('255,122,104', .4, 34); if (p.kim) aura('255,224,112', .5, 36); if (p.sForm > 0) aura('255,242,176', .7, 46); }
   if (cls === 'samurai' && formOf('samurai') && (p.kiY | 0) > 0) aura('255,106,106', .25 + p.kiY * .1);
   if (cls === 'hound' && p.regressed) aura('224,48,60', .3);
@@ -5848,12 +5848,20 @@ function drawFxList() {
         for (let j = 0; j < 6; j++) { rr += 14 + ((i * 7 + j * 13 + tm) % 9); const jt = (Math.sin(i * 12.9 + j * 4.1 + tm * 1.7)) * .09; ctx.lineTo(Math.cos(base + jt) * rr, Math.sin(base + jt) * rr); }
         ctx.strokeStyle = 'rgba(255,60,70,.55)'; ctx.lineWidth = 3.4; ctx.stroke(); ctx.strokeStyle = '#050003'; ctx.lineWidth = 1.4; ctx.stroke(); }
       ctx.restore();
+    } else if (f.type === 'wind') {                                  // cơn gió bá khí thổi bật mọi thứ ra xa
+      const pr = 1 - k, a = Math.min(1, k * 2); ctx.save(); ctx.lineCap = 'round'; ctx.globalAlpha = a;
+      for (let i = 0; i < 30; i++) { const h1 = Math.sin(i * 12.9898 + f.seed) * 43758.5453, r1 = h1 - Math.floor(h1), h2 = Math.sin(i * 78.233 + f.seed * 1.7) * 12345.678, r2 = h2 - Math.floor(h2);
+        const side = i % 2 ? 1 : -1, y0 = f.y + (r1 - .5) * 320, d0 = 30 + pr * (W * .78) * (.5 + r2 * .8), len = 60 + r2 * 160, x0 = f.x + side * d0;
+        ctx.strokeStyle = i % 3 ? 'rgba(255,236,230,.8)' : 'rgba(255,110,110,.75)'; ctx.lineWidth = 1.1 + r1 * 1.5; ctx.beginPath(); ctx.moveTo(x0, y0);
+        ctx.bezierCurveTo(x0 - side * len * .35, y0 - 8 - r1 * 10, x0 - side * len * .7, y0 + 8 + r2 * 10, x0 - side * len, y0 + (r1 - .5) * 14); ctx.stroke();
+        if (i % 5 === 0) { ctx.beginPath(); ctx.arc(x0 - side * len, y0 + (r1 - .5) * 14, 5 + r2 * 4, side > 0 ? 2.2 : -.8, side > 0 ? 5 : 2.4); ctx.stroke(); } }
+      ctx.restore();
     } else if (f.type === 'sslash') {                                // nhát chém Bá Khí quét toàn màn hình
-      const pr = 1 - k, e = easeO(Math.min(1, pr * 1.6)), a = Math.min(1, k * 1.8), cx = camX + W / 2, cy = f.y; ctx.save(); ctx.translate(cx, cy); ctx.rotate(-.42); ctx.lineCap = 'round';
-      const L = W * 1.05 * e; ctx.globalAlpha = a; ctx.shadowColor = '#ff1a2a'; ctx.shadowBlur = 50;
-      ctx.strokeStyle = 'rgba(255,26,42,.55)'; ctx.lineWidth = 120 * k + 8; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(L, 0); ctx.stroke();
-      ctx.strokeStyle = '#ff5a4a'; ctx.lineWidth = 56 * k + 4; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(L, 0); ctx.stroke();
-      ctx.shadowBlur = 0; ctx.strokeStyle = '#fff2e8'; ctx.lineWidth = 20 * k + 2; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(L, 0); ctx.stroke();
+      const pr = 1 - k, e = easeO(Math.min(1, pr * 1.6)), a = Math.min(1, k * 1.8), cx = camX + W / 2, cy = f.y, th = f.th || 1; ctx.save(); ctx.translate(cx, cy); ctx.rotate(f.ang != null ? f.ang : -.42); ctx.lineCap = 'round';
+      const L = W * 1.05 * e; ctx.globalAlpha = a; ctx.shadowColor = '#ff1a2a'; ctx.shadowBlur = th < 1 ? 12 : 50;
+      ctx.strokeStyle = 'rgba(255,26,42,.55)'; ctx.lineWidth = (120 * k + 8) * th; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(L, 0); ctx.stroke();
+      ctx.strokeStyle = '#ff5a4a'; ctx.lineWidth = (56 * k + 4) * th; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(L, 0); ctx.stroke();
+      ctx.shadowBlur = 0; ctx.strokeStyle = '#fff2e8'; ctx.lineWidth = (20 * k + 2) * th; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(L, 0); ctx.stroke();
       ctx.strokeStyle = '#050003'; ctx.lineWidth = 3; for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.moveTo(-L, i * 14); for (let x = -L; x < L; x += 40) ctx.lineTo(x, i * 14 + Math.sin(x * .05 + i * 2 + f.t) * 10); ctx.stroke(); }
       ctx.restore();
     } else if (f.type === 'cring') {                                 // vòng năng lượng thu lại khi boss gồng
@@ -5980,7 +5988,7 @@ function drawShot(q) {
       ctx.fillStyle = q.color; ctx.shadowColor = q.color; ctx.shadowBlur = 16;
       ctx.beginPath(); ctx.arc(-8, 0, 30, -1.2, 1.2); ctx.arc(-20, 0, 26, 1.05, -1.05, true); ctx.fill();
       ctx.fillStyle = q.inner || '#fffbe8'; ctx.beginPath(); ctx.arc(-8, 0, 28, -.9, .9); ctx.arc(-14, 0, 25, .85, -.85, true); ctx.fill();
-      if (q.dark) { ctx.shadowBlur = 0; for (let i = 0; i < 3; i++) { ctx.strokeStyle = i ? '#b06bff' : '#ff5a5a'; ctx.lineWidth = 2; ctx.beginPath(); let yy = -30; ctx.moveTo(-6 + Math.random() * 10, yy);
+      if (q.dark) { ctx.shadowBlur = 0; for (let i = 0; i < 3; i++) { ctx.strokeStyle = q.red ? (i ? '#06000a' : '#ff5a5a') : (i ? '#b06bff' : '#ff5a5a'); ctx.lineWidth = q.red ? (i ? 1.3 : 2.2) : 2; ctx.beginPath(); let yy = -30; ctx.moveTo(-6 + Math.random() * 10, yy);
         while (yy < 30) { yy += 8; ctx.lineTo(-10 + Math.random() * 22, yy); } ctx.stroke(); } }
       ctx.restore(); break;
     }
@@ -7520,41 +7528,58 @@ STONES.pirate.src = ['👑 Lần đầu hạ mỗi boss Saga II: +3 viên (boss 
 const stoneNeed = c => FORMS[c].slice(1).map(F => `${TIER_REQ[F.rar].cost} (lên ${TIER[F.rar]})`).join(', ');
 const ycMul = () => 1 + (rank() >= 5 ? .1 : .08) * ((player.yc | 0));
 function pirateYc() { const p = player; if ((p.yc | 0) >= 5) return; p.yc = (p.yc | 0) + 1; const pc = center(p); popups.push({ text: 'Ý CHÍ ' + p.yc + '/5', x: pc.x, y: p.y - 22, t: 44, color: '#ffc83a' }); rings.push({ x: pc.x, y: pc.y, r: 6, max: 50, t: 14, color: '#ff3a3a' }); if (p.yc === 5) popups.push({ text: 'ĐÒN KẾ BÙNG NỔ!', x: pc.x, y: p.y - 40, t: 60, color: '#ff6a4a' }); }
+function ycTake() { const p = player, on = (p.yc | 0) >= 5, mul = ycMul(); if (on) { p.yc = 0; popups.push({ text: 'BÁ VƯƠNG KHÍ!', x: center(p).x, y: p.y - 46, t: 60, color: '#ff6a4a', big: true }); ycBurstFx(p); } return { on, mul }; }
+function ssSlashAll(p, dm) {
+  const pc = center(p), K = '#ff2a2a'; flashT = 16; flashCol = '255,235,225'; hitStop = Math.max(hitStop, 14); shake = Math.max(shake, 30);
+  fxList.push({ type: 'sslash', y: pc.y - 10, t: 50, max: 50 }); cres(camX + W / 2, pc.y, 380, -2.7, -.2, 70, K, '#ffffff', 28, 1); cres(camX + W / 2, pc.y, 300, -2.5, -.35, 34, '#ff8a6a', '#ffffff', 26, 1);
+  for (const e of enemies) if (e.alive && !e.under && onScreen(e)) { const c = center(e); damage(e, dm, K); if (!e.boss) e.stun = Math.max(e.stun || 0, 90); else e.slowT = Math.max(e.slowT || 0, 120);
+    strk(c.x, GROUND_Y + 10, c.x, c.y - 150, 38, K, '#ffffff', 42); darkBolt(c.x - 30 + Math.random() * 60, c.y - 220, c.x, c.y, 'blk', 22); spark(c.x, c.y, '#ffffff'); ripl(c.x, Math.min(GROUND_Y, c.y + 30), 90, K, 22); burst(c.x, c.y, K, 18, 11); crack(c.x, Math.min(GROUND_Y, c.y + 40), 1.1); }
+  for (let i = 0; i < 26; i++) { const x = camX + Math.random() * W; darkBolt(x + (Math.random() - .5) * 90, -10, x + (Math.random() - .5) * 60, GROUND_Y - 4, 'blk', 22); }
+  for (let k = 0; k < 4; k++) rings.push({ x: pc.x + p.face * 40, y: pc.y, r: 10 + k * 12, max: 360 + k * 170, t: 26 + k * 5, color: k % 2 ? '#ff8a6a' : K });
+  ripl(pc.x, p.y + p.h, 520, K, 30); burst(pc.x, pc.y, K, 60, 16); dimT = 70; dimCol = '60,0,8'; pose(p, 1, 16);
+}
 function ycBurstFx(p) { const pc = center(p); rings.push({ x: pc.x, y: pc.y, r: 8, max: 150, t: 20, color: '#ff3a3a' }); for (let i = 0; i < 5; i++) darkBolt(pc.x + (Math.random() - .5) * 60, pc.y - 90, pc.x + (Math.random() - .5) * 140, pc.y + 10, 'blk', 12); flashT = Math.max(flashT, 6); flashCol = '255,60,60'; shake = Math.max(shake, 10); }
 // ---------- combo 5 đòn: chém + đá ----------
 const COMBO_SS = { n: 5, win: 44, atk: [13, 12, 14, 14, 18], cd: [9, 9, 10, 11, 22], mul: [1, 1.1, 1.05, 1.3, 2], reach: [66, 62, 66, 76, 82], lunge: [2.4, 3.4, 2.4, 3, 3.6], pose: [1, 3, 1, 4, 2] };
 function comboFxSS(p, st) {
+  const big = !!p.ycUpAtk, kk = big ? 1.4 : 1; p.ycUpAtk = false; const cr = (a1, a2, r, t0, t1, w, c1, c2, tt, ff) => cres(a1, a2, r * kk, t0, t1, w * kk, c1, c2, tt, ff);
   const f = p.face, q = center(p), x = q.x + f * 12, y = q.y - 2, K = '#ff3a3a', G = '#ffd86a', W = '#ffffff', lo = q.y + 12;
   const bolt = (dx, dy, n) => { for (let i = 0; i < n; i++) darkBolt(x + f * 6, y + dy, x + f * (dx + Math.random() * 30), y + dy + (Math.random() - .5) * 50, 'blk', 8); };
   rings.push({ x, y: q.y, r: 4, max: 42, t: 10, color: K });
-  if (st === 0) { cres(x, y, 68, -1.3, .6, 17, K, W, 13, f); strk(q.x - f * 6, y - 10, q.x + f * 80, y + 8, 8, K, W, 9); bolt(80, -6, 1); }
+  if (big) { rings.push({ x, y: q.y, r: 6, max: 96, t: 14, color: K }); for (let i = 0; i < 3; i++) darkBolt(x + f * 6, y - 30 + Math.random() * 20, x + f * (90 + Math.random() * 60), y + (Math.random() - .5) * 70, 'blk', 9); shots.push({ type: 'wave', dark: true, red: true, color: '#16030a', inner: '#ff2a2a', x: q.x + f * 22 - 20, y: q.y - 40, w: 40, h: 80, vx: f * 12, face: f, life: 50, dmg: 2.5 * ycMul(), pierce: true, hits: new Set() }); }
+  if (st === 0) { cr(x, y, 68, -1.3, .6, 17, K, W, 13, f); strk(q.x - f * 6, y - 10, q.x + f * 80, y + 8, 8, K, W, 9); bolt(80, -6, 1); }
   else if (st === 1) { strk(q.x - f * 4, lo, q.x + f * 78, lo - 4, 14, K, W, 11); spark(q.x + f * 76, lo - 4, G); ripl(q.x + f * 70, p.y + p.h, 40, K, 12); bolt(80, 10, 1); }
-  else if (st === 2) { cres(x, y + 8, 72, 1.5, -1.6, 19, K, G, 14, f); strk(q.x, y + 22, q.x + f * 70, y - 34, 9, K, W, 10); bolt(70, -14, 2); }
-  else if (st === 3) { cres(q.x, y + 6, 58, 0, 6.28, 16, K, W, 15, 1); ripl(q.x, p.y + p.h, 80, K, 16); for (let i = 0; i < 3; i++) { const a = i * 2.1 + .4; darkBolt(q.x, y, q.x + Math.cos(a) * 80, y + Math.sin(a) * 60, 'blk', 8); } shake = Math.max(shake, 4); }
-  else { cres(x, y, 78, -2.9, -.1, 24, K, G, 16, f); cres(x, y, 62, -2.6, -.3, 12, W, W, 14, f); strk(q.x + f * 10, y - 70, q.x + f * 100, y + 24, 12, K, W, 12); bolt(100, -30, 2); ripl(q.x + f * 70, p.y + p.h, 90, K, 18); rings.push({ x: q.x + f * 40, y: q.y, r: 8, max: 110, t: 18, color: G });
-    shots.push({ type: 'wave', dark: true, color: '#2a1030', inner: K, x: q.x + f * 22 - 14, y: q.y - 30, w: 28, h: 56, vx: f * 11, face: f, life: 46, dmg: 2 * ycMul(), pierce: true, hits: new Set() }); flashT = Math.max(flashT, 4); flashCol = '255,60,60'; shake = Math.max(shake, 7); hitStop = Math.max(hitStop, 3); }
+  else if (st === 2) { cr(x, y + 8, 72, 1.5, -1.6, 19, K, G, 14, f); strk(q.x, y + 22, q.x + f * 70, y - 34, 9, K, W, 10); bolt(70, -14, 2); }
+  else if (st === 3) { cr(q.x, y + 6, 58, 0, 6.28, 16, K, W, 15, 1); ripl(q.x, p.y + p.h, 80, K, 16); for (let i = 0; i < 3; i++) { const a = i * 2.1 + .4; darkBolt(q.x, y, q.x + Math.cos(a) * 80, y + Math.sin(a) * 60, 'blk', 8); } shake = Math.max(shake, 4); }
+  else { cr(x, y, 78, -2.9, -.1, 24, K, G, 16, f); cr(x, y, 62, -2.6, -.3, 12, W, W, 14, f); strk(q.x + f * 10, y - 70, q.x + f * 100, y + 24, 12, K, W, 12); bolt(100, -30, 2); ripl(q.x + f * 70, p.y + p.h, 90, K, 18); rings.push({ x: q.x + f * 40, y: q.y, r: 8, max: 110, t: 18, color: G });
+    shots.push({ type: 'wave', dark: true, red: true, color: '#16030a', inner: K, x: q.x + f * 22 - 14, y: q.y - 30, w: 28, h: 56, vx: f * 11, face: f, life: 46, dmg: 2 * ycMul(), pierce: true, hits: new Set() }); flashT = Math.max(flashT, 4); flashCol = '255,60,60'; shake = Math.max(shake, 7); hitStop = Math.max(hitStop, 3); }
 }
 // ---------- bốn chiêu ----------
 const PFN_SS = [
-  () => { const p = player, t3 = tier(0) >= 3, tg = aimFoe(520), pc = center(p), cx = tg ? center(tg).x : pc.x + p.face * 260, dm = (3 + (t3 ? 1 : 0)) * ycMul();
-    sc(p, [0, 1, 2].map(v => [v * 16, () => { for (let k = -1; k <= 1; k++) { const x = cx + k * 54 + (Math.random() - .5) * 20; shots.push({ type: 'cball', x: x - 8, y: -70 - Math.random() * 40, w: 16, h: 16, vy: 4, gy: groundY(x, p.y), life: 160, landed: false, dmg: dm, radius: 62 }); }
-      const side = v % 2 ? 1 : -1, ex = side > 0 ? camX + W - 10 : camX + 10, ey = 80 + v * 44; spark(ex, ey, '#ffb347'); strk(ex, ey, ex - side * 80, ey + 14, 12, '#ffb347', '#ffffff', 9); burst(ex - side * 20, ey, '#ff8a3a', 8, 7); shake = Math.max(shake, 3); }]), false); },
-  () => { const p = player, f = p.face, t3 = tier(1) >= 3, dm = (4.5 + (t3 ? 1 : 0)) * ycMul(); p.atk = 14; p.atkId = newId(); pose(p, 1, 14);
-    const mk = (dy, dl) => [dl, () => { const q = center(p); shots.push({ type: 'wave', dark: true, color: '#2a1030', inner: '#ffd86a', x: q.x + f * 20 - 22, y: q.y - 50 + dy, w: 48, h: 100, vx: f * 14, face: f, life: 80, dmg: dm, pierce: true, hits: new Set() });
-      cres(q.x + f * 30, q.y + dy * .5, 90, dy < 0 ? -2.4 : -.6, dy < 0 ? .4 : 2.2, 22, '#ffd86a', '#ffffff', 16, f); darkBolt(q.x, q.y + dy, q.x + f * 160, q.y + dy * 1.5, 'blk', 12); shake = Math.max(shake, 6); }];
+  () => { const p = player, up = ycTake(), t3 = tier(0) >= 3, tg = aimFoe(520), pc = center(p), cx = tg ? center(tg).x : pc.x + p.face * 260, dm = (3 + (t3 ? 1 : 0)) * up.mul * (up.on ? 1.25 : 1);
+    sc(p, [0, 1, 2].map(v => [v * 16, () => {
+      if (up.on) { const x0 = 2 * T + 20, x1 = (world.cols - 2) * T - 20, step = Math.max(120, (x1 - x0) / 36); for (let x = x0 + (v % 2) * step * .5; x <= x1; x += step) { const xx = x + (Math.random() - .5) * step * .4; shots.push({ type: 'cball', x: xx - 8, y: -70 - Math.random() * 110, w: 16, h: 16, vy: 4, gy: groundY(xx, p.y), life: 220, landed: false, dmg: dm, radius: 72 }); } }
+      else for (let k = -1; k <= 1; k++) { const x = cx + k * 54 + (Math.random() - .5) * 20; shots.push({ type: 'cball', x: x - 8, y: -70 - Math.random() * 40, w: 16, h: 16, vy: 4, gy: groundY(x, p.y), life: 160, landed: false, dmg: dm, radius: 62 }); }
+      for (const side of up.on ? [-1, 1] : [v % 2 ? 1 : -1]) { const ex = side > 0 ? camX + W - 10 : camX + 10, ey = 80 + v * 44; spark(ex, ey, '#ffb347'); strk(ex, ey, ex - side * 80, ey + 14, 12, '#ffb347', '#ffffff', 9); burst(ex - side * 20, ey, '#ff8a3a', 8, 7); }
+      shake = Math.max(shake, up.on ? 6 : 3); }]), false); },
+  () => { const p = player, up = ycTake(), f = p.face, t3 = tier(1) >= 3, bg = up.on, dm = (4.5 + (t3 ? 1 : 0)) * up.mul * (bg ? 1.5 : 1); p.atk = 14; p.atkId = newId(); pose(p, 1, 14);
+    const mk = (dy, dl) => [dl, () => { const q = center(p), W2 = bg ? 100 : 48, H2 = bg ? 200 : 100;
+      shots.push({ type: 'wave', dark: true, red: true, color: '#16030a', inner: '#ff2a2a', x: q.x + f * 20 - W2 / 2, y: q.y - H2 / 2 + dy * (bg ? 1.4 : 1), w: W2, h: H2, vx: f * (bg ? 16 : 14), face: f, life: bg ? 100 : 80, dmg: dm, pierce: true, hits: new Set() });
+      cres(q.x + f * 30, q.y + dy * .5, bg ? 130 : 90, dy < 0 ? -2.4 : -.6, dy < 0 ? .4 : 2.2, bg ? 34 : 22, '#ff3a3a', '#ffffff', 16, f); darkBolt(q.x, q.y + dy, q.x + f * 160, q.y + dy * 1.5, 'blk', 12); shake = Math.max(shake, bg ? 10 : 6); }];
     sc(p, [mk(-26, 0), mk(26, 8)], false); },
-  () => { const p = player, pc = center(p), t3 = tier(2) >= 3; pose(p, 5, 50);
-    for (const e of enemies) if (e.alive && onScreen(e)) { if (e.boss) e.slowT = Math.max(e.slowT || 0, 300); else e.stun = Math.max(e.stun || 0, t3 ? 360 : 300); const c = center(e); damage(e, 3 * ycMul(), '#ff3a3a'); darkBolt(pc.x, pc.y - 40, c.x, c.y, 'blk'); darkBolt(c.x, c.y - 120, c.x, c.y, 'blk'); spark(c.x, c.y, '#ff3a3a'); }
+  () => { const p = player, up = ycTake(), pc = center(p), t3 = tier(2) >= 3; pose(p, 5, 50);
+    for (const e of enemies) if (e.alive && onScreen(e)) { if (e.boss) e.slowT = Math.max(e.slowT || 0, 300); else e.stun = Math.max(e.stun || 0, t3 ? 360 : 300); const c = center(e); damage(e, 3 * up.mul, '#ff3a3a'); darkBolt(pc.x, pc.y - 40, c.x, c.y, 'blk'); darkBolt(c.x, c.y - 120, c.x, c.y, 'blk'); spark(c.x, c.y, '#ff3a3a'); }
     const wave = (d, mx) => () => { fxList.push({ type: 'bakhi', x: center(p).x, y: center(p).y, r: mx, t: 70, max: 70, seed: Math.random() * 6 }); for (let i = 0; i < 6; i++) { const a = Math.random() * 6.283, r0 = 40 + Math.random() * 60; darkBolt(center(p).x + Math.cos(a) * r0, center(p).y + Math.sin(a) * r0, center(p).x + Math.cos(a) * (mx * .9), center(p).y + Math.sin(a) * (mx * .9), 'blk'); } shake = Math.max(shake, 8); };
     sc(p, [[0, wave(0, 420)], [8, wave(8, 620)], [16, wave(16, 860)]], false);
     for (let i = 0; i < 14; i++) { const x = camX + Math.random() * W; darkBolt(x + (Math.random() - .5) * 80, -10, x, GROUND_Y - 4, 'blk'); }
+    if (up.on) { p.windT = 46; fxList.push({ type: 'wind', x: pc.x, y: pc.y - 10, t: 54, max: 54, seed: Math.random() * 9 }); popups.push({ text: 'GIÓ BÁ KHÍ!', x: pc.x, y: p.y - 78, t: 60, color: '#ffe0d8' }); }
     dimT = 46; dimCol = '40,0,6'; flashT = 10; flashCol = '255,30,40'; shake = Math.max(shake, 18); hitStop = Math.max(hitStop, 6); p.ssAura = 120; popups.push({ text: 'BÁ KHÍ VƯƠNG GIẢ!', x: pc.x, y: p.y - 34, t: 70, color: '#ff4a3a' }); },
-  () => { const p = player, pc = center(p); p.ssCharge = { t: 0, t3: tier(3) >= 3 }; p.shield = 125; p.plant = 125; p.vx = 0; pose(p, 5, 126); popups.push({ text: 'VẬN SỨC...', x: pc.x, y: p.y - 30, t: 60, color: '#ffc83a' }); rings.push({ x: pc.x, y: pc.y, r: 8, max: 90, t: 20, color: '#ff3a3a' }); },
+  () => { const p = player, up = ycTake(), pc = center(p); p.ssCharge = { t: 0, t3: tier(3) >= 3, up: up.on, mul: up.mul }; p.shield = 125; p.plant = 125; p.vx = 0; pose(p, 5, 126); popups.push({ text: up.on ? 'VẬN SỨC · BÁ VƯƠNG KHÍ...' : 'VẬN SỨC...', x: pc.x, y: p.y - 30, t: 60, color: '#ffc83a' }); rings.push({ x: pc.x, y: pc.y, r: 8, max: up.on ? 140 : 90, t: 20, color: '#ff3a3a' }); },
 ];
 // ---------- dữ liệu hình thái ----------
-FORMS.pirate = [snapForm('pirate'), { rar: 'ss', name: 'Hắc Hải Vương', hero: 'Hắc Hải', color: '#ff3a3a', role: 'Vua của biển đen', basic: { name: 'Kiếm cước vương giả', cd: 22 }, title: 'Vua của biển đen', stats: [5, 4, 5, 5], roles: FORMS.pirate ? [] : ROLES.pirate, fn: PFN_SS, dur: [null, null, null, p => p.ssCharge ? 124 - p.ssCharge.t : 0], combo: COMBO_SS, comboFx: comboFxSS,
-  skills: [SK('Hạm Đội Khai Hỏa', 360, '✹', 'Gọi 3 loạt đạn pháo từ hạm đội ngoài màn hình rơi xuống vị trí chỉ định'), SK('Vương Kiếm Trảm', 240, '〰', 'Hai sóng kiếm đen vàng xuyên cả màn hình, chém thành chữ X'), SK('Bá Khí Vương Giả', 1200, '♛', 'Bá khí và sét đen phủ toàn màn hình: quái thường bất động 5 giây, boss bị làm chậm'), SK('Kiếm Kỹ Bá Khí Trảm', 2400, '⚔', 'Vận sức 2 giây, bá khí bao bọc thanh kiếm và bạn miễn sát thương, rồi chém phóng thích năng lượng đỏ rực kèm sét đen')],
-  pass: { name: 'Ý Chí Thừa Kế', desc: 'Mỗi lần mất tim nạp 1 Ý Chí (tối đa 5), mỗi Ý Chí +8% sát thương. Đủ 5 Ý Chí: đòn đánh kế tiếp bùng nổ gấp đôi' }, pass5: 'Ý Chí Thừa Kế: mỗi Ý Chí +10% sát thương',
+FORMS.pirate = [snapForm('pirate'), { rar: 'ss', name: 'Hắc Hải Vương', hero: 'Hắc Hải', color: '#ff3a3a', role: 'Vua của biển đen', basic: { name: 'Kiếm cước vương giả', cd: 22 }, title: 'Vua của biển đen', stats: [5, 4, 5, 5], roles: FORMS.pirate ? [] : ROLES.pirate, fn: PFN_SS, dur: [null, null, null, p => p.ssCharge ? 124 - p.ssCharge.t : p.ssBarrage ? 60 : 0], combo: COMBO_SS, comboFx: comboFxSS,
+  skills: [SK('Hạm Đội Khai Hỏa', 360, '✹', 'Gọi 3 loạt đạn pháo từ hạm đội rơi xuống vị trí chỉ định. Nâng cấp: đạn pháo trải dài khắp bản đồ'), SK('Vương Kiếm Trảm', 240, '〰', 'Hai sóng kiếm đen đỏ xuyên cả màn hình, chém thành chữ X. Nâng cấp: sóng kiếm to hơn, mạnh hơn'), SK('Bá Khí Vương Giả', 1200, '♛', 'Bá khí và sét đen phủ toàn màn hình: quái thường bất động 5 giây, boss bị làm chậm. Nâng cấp: đẩy lùi mọi quái kèm cơn gió thổi'), SK('Kiếm Kỹ Bá Khí Trảm', 2400, '⚔', 'Vận sức 2 giây, bá khí bao bọc thanh kiếm và bạn miễn sát thương, rồi chém phóng thích năng lượng đỏ rực kèm sét đen. Nâng cấp: tung loạt nhát đâm và chém xuyên màn hình, uy lực vượt trội')],
+  pass: { name: 'Bá Vương Khí', desc: 'Mỗi lần mất tim nạp 1 Ý Chí (tối đa 5), mỗi Ý Chí +8% sát thương. Đủ 5 Ý Chí: đòn kế tiếp (đánh thường hoặc kỹ năng) được nâng cấp. Đánh thường mạnh gấp đôi · Chiêu 1: đạn pháo trải dài cả bản đồ · Chiêu 2: sóng kiếm to hơn · Chiêu 3: đẩy lùi quái kèm gió thổi · Chiêu 4: loạt nhát đâm và chém xuyên màn hình' }, pass5: 'Bá Vương Khí: mỗi Ý Chí +10% sát thương',
   t3: ['Đạn pháo mạnh thêm 1 sát thương', 'Sóng kiếm mạnh thêm 1 sát thương', 'Quái bị bất động 6 giây', 'Nhát chém cuối mạnh thêm 2 sát thương'], polish: [fl2('beam'), fl2('slash'), fl2('aura'), fl2('sky')] }];
 FORMS.pirate[1].roles = FORMS.pirate[0].roles;
 applyForm('pirate');
@@ -7616,16 +7641,21 @@ function formTick(p) {
       if (gTick % 3 === 0) darkBolt(sx + f * 2, sy - 30 + Math.random() * 10, sx + f * (10 + Math.random() * 34), sy + (Math.random() - .3) * 70, 'blk', 9);
       if (gTick % 2 === 0) particles.push({ x: sx + (Math.random() - .5) * 20, y: sy + 20, vx: (Math.random() - .5) * 1.2, vy: -2.5 - Math.random() * 2, life: 28, color: Math.random() < .5 ? '#ff3a3a' : '#ffd86a' });
       if (Z.t % 20 === 0) rings.push({ x: pc.x, y: pc.y, r: 10, max: 60 + Z.t * .5, t: 14, color: '#ff3a3a' });
-      if (Z.t >= 124) { const dm = (13 + (Z.t3 ? 2 : 0)) * ycMul(), K = '#ff2a2a';
-        flashT = 16; flashCol = '255,235,225'; hitStop = Math.max(hitStop, 14); shake = Math.max(shake, 30);
-        fxList.push({ type: 'sslash', y: pc.y - 10, t: 50, max: 50 }); cres(camX + W / 2, pc.y, 380, -2.7, -.2, 70, K, '#ffffff', 28, 1); cres(camX + W / 2, pc.y, 300, -2.5, -.35, 34, '#ffd86a', '#ffffff', 26, 1);
-        let hits = 0;
-        for (const e of enemies) if (e.alive && !e.under && onScreen(e)) { hits++; const c = center(e); damage(e, dm, K); if (!e.boss) e.stun = Math.max(e.stun || 0, 90); else e.slowT = Math.max(e.slowT || 0, 120);
-          strk(c.x, GROUND_Y + 10, c.x, c.y - 150, 38, K, '#ffffff', 42); darkBolt(c.x - 30 + Math.random() * 60, c.y - 220, c.x, c.y, 'blk', 22); spark(c.x, c.y, '#ffffff'); ripl(c.x, Math.min(GROUND_Y, c.y + 30), 90, K, 22); burst(c.x, c.y, K, 18, 11); crack(c.x, Math.min(GROUND_Y, c.y + 40), 1.1); }
-        for (let i = 0; i < 26; i++) { const x = camX + Math.random() * W; darkBolt(x + (Math.random() - .5) * 90, -10, x + (Math.random() - .5) * 60, GROUND_Y - 4, 'blk', 22); }
-        for (let k = 0; k < 4; k++) rings.push({ x: pc.x + f * 40, y: pc.y, r: 10 + k * 12, max: 360 + k * 170, t: 26 + k * 5, color: k % 2 ? '#ffd86a' : K });
-        ripl(pc.x, p.y + p.h, 520, K, 30); burst(pc.x, pc.y, K, 60, 16); dimT = 70; dimCol = '60,0,8'; pose(p, 1, 16);
-        popups.push({ text: 'BÁ KHÍ TRẢM!', x: pc.x, y: p.y - 40, t: 90, color: '#ff6a4a' }); p.ssCharge = null; p.shield = 12; p.plant = 0; p.ssAura = 60; } }
+      if (Z.t >= 124) { const dm0 = 13 + (Z.t3 ? 2 : 0);
+        if (Z.up) { p.ssBarrage = { t: 0, n: 14, dm: dm0 * Z.mul, f }; p.ssCharge = null; p.shield = 12; p.plant = 60; p.ssAura = 120; flashT = 14; flashCol = '255,235,225'; shake = Math.max(shake, 22); popups.push({ text: 'LOẠN TRẢM!', x: pc.x, y: p.y - 40, t: 90, color: '#ff6a4a' }); }
+        else { ssSlashAll(p, dm0 * Z.mul); popups.push({ text: 'BÁ KHÍ TRẢM!', x: pc.x, y: p.y - 40, t: 90, color: '#ff6a4a' }); p.ssCharge = null; p.shield = 12; p.plant = 0; p.ssAura = 60; } } }
+    if (p.ssBarrage) { const B = p.ssBarrage; B.t++; p.vx = 0; p.shield = Math.max(p.shield | 0, 2); p.plant = Math.max(p.plant | 0, 2);
+      if ((B.t - 1) % 3 === 0) { const i = (B.t - 1) / 3, K = '#ff2a2a';
+        if (i >= B.n) { ssSlashAll(p, B.dm * 1.2); popups.push({ text: 'BÁ VƯƠNG TUYỆT TRẢM!', x: pc.x, y: p.y - 40, t: 90, color: '#ff6a4a' }); p.ssBarrage = null; p.shield = 12; p.plant = 0; }
+        else { const stab = i % 3 === 1, c0 = center(p);
+          if (stab) { for (let k = -1; k <= 1; k++) strk(c0.x, c0.y - 6, c0.x + B.f * (320 + Math.random() * 420), c0.y + k * 46 + (Math.random() - .5) * 40, 11, K, '#ffffff', 12); spark(c0.x + B.f * 380, c0.y, '#ffffff'); pose(p, 1 + (i % 2), 5); }
+          else { fxList.push({ type: 'sslash', y: c0.y + (Math.random() - .5) * 170, ang: (Math.random() < .5 ? -1 : 1) * (.25 + Math.random() * .7), th: .22 + Math.random() * .14, t: 16, max: 16 }); pose(p, 2, 5); }
+          for (const e of enemies) if (e.alive && !e.under && onScreen(e)) { const c = center(e); damage(e, B.dm * .3, K); if (!e.boss) e.stun = Math.max(e.stun || 0, 40); else e.slowT = Math.max(e.slowT || 0, 40); spark(c.x, c.y, '#ffffff'); if (stab) burst(c.x, c.y, K, 6, 8); }
+          for (let q = 0; q < 3; q++) darkBolt(camX + Math.random() * W, -10, camX + Math.random() * W, GROUND_Y - 4, 'blk', 14);
+          shake = Math.max(shake, 7); hitStop = Math.max(hitStop, 1); } } }
+    if (p.windT > 0) { p.windT--; const k = p.windT / 46;
+      for (const e of enemies) if (e.alive && !e.under && onScreen(e)) { const dir = Math.sign(center(e).x - pc.x) || f; const push = e.boss ? 2.2 : 3 + 13 * k; e.x = Math.max(2 * T, Math.min((world.cols - 2) * T - e.w, e.x + dir * push)); if (!e.boss) e.vx = 0; }
+      if (p.windT % 2 === 0) for (let i = 0; i < 3; i++) { const side = Math.random() < .5 ? -1 : 1; particles.push({ x: pc.x + side * (30 + Math.random() * 60), y: pc.y + (Math.random() - .5) * 170, vx: side * (9 + Math.random() * 7), vy: (Math.random() - .5) * 1.2, life: 26, color: Math.random() < .5 ? '#f0d8d8' : '#ff9a9a', s: 1.5, puff: true }); } }
   } else if (cls === 'samurai') {
     const sf = formOf('samurai'); if (!sf) return;
     if (p.sw2) { const Z = p.sw2; Z.t++;
