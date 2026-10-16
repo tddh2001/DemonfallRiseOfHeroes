@@ -511,7 +511,8 @@
   .tn-champ b { display: block; font: 600 28px Oswald, sans-serif; color: #ffe08a; } .tn-champ small { display: block; opacity: .8; } .tn-champ em { display: block; margin-top: 4px; font-style: normal; font-size: 13px; color: #9fe8a8; }
   .tn-rank { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 4px 14px; } .tn-rk { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 6px; background: rgba(255,255,255,.04); font-size: 13px; } .tn-rk i { width: 22px; font-style: normal; color: #ffd166; font-weight: 800; } .tn-rk span { flex: 1; } .tn-rk em { font-style: normal; opacity: .7; font-size: 11px; } .tn-rk b { color: #ffd166; min-width: 46px; text-align: right; } .tn-rk.me { outline: 1px solid #ffd166; }
   .tn-skip { position: fixed; right: 14px; top: 96px; z-index: 60; font: 700 13px 'Be Vietnam Pro', sans-serif; padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,.4); background: rgba(10,16,40,.85); color: #e8ecf7; cursor: pointer; } .tn-skip[hidden] { display: none; }
-  body.tournLive .touch { display: none !important; }
+  .tn-ready { display: flex; align-items: center; justify-content: center; gap: 26px; margin: 14px 0; flex-wrap: wrap; } .tn-vsc { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 22px; border: 2px solid rgba(255,255,255,.2); border-radius: 14px; background: rgba(255,255,255,.04); min-width: 170px; } .tn-vsc.me { border-color: #ffd166; background: rgba(255,209,102,.12); box-shadow: 0 0 18px rgba(255,209,102,.4); } .tn-vsc b { font: 600 20px Oswald, sans-serif; } .tn-vsc small { opacity: .75; }
+  .tn-vs { font: 700 44px Oswald, sans-serif; color: #ff6a4a; text-shadow: 0 0 18px #ff3a3a; } .tn-win { color: #7ee08a !important; } .tn-lose { color: #ff7a7a !important; }
   .stn canvas { width: 22px; image-rendering: pixelated; vertical-align: middle; }
   .tier-SS { color: #fff; border-color: #ffe9a8; background: linear-gradient(90deg, #7a0e1a, #c8861a, #7a0e1a); box-shadow: 0 0 14px rgba(255,100,60,.7); text-shadow: 0 1px 2px #000; font-weight: 800; letter-spacing: .1em; }
   .champ .rb.SS { background: linear-gradient(90deg, #7a0e1a, #ffd76a, #ff3a3a, #ffd76a, #7a0e1a); }
@@ -626,7 +627,7 @@
     <div class="btns"><button class="btn" id="invClose">Xong</button></div>
   </div>
   <div class="overlay" id="tnPanel" hidden><div class="tn-box" id="tnBox"></div></div>
-  <button class="tn-skip" id="tnSkip" hidden>⏭ Bỏ qua trận này (Esc)</button>
+  <button class="tn-skip" id="tnSkip" hidden>🏳 Đầu hàng</button>
   <div class="overlay" id="btPanel" hidden><div class="bt-box" id="btBox"></div></div>
   <div class="overlay" id="shopPanel" hidden>
     <h1>Cửa hàng</h1>
@@ -1290,7 +1291,7 @@ let state = 'menu', particles = [], trail = [], popups = [], ult = null, shake =
 let boss = null, bossStarted = false, reward = null, goalTaken = false, gate = null;
 let actionId = 0;
 const newId = () => ++actionId;
-let tournRun = null, tournBuildFlag = false;
+let duelRun = null, tournBuildFlag = false, duelBusy = 0;
 const keys = { left: false, right: false, jump: false, down: false, atk: false, s1: false, s2: false, s3: false, s4: false };
 const pressed = { atk: false, s1: false, s2: false, s3: false, s4: false };
 let jumpHeld = false, jumpBuf = 0, dropReq = false, trainLog = [];
@@ -1476,6 +1477,7 @@ const invulnerable = () => { const p = player; return p.inv > 0 || p.fort > 0 ||
 
 function updateHud() {
   if (!player) return;
+  if (world && world.duel && (!world.duel.human || player !== world.duel.human.p)) return;
   document.getElementById('hearts').textContent = '♥'.repeat(Math.max(0, player.hearts)) + '♡'.repeat(Math.max(0, player.maxHearts - player.hearts));
   document.getElementById('score').textContent = `✦ ${collected} / ${coins.length}`;
 }
@@ -1523,7 +1525,7 @@ function hurt(src) {
     p.inv = 40; popups.push({ text: 'CHẶN!', x: center(p).x, y: p.y - 10, t: 40, color: '#ffb347' });
     burst(center(p).x, center(p).y, '#ffb347', 12, 6); if (src.isHaz && src.once) src.life = 0; return 'blocked';
   }
-  const dmgH = src && src.isHaz ? hazDmg(src) : (src && src.boss) ? 2 : 1;
+  const dmgH = src && src.duelH ? src.duelH : src && src.isHaz ? hazDmg(src) : (src && src.boss) ? 2 : 1;
   p.hearts = Math.max(0, p.hearts - dmgH); p.inv = dmgH > 1 ? 85 : 70; p.hurtCount++; p.hitT = 8;
   popups.push({ text: `-${dmgH} ♥`, x: center(p).x, y: p.y - 18, t: 40, color: '#ff6b6b', dmgPop: true, big: dmgH > 1 });
   if (dmgH > 1) { flashT = Math.max(flashT, 6); flashCol = '255,60,60'; hitStop = Math.max(hitStop, 5); }
@@ -1627,6 +1629,7 @@ function reflectHit(src) {
 function damage(e, dmg, color) {
   if (!e.alive || e.transforming || e.under) return;
   dmg = Math.round(dmg * lvDmgMul(player ? player.level : 1) * 10) / 10;
+  if (e.duel) { duelHit(e, dmg, color); return; }
   if (e.mark > 0 && cls === 'chain') dmg += rank() >= 5 ? 2 : 1;
   if (world.tourn && e.kind !== 'dummy') world.tourn.dmg += Math.min(dmg, Math.max(0, e.hp));
   e.hp -= dmg; e.flash = 8;
@@ -2713,7 +2716,7 @@ function useSkill(i) {
   if (p.level < SKILL_LV[i] || p.cds[i] > 0 || p.leap || p.mUlt || p.wUlt || p.void || ultCine || p.aleap || p.sfist || p.mv || (p.sc && p.sc.lock)) return;
   if (cls === 'hound' && i === 3 && !p.regressed) { SKILL_FN.hound[3](); return; }
   if (cls === 'ancient' && i === 3 && p.awake > 0) return;
-  if (i === 3 && (RARITY[cls] === 'leg' || RARITY[cls] === 'ss')) {
+  if (i === 3 && (RARITY[cls] === 'leg' || RARITY[cls] === 'ss') && !(world && world.duel)) {
     if ((cls === 'king' && p.trans > 0 && ult) || (cls === 'giong' && (p.gcharge > 0 || p.rear > 0))) return;
     ultCine = { t: 0, i, name: skillsOf(p)[3].name, color: (p.holy || p.trans > 0) ? '#ffd84d' : CLASSES[cls].color }; if (cls === 'pirate' && formOf('pirate')) { ultCine.ss = true; ultCine.len = SS_CINE_LEN; ultCine.bolts = []; } return;
   }
@@ -3669,6 +3672,7 @@ function update() {
   for (const e of enemies) {
     if (!e.alive) continue;
     if (e.bleed > 0) { e.bleed--; if (e.bleed % 30 === 0) damage(e, .5, '#c8102e'); if (Math.random() < .3) particles.push({ x: e.x + Math.random() * e.w, y: e.y + e.h * .4, vx: 0, vy: 1.5, life: 18, color: '#b0101e' }); if (!e.alive) continue; }
+    if (e.duel) { if (e.flash > 0) e.flash--; continue; }
     if (tsk) { if (e.flash > 0) e.flash--; continue; }
     if (e.boss) { if (e.slowStep !== false) updateBoss(e); else if (e.flash > 0) e.flash--; } else updateEnemy(e, pc);
     if (!e.alive) continue;
@@ -4060,6 +4064,7 @@ function updateShots(p, pc) {
 }
 
 function tickFx() {
+  if (world && world.duel && !world.duel.fxTurn) return;
   for (const q of particles) { q.x += q.vx; q.y += q.vy; q.vy += q.puff ? -0.02 : 0.15; if (q.puff) { q.vx *= .94; q.s += .15; } q.life--; }
   particles = particles.filter(q => q.life > 0);
   for (const t of trail) t.life--;
@@ -4985,7 +4990,7 @@ return {hero,boss,enemy,enemyInfo,hasHero:c=>!!HEROES[c],hasBoss:id=>!!BOSSES[id
 
 // ======================= PIXEL ART: tướng & boss nhìn nghiêng =======================
 const PIXEL_ART = true, HERO_SC = 1.25;
-const BUILD = 49;
+const BUILD = 50;
 addEventListener('load', () => { const t = document.getElementById('buildTag'); if (t) t.textContent = `Bản ${BUILD} · ${PIXEL_ART ? 'Pixel art' : 'Vector'}`; });
 function heroPixPose(p) {
   const A = Date.now();
@@ -6953,10 +6958,11 @@ function draw() {
   if (riftScene) drawRiftScene();
   const p = player;
   if (cls === 'gunner' && p.level >= 2 && state === 'play') { const t = getTarget(); if (t) drawReticle(t); }
-  for (const t of trail) if (!t.boss) { if (t.col) glow(t.x + 13, t.y + 19, 26, hexRgb(t.col), t.life / 12 * .5); drawHero({ ...p, x: t.x, y: t.y, face: t.face, thrust: 0, atk: 0, hitT: 0 }, t.life / 12 * (t.col ? .42 : .35)); }
+  for (const t of trail) if (!t.boss) { if (t.col) glow(t.x + 13, t.y + 19, 26, hexRgb(t.col), t.life / 12 * .5); drawHero({ ...((t.own != null && world.duel) ? world.duel.f[t.own].p : p), x: t.x, y: t.y, face: t.face, thrust: 0, atk: 0, hitT: 0 }, t.life / 12 * (t.col ? .42 : .35)); }
   drawNinjaExtras(p);
   const blink = p.inv > 0 && p.dash <= 0 && p.phase <= 0 && !p.mv && !p.aleap && !p.sfist && !(p.ghost > 0) && Math.floor(p.inv / 5) % 2;
   if (!blink && p.phase <= 0 && !(p.killSeq && p.killSeq.dash <= 0)) drawHero(p, p.hidden ? .4 : 1);
+  if (world.duel) duelDrawOpp();
   drawSlash(p);
   if (p.starFalls) for (const f of p.starFalls) { if (f.t > f.max - 4) continue; const k = 1 - f.t / f.max, y = -40 + (f.gy - 20 + 40) * k, x = f.x - 80 * (1 - k);
     ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(200,168,255,.6)'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(x - 50, y - 60); ctx.lineTo(x, y); ctx.stroke(); glow(x, y, 26, '200,168,255', .9); ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(x, y, 6, 0, 7); ctx.fill(); ctx.restore();
@@ -6981,6 +6987,7 @@ function draw() {
         line(hx, hy, ex, ey, '#c8423b', 9); line(hx, hy, ex, ey, '#ff7a6a', 2.5); ctx.fillStyle = '#ffd84d'; ctx.beginPath(); ctx.arc(ex, ey, 8, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(hx, hy, 6, 0, 7); ctx.fill(); ctx.restore(); } } }
   if (p.parryWin > 0) { ctx.save(); ctx.globalAlpha = p.parryWin / 10 * .7; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(p.x + 13, p.y + 19, 26, 0, 7); ctx.stroke(); ctx.restore(); }
   shots.forEach(drawShot);
+  if (world.duel) for (const F of world.duel.f) if (F.p !== player) F.shots.forEach(drawShot);
   hazards.forEach(drawHazard);
   drawFxList();
   for (const r of rings) { ctx.globalAlpha = r.t / 20; ctx.strokeStyle = r.color; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, 7); ctx.stroke(); }
@@ -7008,6 +7015,7 @@ function draw() {
   ctx.save(); ctx.translate(-Math.round(camX) + sx, sy);
   if (p.phase > 0) { glow(p.x + 13, p.y + 19, 34, '182,156,255', .5); drawHero(p, .9); }
   drawPlayerFx(p);
+  if (world.duel) duelDrawOppFx();
   ctx.font = '700 14px "Baloo 2", sans-serif'; ctx.textAlign = 'center';
   for (const u of popups) { ctx.globalAlpha = Math.min(1, u.t / 15);
     if (u.dmgPop) { const k = u.t > 28 ? 1 + (u.t - 28) * .12 : 1, fs = (u.big ? 20 : 15) * k; ctx.font = `800 ${fs}px "Baloo 2", sans-serif`;
@@ -7040,7 +7048,7 @@ function draw() {
   if (dimT > 0) { ctx.fillStyle = `rgba(${dimCol},${Math.min(.5, dimT / 24)})`; ctx.fillRect(0, 0, W, H); dimT--; }
   if (flashT > 0) { ctx.fillStyle = `rgba(${flashCol},${Math.min(1, flashT / 14)})`; ctx.fillRect(0, 0, W, H); flashT--; if (flashT <= 0) flashCol = '255,236,220'; }
   if (cutin) drawCutin();
-  if (tournRun && tournRun.live) drawTournHud();
+  if (duelRun && duelRun.live && world.duel) drawDuelHud();
   drawHud();
   if (dialog) drawDialog();
 }
@@ -7057,10 +7065,10 @@ function loop(now) {
   let steps = 0;
   while (stepAcc >= STEP_MS && steps < 5) {
     stepAcc -= STEP_MS; steps++;
-    if (state === 'play' && !dialog) { if (tournRun) { if (tournRun.live) tournLive(); } else if (ultCine) tickCine(); else if (hitStop > 0) hitStop--; else update(); }
+    if (state === 'play' && !dialog) { if (duelRun) { if (duelRun.live) duelLive(); } else if (ultCine) tickCine(); else if (hitStop > 0) hitStop--; else update(); }
   }
   if (steps >= 5) stepAcc = 0;
-  if (world && state !== 'menu' && !(tournRun && !tournRun.live)) draw();
+  if (world && state !== 'menu' && !(duelRun && !duelRun.live)) draw();
   if (state === 'menu' && !$('menuPanel').hidden) drawShowcase();
   requestAnimationFrame(loop);
 }
@@ -7094,6 +7102,7 @@ function startStage(n, c) {
   showDialog(STORY[n] && STORY[n].intro);
 }
 function gameOver() {
+  if (world && world.duel) { duelKO(); return; }
   if (world && world.tourn) { world.tourn.dead = true; world.tourn.diedAt = world.tourn.t; return; }
   state = 'over'; save.hxp[cls] = player.xp;
   const keep = Math.floor(collected / 2); save.coins += keep; persist();
@@ -7172,6 +7181,7 @@ function stageClear() {
   document.getElementById('endPanel').hidden = false;
 }
 function togglePause() {
+  if (duelRun) return;
   if (state === 'play') { state = 'pause'; document.getElementById('pausePanel').hidden = false; { const tt = document.getElementById('trainTools'); tt.hidden = !(world && world.training); document.getElementById('trainNoCd2').checked = !!save.trainNoCd; } for (const k in keys) keys[k] = false; }
   else if (state === 'pause') { state = 'play'; document.getElementById('pausePanel').hidden = true; }
 }
@@ -7721,138 +7731,211 @@ function renderBtRow() {
 function renderMenuDots() { const n = btReadyCount(); const d = $('invDot'); if (d) d.textContent = n ? n : ''; }
 $('invBtn').addEventListener('click', openInv); document.getElementById('trainNoCd2').addEventListener('change', e => { save.trainNoCd = e.target.checked; persist(); }); $('invClose').addEventListener('click', toMenu);
 
-// ======================= GIẢI ĐẤU (TOURNAMENT) =======================
-const TN_FRAMES = 4800, TN_WAVE = 520, TN_ROUNDS = ['Vòng 16', 'Tứ kết', 'Bán kết', 'Chung kết'];
+// ======================= GIẢI ĐẤU: TƯỚNG ĐỐI KHÁNG TƯỚNG =======================
+// Hai tướng cùng chạy trong một đấu trường. Mỗi tướng chạy bộ chiêu thật của mình, tướng đối thủ đóng vai "mục tiêu"
+// của chiêu thức; sát thương đi qua cơ chế phòng thủ thật (né, đỡ, khiên, hồi sinh...) của người bị đánh.
+const TN_ROUNDS = ['Vòng 16', 'Tứ kết', 'Bán kết', 'Chung kết'];
 const TN_RANGE = { mage: 230, gunner: 240, moonbow: 250, stargaze: 220, chain: 150, sky: 90, shade: 90, tide: 90, volt: 80 };
+const DUEL_HEAVY = 16, DUEL_TIME = 5400, DUEL_CD = 150;
+ETYPES.duelist = { w: 26, h: 38, hp: 1, xp: 0, spd: 0 };
 function buildTourn() {
-  const cols = 44, G = Array.from({ length: ROWS }, () => Array(cols).fill(' '));
+  const cols = 24, G = Array.from({ length: ROWS }, () => Array(cols).fill(' '));
   for (let x = 0; x < cols; x++) for (let y = 10; y < ROWS; y++) G[y][x] = '#';
   for (let x = 0; x < 2; x++) for (let y = 0; y < 10; y++) G[y][x] = '#';
   for (let x = cols - 2; x < cols; x++) for (let y = 0; y < 10; y++) G[y][x] = '#';
-  return { G, cols, len: cols, spawn: [], flies: [], cps: [], goalCol: 999, isBoss: false, n: TRAIN, d: 1, signs: [], tick: 0, tourn: { t: 0, dmg: 0, wave: 0, dead: false, diedAt: 0, done: false } };
+  return { G, cols, len: cols, spawn: [], flies: [], cps: [], goalCol: 999, isBoss: false, n: TRAIN, d: 1, signs: [], tick: 0, tourn: { t: 0, dmg: 0, dead: false, diedAt: 0, done: false } };
 }
-function tournBegin(hero, seed) {
-  tournBuildFlag = true; stageNum = TRAIN; cls = hero; buildWorld(TRAIN); tournBuildFlag = false;
-  fxList.length = 0; hitStop = 0; flashT = 0; dimT = 0; gTick = 0;
-  const p = player; p.level = 100; p.inv = 0; p.hearts = p.maxHearts; p.x = 20 * T; p.y = GROUND_Y - p.h - 2; camX = Math.max(0, p.x - W / 2);
-  world.tourn.rng = mulberry32(seed); world.tourn.hero = hero; state = 'play'; $('stageName').textContent = '⚔ Giải đấu';
+function duelMake(hero, idx, ai) {
+  cls = hero; buildWorld(TRAIN);
+  const p = player; p.level = 100; p.inv = 60; p.hearts = p.maxHearts;
+  const F = { idx, cls: hero, p, ai, shots: [], traps: [], echoes: [], soldiers: [], ult: null, timeSlow: 0, stunT: 0, over: false };
+  const mk = boss => { const e = makeEnemy('e', 0, 0, 1); e.kind = 'duelist'; e.id = 'fist'; e.duel = true; e.owner = F; e.boss = boss; e.hp = e.maxHp = 1e9; e.alive = true; e.w = 26; e.h = 38; return e; };
+  F.proxy = mk(true); F.src = mk(false);
+  return F;
 }
-const TN_CFG = { hpBase: 8, hpWave: 4, cnt0: 4, cntW: 1.5, cap: 22, nBase: 2, nWave: .9 };
-function tournSpawn(Tn) {
-  const rng = Tn.rng, w = Tn.wave, n = TN_CFG.nBase + w * TN_CFG.nWave; if (enemies.filter(e => e.alive).length > TN_CFG.cap) return;
-  const pool = ['e', 'e', 'a', 'b']; if (w >= 1) pool.push('E', 'j'); if (w >= 3) pool.push('c', 'm', 'g'); if (w >= 5) pool.push('w', 's', 'u', 'f', 'n', 'r');
-  const cnt = TN_CFG.cnt0 + Math.floor(w * TN_CFG.cntW), pc = center(player), hm = TN_CFG.hpBase + w * TN_CFG.hpWave;
-  for (let i = 0; i < cnt; i++) { const k = pool[Math.floor(rng() * pool.length)], side = rng() < .5 ? -1 : 1, x = Math.max(3 * T, Math.min((world.cols - 3) * T, pc.x + side * (300 + rng() * 380)));
-    const en = makeEnemy(k, Math.floor(x / T), ETYPES[k].fly ? 3 + Math.floor(rng() * 3) : 9, n); en.hp = en.maxHp = Math.round(en.hp * hm); en.xp = 0; enemies.push(en); }
+function duelBegin(a, b, human) {
+  tournBuildFlag = true; stageNum = TRAIN;
+  const fa = duelMake(a, 0, human !== 0), fb = duelMake(b, 1, human !== 1);
+  tournBuildFlag = false;
+  const D = world.duel = { f: [fa, fb], human: human == null ? null : [fa, fb][human], t: 0, countdown: human == null ? 0 : DUEL_CD, over: false, overT: 0, loser: -1, g0: 0, fxTurn: true, finished: false, forfeit: false, label: '' };
+  fa.p.x = 3 * T; fb.p.x = (world.cols - 3) * T - fb.p.w; fa.p.y = fb.p.y = GROUND_Y - fa.p.h - 2; fa.p.face = 1; fb.p.face = -1;
+  fxList.length = 0; hitStop = 0; flashT = 0; dimT = 0; camX = 0; gTick = 0; state = 'play'; duelBase(); updateHud(); $('stageName').textContent = '⚔ Giải đấu';
 }
-function tournBot(p) {
-  for (const k of ['left', 'right', 'jump', 'down']) keys[k] = false;
-  const pc = center(p), foes = enemies.filter(e => e.alive && !e.under && e.kind !== 'dummy');
-  let tg = null, bd = 1e9; for (const e of foes) { const c = center(e), d = Math.abs(c.x - pc.x) + Math.abs(c.y - pc.y) * .5; if (d < bd) { bd = d; tg = e; } }
-  p.target = tg; const want = TN_RANGE[cls] != null ? TN_RANGE[cls] : MELEE[cls] ? Math.round(MELEE[cls].reach * .7) : 58;
-  if (tg) {
-    const c = center(tg), dx = c.x - pc.x, ad = Math.abs(dx), dir = dx > 0 ? 1 : -1;
-    if (ad > want + 24) keys[dir > 0 ? 'right' : 'left'] = true;
-    else if (want >= 150 && ad < want * .55) keys[dir > 0 ? 'left' : 'right'] = true;
-    else if (p.face !== dir) keys[dir > 0 ? 'right' : 'left'] = true;
-    if (ad < want + 120 || want >= 150) pressed.atk = true;
-    const near = foes.filter(e => Math.abs(center(e).x - pc.x) < 360).length;
-    for (let i = 0; i < 4; i++) { if (p.cds[i] > 0 || p.level < SKILL_LV[i]) continue; if (i === 3 ? !(near >= 3 || p.hearts <= 2) : Math.abs(dx) > 420) continue; pressed['s' + (i + 1)] = true; break; }
-  } else { const mid = (world.cols / 2) * T; if (Math.abs(pc.x - mid) > 120) keys[pc.x < mid ? 'right' : 'left'] = true; }
-  for (const h of hazards) { if (!h.vx || !p.ground) continue; const hc = center(h); if (Math.abs(hc.y - pc.y) < 44 && Math.abs(hc.x - pc.x) < 90 && Math.sign(h.vx) === Math.sign(pc.x - hc.x)) { keys.jump = true; break; } }
+function duelBase() {
+  const D = world.duel, F = D.human || D.f[0]; player = F.p; cls = F.cls; shots = F.shots; traps = F.traps; ult = F.ult; timeSlow = F.timeSlow;
+  echoes.length = 0; for (const x of F.echoes) echoes.push(x); soldiers.length = 0; for (const x of F.soldiers) soldiers.push(x); enemies = [];
 }
-function tournStep() {
-  const Tn = world.tourn, p = player; if (Tn.done) return;
-  if (!ultCine && !(hitStop > 0)) { if (Tn.t % TN_WAVE === 0) { tournSpawn(Tn); Tn.wave++; } tournBot(p); }
-  if (ultCine) tickCine(); else if (hitStop > 0) hitStop--; else { update(); Tn.t++; }
-  if (Tn.dead || p.hearts <= 0 || Tn.t >= TN_FRAMES) Tn.done = true;
+function duelEnter(F, O) {
+  player = F.p; cls = F.cls; shots = F.shots; traps = F.traps; ult = F.ult; timeSlow = F.timeSlow;
+  echoes.length = 0; for (const x of F.echoes) echoes.push(x); soldiers.length = 0; for (const x of F.soldiers) soldiers.push(x);
+  const px = O.proxy, op = O.p; px.x = px.x0 = op.x; px.y = op.y; px.w = op.w; px.h = op.h; px.vx = 0; px.vy = 0; px.alive = true; px.stun = 0; px.stunT = 0; px.hp = px.maxHp = 1e9; px.under = !!op.hidden; px.face = op.face; px.lift = 0; px.fly = false;
+  enemies = [px];
 }
-function tournResult() {
-  const Tn = world.tourn, p = player, surv = Math.min(1, (Tn.dead ? Tn.diedAt : Tn.t) / TN_FRAMES);
-  return { hero: Tn.hero, dmg: Math.round(Tn.dmg), kills: p.kills, dead: !!Tn.dead, secs: Math.round((Tn.dead ? Tn.diedAt : Tn.t) / 60), hearts: Tn.dead ? 0 : p.hearts, score: Math.round((Tn.dmg + 15 * p.kills) * (.5 + .5 * surv) + (Tn.dead ? 0 : p.hearts * 3)) };
+function duelLeave(F, O) {
+  F.shots = shots; F.traps = traps; F.ult = ult; F.timeSlow = timeSlow; F.echoes = echoes.slice(); F.soldiers = soldiers.slice();
+  const px = O.proxy, dx = px.x - px.x0; if (Math.abs(dx) > .5) O.p.x = Math.max(2 * T, Math.min((world.cols - 2) * T - O.p.w, O.p.x + dx));
+  const st = Math.max(px.stun > 20 ? px.stun : 0, px.stunT > 0 ? px.stunT : 0); if (st > 0) O.stunT = Math.max(O.stunT, Math.min(60, st)); px.stun = 0; px.stunT = 0; px.state = '';
 }
-function tournEnd() {
-  const r = tournResult(), res = tournRun && tournRun.resolve; tournRun = null; state = 'menu'; document.body.classList.remove('playing', 'tournLive'); const sk = $('tnSkip'); if (sk) sk.hidden = true;
-  if (res) res(r);
+function duelWith(F, fn) {
+  const sv = { player, cls, shots, traps, ult };
+  player = F.p; cls = F.cls; shots = F.shots; traps = F.traps; ult = F.ult;
+  try { fn(); } finally { player = sv.player; cls = sv.cls; shots = sv.shots; traps = sv.traps; ult = sv.ult; }
 }
-function tournLive() { const Tn = world.tourn, steps = tournRun.skip ? 1e6 : tournRun.speed; for (let i = 0; i < steps && !Tn.done; i++) tournStep(); if (Tn.done) tournEnd(); }
-function tournTrial(hero, seed, live) {
+function duelHit(proxy, dmg, color) {
+  const D = world.duel, V = proxy.owner, A = D.f[1 - V.idx]; if (V.over || A.over || D.countdown > 0 || duelBusy > 2) return;
+  const c = center(proxy); burst(c.x, c.y, color || '#ffffff', 5);
+  A.src.x = A.p.x; A.src.y = A.p.y; A.src.w = A.p.w; A.src.h = A.p.h; A.src.boss = false; A.src.duelH = dmg < 10 ? 1 : dmg < 24 ? 2 : dmg < 45 ? 3 : 4;
+  const sp = player, sc = cls; duelBusy++; player = V.p; cls = V.cls;
+  try { hurt(A.src); } finally { player = sp; cls = sc; duelBusy--; }
+}
+function duelKO() {
+  const D = world.duel, F = D.f.find(f => f.p === player); if (!F || D.over) return;
+  D.over = true; D.loser = F.idx; F.over = true; popups.push({ text: 'K.O.!', x: center(F.p).x, y: F.p.y - 34, t: 90, color: '#ff6a4a', big: true }); flashT = 14; flashCol = '255,240,220'; hitStop = 14; shake = 16;
+}
+function duelBot(F, O) {
+  const p = F.p, op = O.p; for (const k of ['left', 'right', 'jump', 'down']) keys[k] = false;
+  const pc = center(p), oc = center(op), dx = oc.x - pc.x, ad = Math.abs(dx), dir = dx > 0 ? 1 : -1;
+  p.target = O.proxy.under ? null : O.proxy;
+  const want = TN_RANGE[F.cls] != null ? TN_RANGE[F.cls] : MELEE[F.cls] ? Math.round(MELEE[F.cls].reach * .7) : 58;
+  if (ad > want + 24) keys[dir > 0 ? 'right' : 'left'] = true;
+  else if (want >= 150 && ad < want * .55) keys[dir > 0 ? 'left' : 'right'] = true;
+  else if (p.face !== dir) keys[dir > 0 ? 'right' : 'left'] = true;
+  if (ad < want + 120 || want >= 150) pressed.atk = true;
+  for (let i = 0; i < 4; i++) { if (p.cds[i] > 0 || p.level < SKILL_LV[i]) continue; if (i === 3 ? !(ad < 420 && (p.hearts <= op.hearts || p.hearts <= 3 || Math.random() < .015)) : ad > 460) continue; pressed['s' + (i + 1)] = true; break; }
+  if (p.ground) for (const q of O.shots) { if (!q.vx) continue; const qx = q.x + (q.w || 0) / 2, qy = q.y + (q.h || 0) / 2; if (Math.abs(qy - pc.y) < 50 && Math.abs(qx - pc.x) < 100 && Math.sign(q.vx) === Math.sign(pc.x - qx)) { keys.jump = true; break; } }
+}
+function duelStep() {
+  const D = world.duel; if (D.finished) return;
+  if (D.over) { D.overT++; tickFx(); if (D.overT > (duelRun && duelRun.live ? 110 : 1)) D.finished = true; return; }
+  if (D.forfeit) { D.over = true; D.loser = D.human.idx; D.overT = 100; return; }
+  if (D.countdown > 0) { D.countdown--; return; }
+  if (hitStop > 0) { hitStop--; return; }
+  D.t++;
+  for (let k = 0; k < 2; k++) {
+    const F = D.f[k], O = D.f[1 - k]; if (k === 0) D.g0 = gTick; else gTick = D.g0;
+    duelEnter(F, O); D.fxTurn = k === 0;
+    const sk = Object.assign({}, keys), sp = Object.assign({}, pressed), tl = trail.length;
+    if (F.stunT > 0) { F.stunT--; for (const q in keys) keys[q] = false; for (const q in pressed) pressed[q] = false; }
+    else if (F.ai) duelBot(F, O);
+    update();
+    Object.assign(keys, sk); Object.assign(pressed, sp);
+    for (let i = tl; i < trail.length; i++) trail[i].own = F.idx;
+    duelLeave(F, O);
+    if (D.over) break;
+  }
+  gTick = D.g0 + 1; duelBase();
+  if (!D.over && D.t >= DUEL_TIME) { const r = D.f.map(f => f.p.hearts / f.p.maxHearts); D.over = true; D.loser = r[0] === r[1] ? (Math.random() < .5 ? 0 : 1) : (r[0] < r[1] ? 0 : 1); D.overT = 100; D.timeout = true; }
+}
+function duelResult() {
+  const D = world.duel; return { winner: 1 - D.loser, hearts: D.f.map(f => Math.max(0, f.p.hearts)), maxH: D.f.map(f => f.p.maxHearts), secs: Math.round(D.t / 60), timeout: !!D.timeout };
+}
+function duelFinish() {
+  const r = duelResult(), res = duelRun && duelRun.resolve; duelRun = null; state = 'menu'; document.body.classList.remove('playing'); const sk = $('tnSkip'); if (sk) sk.hidden = true;
+  world.duel = null; player = null; world = null; if (res) res(r);
+}
+function duelLive() { const D = world.duel; duelStep(); if (D.finished) duelFinish(); }
+function duelRunLive(a, b, idx, label) {
+  return new Promise(resolve => { hideAll(); document.body.classList.add('playing'); duelBegin(a, b, idx); world.duel.label = label || ''; duelRun = { live: true, human: true, resolve }; const sk = $('tnSkip'); if (sk) sk.hidden = false; });
+}
+function duelRunHeadless(a, b) {
   return new Promise(resolve => {
-    tournBegin(hero, seed); const Tn = world.tourn; tournRun = { hero, live, speed: 3, skip: false, resolve, label: tn ? `${TN_ROUNDS[tn.round] || ''}` : '' };
-    if (live) { hideAll(); document.body.classList.add('playing', 'tournLive'); $('tnSkip').hidden = false; return; }
-    const chunk = () => { try { for (let i = 0; i < 500 && !Tn.done; i++) tournStep(); } catch (err) { console.error(err); Tn.done = true; }
-      if (Tn.done) tournEnd(); else setTimeout(chunk, 0); };
+    duelBegin(a, b, null); duelRun = { live: false, human: false, resolve }; const D = world.duel;
+    const chunk = () => { try { for (let i = 0; i < 600 && !D.finished; i++) duelStep(); } catch (err) { console.error(err); D.over = true; D.loser = Math.random() < .5 ? 0 : 1; D.finished = true; }
+      if (D.finished) duelFinish(); else setTimeout(chunk, 0); };
     chunk();
   });
 }
-function drawTournHud() {
-  const Tn = world.tourn, sc = Math.round(Tn.dmg + 15 * player.kills), left = Math.max(0, Math.ceil((TN_FRAMES - Tn.t) / 60));
-  ctx.save(); ctx.fillStyle = 'rgba(8,10,22,.78)'; ctx.beginPath(); ctx.roundRect(W / 2 - 190, 50, 380, 40, 9); ctx.fill(); ctx.strokeStyle = 'rgba(255,209,102,.6)'; ctx.stroke(); ctx.textAlign = 'center';
-  ctx.font = '700 14px "Baloo 2", sans-serif'; ctx.fillStyle = '#ffd166'; ctx.fillText(`GIẢI ĐẤU · ${tournRun.label} · ${CLASSES[tournRun.hero].name}`, W / 2, 68);
-  ctx.fillStyle = '#e8ecf7'; ctx.fillText(`Điểm ${sc}   ·   Hạ ${player.kills}   ·   Còn ${left}s`, W / 2, 85); ctx.restore();
+function duelDrawOpp() {
+  const D = world.duel, mine = D.human || D.f[0], O = D.f.find(f => f !== mine);
+  duelWith(O, () => { const q = player, blink = q.inv > 0 && q.dash <= 0 && q.phase <= 0 && !q.mv && !(q.ghost > 0) && Math.floor(q.inv / 5) % 2; if (!blink && q.phase <= 0) drawHero(q, q.hidden ? .4 : 1); });
+}
+function duelDrawOppFx() { const D = world.duel, mine = D.human || D.f[0], O = D.f.find(f => f !== mine); duelWith(O, () => drawPlayerFx(player)); }
+function drawDuelHud() {
+  const D = world.duel, me = D.human || D.f[0], op = D.f.find(f => f !== me); ctx.save(); ctx.textAlign = 'center';
+  const panel = (F, x, al) => { ctx.fillStyle = 'rgba(8,10,22,.8)'; ctx.beginPath(); ctx.roundRect(x, 44, 280, 52, 9); ctx.fill(); ctx.strokeStyle = F === me ? 'rgba(255,209,102,.8)' : 'rgba(232,236,247,.4)'; ctx.stroke();
+    ctx.textAlign = al; const tx = al === 'left' ? x + 12 : x + 268; ctx.font = '700 14px "Baloo 2", sans-serif'; ctx.fillStyle = F === me ? '#ffd166' : '#e8ecf7'; ctx.fillText(`${CLASSES[F.cls].name}${F === me ? ' (BẠN)' : ''}`, tx, 62);
+    ctx.font = '14px sans-serif'; const n = F.p.maxHearts, w2 = Math.min(18, 250 / n); for (let i = 0; i < n; i++) { ctx.fillStyle = i < F.p.hearts ? '#ff5a6a' : 'rgba(255,255,255,.18)'; const hx = al === 'left' ? x + 12 + i * w2 : x + 268 - (n - 1 - i) * w2 - 12; ctx.fillText('♥', hx + (al === 'left' ? 6 : 6), 86); } };
+  panel(me, 24, 'left'); panel(op, W - 304, 'right');
+  ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(8,10,22,.8)'; ctx.beginPath(); ctx.roundRect(W / 2 - 62, 44, 124, 52, 9); ctx.fill(); ctx.font = '700 12px "Baloo 2", sans-serif'; ctx.fillStyle = '#c8aa6e'; ctx.fillText(D.label || 'GIẢI ĐẤU', W / 2, 60);
+  ctx.font = '700 22px "Baloo 2", sans-serif'; ctx.fillStyle = '#ffffff'; ctx.fillText(Math.max(0, Math.ceil((DUEL_TIME - D.t) / 60)) + 's', W / 2, 86);
+  const oc = center(op.p); ctx.font = '700 11px "Baloo 2", sans-serif'; ctx.fillStyle = '#ff9a9a'; ctx.fillText(CLASSES[op.cls].name, oc.x - camX, op.p.y - 12);
+  if (D.countdown > 0) { const n = Math.ceil(D.countdown / 50), fs = 90; ctx.font = `900 ${fs}px "Baloo 2", sans-serif`; ctx.lineWidth = 8; ctx.strokeStyle = 'rgba(0,0,0,.8)'; const t = n > 0 && D.countdown > 25 ? String(Math.min(3, n)) : 'ĐẤU!'; ctx.strokeText(t, W / 2, H * .45); ctx.fillStyle = '#ffd166'; ctx.fillText(t, W / 2, H * .45); }
+  ctx.restore();
 }
 // ---------- bốc thăm + vòng đấu ----------
 let tn = null, tnSel = 'warrior';
 const tnShuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const tnWait = key => new Promise(res => { tn[key] = res; });
 function tournNew(my) {
   const pool = tnShuffle(CLASS_ORDER.filter(c => c !== my)).slice(0, 15), field = tnShuffle(pool.concat([my]));
-  tn = { my, field, rounds: [], round: 0, status: 'ready', trials: +($('tnTrials') ? $('tnTrials').value : 2) || 2, live: !!($('tnLive') && $('tnLive').checked), board: {}, cancel: false, cur: null, msg: '' };
-  field.forEach(c => tn.board[c] = { hero: c, reached: 0, total: 0, n: 0 });
+  tn = { my, field, rounds: [], round: 0, status: 'ready', board: {}, cancel: false, cur: null, msg: '', out: false, ready: null, result: null };
+  field.forEach(c => tn.board[c] = { hero: c, reached: 0, wins: 0, hl: 0 });
 }
-async function tournMatch(m, r, mi) {
-  const N = tn.trials; let sa = 0, sb = 0, ka = 0, kb = 0;
-  for (let k = 0; k < N; k++) {
-    const seed = 1000 + r * 97 + mi * 13 + k * 5; tn.msg = `${TN_ROUNDS[r]} · trận ${mi + 1}/${tn.rounds[r].length} · lượt ${k + 1}/${N}`;
-    tn.round = r; tnRender();
-    const ra = await tournTrial(m.a, seed, tn.live && m.a === tn.my); if (tn.cancel) return false;
-    const rb = await tournTrial(m.b, seed, tn.live && m.b === tn.my); if (tn.cancel) return false;
-    sa += ra.score; sb += rb.score; ka += ra.kills; kb += rb.kills; tn.board[m.a].total += ra.score; tn.board[m.a].n++; tn.board[m.b].total += rb.score; tn.board[m.b].n++;
-    toMenuTn(); await new Promise(r2 => setTimeout(r2, 0));
-  }
-  m.sa = Math.round(sa / N); m.sb = Math.round(sb / N); m.w = sa > sb ? m.a : sb > sa ? m.b : (ka >= kb ? m.a : m.b); return true;
+async function duelMatch(m, r, mi) {
+  const mine = !tn.out && (m.a === tn.my || m.b === tn.my), label = `${TN_ROUNDS[r].toUpperCase()} · TRẬN ${mi + 1}`; let res;
+  tn.round = r; tn.cur = m;
+  if (mine) {
+    tn.ready = { m, r, mi, label }; tnRender(); await tnWait('go'); tn.ready = null; if (tn.cancel) return false;
+    const idx = m.a === tn.my ? 0 : 1; res = await duelRunLive(m.a, m.b, idx, label); toMenuTn();
+    tn.result = { m, res, win: res.winner === idx, idx }; tnRender(); await tnWait('next'); tn.result = null; if (tn.cancel) return false; if (res.winner !== idx) tn.out = true;
+  } else { tn.msg = `${TN_ROUNDS[r]} · trận ${mi + 1}/${tn.rounds[r].length}${tn.out ? ' · (bạn đã bị loại, các trận còn lại tự mô phỏng)' : ''}`; tnRender(); res = await duelRunHeadless(m.a, m.b); toMenuTn(); await new Promise(r2 => setTimeout(r2, 0)); }
+  m.w = res.winner === 0 ? m.a : m.b; m.sa = res.hearts[0]; m.sb = res.hearts[1]; tn.board[m.w].wins++; tn.board[m.w].hl += res.hearts[res.winner]; return true;
 }
 async function tournPlay() {
   tn.status = 'running'; let cur = tn.field.slice();
   for (let r = 0; r < 4; r++) {
     tn.rounds[r] = []; for (let i = 0; i < cur.length; i += 2) tn.rounds[r].push({ a: cur[i], b: cur[i + 1], sa: null, sb: null, w: null }); cur.forEach(c => tn.board[c].reached = r + 1);
-    for (let mi = 0; mi < tn.rounds[r].length; mi++) { tn.cur = tn.rounds[r][mi]; tnRender(); if (!(await tournMatch(tn.rounds[r][mi], r, mi))) { tn.status = 'cancel'; tnRender(); return; } tnRender(); }
+    for (let mi = 0; mi < tn.rounds[r].length; mi++) { if (!(await duelMatch(tn.rounds[r][mi], r, mi))) { tn.status = 'cancel'; tnRender(); return; } tnRender(); }
     cur = tn.rounds[r].map(m => m.w);
   }
   tn.champ = cur[0]; tn.board[tn.champ].reached = 5; tn.status = 'done'; tn.cur = null;
-  const st = (save.stats.tourn = save.stats.tourn || { runs: 0, champ: {} }); st.runs++; st.champ[tn.champ] = (st.champ[tn.champ] || 0) + 1; persist(); player = null; tnRender();
+  const st = (save.stats.tourn = save.stats.tourn || { runs: 0, champ: {} }); st.runs++; st.champ[tn.champ] = (st.champ[tn.champ] || 0) + 1; persist(); tnRender();
 }
 function toMenuTn() { $('tnPanel').hidden = false; document.body.classList.remove('playing'); }
 // ---------- giao diện ----------
-function tnCard(c, size) { const d = document.createElement('div'); d.className = 'tn-av'; try { const cv = heroPortrait(c, size); d.appendChild(cv); } catch (e) {} return d; }
+function tnCard(c, size) { const d = document.createElement('div'); d.className = 'tn-av'; try { d.appendChild(heroPortrait(c, size)); } catch (e) {} return d; }
 function tnOpen() { hideAll(); $('tnPanel').hidden = false; tn = null; tnRender(); }
-function tnClose() { if (tn && tn.status === 'running') tn.cancel = true; tn = null; player = null; world = null; toMenu(); }
+function tnClose() { if (tn) { tn.cancel = true; for (const k of ['go', 'next']) if (tn[k]) tn[k](); } tn = null; player = null; world = null; toMenu(); }
+function tnVs(c, mine) { const d = document.createElement('div'); d.className = 'tn-vsc' + (mine ? ' me' : ''); d.appendChild(tnCard(c, 96)); d.insertAdjacentHTML('beforeend', `<b>${CLASSES[c].name}</b><span class="bd b-${TIER[RARITY[c]].toLowerCase()}">${TIER[RARITY[c]]}</span><small>${mine ? 'BẠN ĐIỀU KHIỂN' : 'AI điều khiển'}</small>`); return d; }
 function tnRender() {
   const box = $('tnBox'); if (!box) return; box.innerHTML = '';
   if (!tn) {
     const st = save.stats.tourn || { runs: 0, champ: {} };
-    box.insertAdjacentHTML('beforeend', `<div class="tn-title">⚔ GIẢI ĐẤU</div><div class="tn-sub">16 tướng đấu loại trực tiếp để tìm ra tướng mạnh nhất. Tướng bạn chọn được xếp cùng 15 tướng ngẫu nhiên, <b>không trùng lặp</b>. Mỗi trận, hai tướng chạy cùng một bài thử trong đấu trường (cấp 100, bậc 5, chiêu cấp 3, cùng chuỗi quái); điểm cao hơn đi tiếp.</div><h4>CHỌN TƯỚNG CỦA BẠN</h4><div class="tn-grid" id="tnGrid"></div>`);
+    box.insertAdjacentHTML('beforeend', `<div class="tn-title">⚔ GIẢI ĐẤU</div><div class="tn-sub">16 tướng đấu loại trực tiếp để tìm ra tướng mạnh nhất. Bạn chọn một tướng và <b>tự điều khiển</b> tướng đó trong các trận của mình; 15 tướng còn lại do hệ thống bốc thăm ngẫu nhiên, <b>không trùng lặp</b>, và do AI điều khiển. Mọi tướng thi đấu ở cấp 100, bậc 5, chiêu cấp 3. Mỗi trận hai tướng đánh nhau bằng chiêu thức thật cho tới khi một bên gục (tối đa 90 giây). Thua là bị loại, các trận còn lại tự mô phỏng để tìm nhà vô địch.</div><h4>CHỌN TƯỚNG CỦA BẠN</h4><div class="tn-grid" id="tnGrid"></div>`);
     const g = $('tnGrid'); for (const c of CLASS_ORDER) { const b = document.createElement('button'); b.className = 'tn-pick' + (c === tnSel ? ' sel' : ''); b.appendChild(tnCard(c, 44)); b.insertAdjacentHTML('beforeend', `<span>${CLASSES[c].name}</span>${st.champ[c] ? `<i class="tn-crown">👑${st.champ[c]}</i>` : ''}`); b.addEventListener('click', () => { tnSel = c; tnRender(); }); g.appendChild(b); }
-    box.insertAdjacentHTML('beforeend', `<div class="tn-opts"><label>Số lượt thử mỗi trận <select id="tnTrials"><option value="1">1 (nhanh)</option><option value="2" selected>2</option><option value="3">3 (chính xác hơn)</option></select></label><label class="tn-chk"><input type="checkbox" id="tnLive"> Xem trực tiếp các trận của tướng bạn (tốc độ ×3)</label></div><div class="inv-btns"><button class="inv-b gold big" id="tnStart">⚔ Bốc thăm & bắt đầu</button><button class="inv-b" id="tnX">Đóng</button></div>${st.runs ? `<div class="tn-hint">Đã tổ chức ${st.runs} giải.</div>` : ''}`);
+    box.insertAdjacentHTML('beforeend', `<div class="inv-btns"><button class="inv-b gold big" id="tnStart">⚔ Bốc thăm & bắt đầu</button><button class="inv-b" id="tnX">Đóng</button></div><div class="tn-hint">Điều khiển như bình thường: ←→ / A D chạy, Space / W nhảy, J đánh thường, K L I O dùng chiêu (hoặc nút cảm ứng). Nút "Đầu hàng" ở góc phải trên.${st.runs ? ` Đã tổ chức ${st.runs} giải.` : ''}</div>`);
     $('tnStart').addEventListener('click', () => { tournNew(tnSel); tnRender(); tournPlay(); }); $('tnX').addEventListener('click', tnClose); return;
+  }
+  if (tn.ready) {
+    const m = tn.ready.m, ctn = document.createElement('div'); ctn.className = 'tn-ready';
+    box.insertAdjacentHTML('beforeend', `<div class="tn-title">⚔ ${tn.ready.label}</div><div class="tn-sub">Sẵn sàng chưa? Bạn điều khiển tướng bên trái.</div>`);
+    ctn.appendChild(tnVs(tn.my, true)); ctn.insertAdjacentHTML('beforeend', '<div class="tn-vs">VS</div>'); ctn.appendChild(tnVs(m.a === tn.my ? m.b : m.a, false)); box.appendChild(ctn);
+    box.insertAdjacentHTML('beforeend', `<div class="inv-btns"><button class="inv-b gold big" id="tnGo">⚔ Vào đấu</button><button class="inv-b" id="tnX">Bỏ giải đấu</button></div>`); $('tnGo').addEventListener('click', () => tn.go()); $('tnX').addEventListener('click', tnClose); return;
+  }
+  if (tn.result) {
+    const R = tn.result, me = tn.my, op = R.m.a === me ? R.m.b : R.m.a, mh = R.res.hearts[R.idx], oh = R.res.hearts[1 - R.idx];
+    box.insertAdjacentHTML('beforeend', `<div class="tn-title ${R.win ? 'tn-win' : 'tn-lose'}">${R.win ? '🏆 CHIẾN THẮNG!' : '💀 BẠI TRẬN'}</div><div class="tn-sub">${CLASSES[me].name} (${mh} ♥ còn lại) ${R.win ? 'đã hạ' : 'bị hạ bởi'} ${CLASSES[op].name} (${oh} ♥) sau ${R.res.secs} giây${R.res.timeout ? ' (hết giờ, tính theo tim còn lại)' : ''}.</div>`);
+    const ctn = document.createElement('div'); ctn.className = 'tn-ready'; ctn.appendChild(tnVs(me, true)); ctn.insertAdjacentHTML('beforeend', `<div class="tn-vs">${R.win ? '✔' : '✖'}</div>`); ctn.appendChild(tnVs(op, false)); box.appendChild(ctn);
+    box.insertAdjacentHTML('beforeend', `<div class="inv-btns"><button class="inv-b gold big" id="tnNext">${R.win ? (tn.round >= 3 ? 'Xem kết quả giải' : 'Tiếp tục') : 'Xem diễn biến giải đấu'}</button></div>`); $('tnNext').addEventListener('click', () => tn.next()); return;
   }
   const done = tn.status === 'done', head = done ? `🏆 NHÀ VÔ ĐỊCH: ${CLASSES[tn.champ].name.toUpperCase()}` : tn.status === 'cancel' ? 'Giải đấu đã dừng' : `⚔ GIẢI ĐẤU · ${tn.msg || 'đang bốc thăm...'}`;
   box.insertAdjacentHTML('beforeend', `<div class="tn-title">${head}</div>`);
-  if (done) { const ch = document.createElement('div'); ch.className = 'tn-champ'; ch.appendChild(tnCard(tn.champ, 96)); ch.insertAdjacentHTML('beforeend', `<div><b>${CLASSES[tn.champ].name}</b><small>${CLASSES[tn.champ].title || TITLES[tn.champ] || ''}</small><span class="bd b-${TIER[RARITY[tn.champ]].toLowerCase()}">${TIER[RARITY[tn.champ]]}</span>${tn.champ === tn.my ? '<em>Tướng bạn chọn đã vô địch!</em>' : `<em>Tướng bạn chọn: ${CLASSES[tn.my].name} · dừng ở ${TN_ROUNDS[Math.max(0, tn.board[tn.my].reached - 1)] || 'Vòng 16'}</em>`}</div>`); box.appendChild(ch); }
+  if (done) { const ch = document.createElement('div'); ch.className = 'tn-champ'; ch.appendChild(tnCard(tn.champ, 96)); ch.insertAdjacentHTML('beforeend', `<div><b>${CLASSES[tn.champ].name}</b><small>${TITLES[tn.champ] || ''}</small><span class="bd b-${TIER[RARITY[tn.champ]].toLowerCase()}">${TIER[RARITY[tn.champ]]}</span>${tn.champ === tn.my ? '<em>Tướng bạn chọn đã vô địch!</em>' : `<em>Tướng bạn chọn: ${CLASSES[tn.my].name} · dừng ở ${TN_ROUNDS[Math.max(0, tn.board[tn.my].reached - 1)] || 'Vòng 16'}</em>`}</div>`); box.appendChild(ch); }
   const br = document.createElement('div'); br.className = 'tn-bracket';
   for (let r = 0; r < 4; r++) { const col = document.createElement('div'); col.className = 'tn-col'; col.insertAdjacentHTML('beforeend', `<h5>${TN_ROUNDS[r]}</h5>`);
     const ms = tn.rounds[r] || Array.from({ length: 8 >> r }, () => ({ a: null, b: null }));
     ms.forEach(m => { const card = document.createElement('div'); card.className = 'tn-match' + (m === tn.cur ? ' live' : '');
-      for (const [side, sc] of [['a', 'sa'], ['b', 'sb']]) { const c = m[side], row = document.createElement('div'); row.className = 'tn-row' + (m.w && m.w === c ? ' win' : m.w ? ' lose' : '') + (c && c === tn.my ? ' me' : ''); if (c) { row.appendChild(tnCard(c, 28)); row.insertAdjacentHTML('beforeend', `<span class="nm">${CLASSES[c].name}</span><b>${m[sc] != null ? m[sc] : ''}</b>`); } else row.insertAdjacentHTML('beforeend', `<span class="nm dim">…</span>`); card.appendChild(row); }
+      for (const [side, sc] of [['a', 'sa'], ['b', 'sb']]) { const c = m[side], row = document.createElement('div'); row.className = 'tn-row' + (m.w && m.w === c ? ' win' : m.w ? ' lose' : '') + (c && c === tn.my ? ' me' : ''); if (c) { row.appendChild(tnCard(c, 28)); row.insertAdjacentHTML('beforeend', `<span class="nm">${CLASSES[c].name}</span><b>${m[sc] != null ? m[sc] + '♥' : ''}</b>`); } else row.insertAdjacentHTML('beforeend', `<span class="nm dim">…</span>`); card.appendChild(row); }
       col.appendChild(card); }); br.appendChild(col); }
   box.appendChild(br);
   if (done) {
-    const rows = Object.values(tn.board).sort((x, y) => y.reached - x.reached || (y.total / Math.max(1, y.n)) - (x.total / Math.max(1, x.n)));
-    let t = '<h4>BẢNG XẾP HẠNG SỨC MẠNH</h4><div class="tn-rank">'; rows.forEach((b, i) => { t += `<div class="tn-rk${b.hero === tn.my ? ' me' : ''}"><i>${i + 1}</i><span>${CLASSES[b.hero].name}</span><em>${b.reached >= 5 ? 'Vô địch' : TN_ROUNDS[b.reached - 1]}</em><b>${Math.round(b.total / Math.max(1, b.n))}</b></div>`; }); t += '</div>';
+    const rows = Object.values(tn.board).sort((x, y) => y.reached - x.reached || y.wins - x.wins || y.hl - x.hl);
+    let t = '<h4>BẢNG XẾP HẠNG SỨC MẠNH</h4><div class="tn-rank">'; rows.forEach((b, i) => { t += `<div class="tn-rk${b.hero === tn.my ? ' me' : ''}"><i>${i + 1}</i><span>${CLASSES[b.hero].name}</span><em>${b.reached >= 5 ? 'Vô địch' : TN_ROUNDS[b.reached - 1]}</em><b>${b.wins} thắng</b></div>`; }); t += '</div>';
     br.insertAdjacentHTML('beforebegin', t + '<h4>BẢNG ĐẤU</h4>'); box.insertAdjacentHTML('beforeend', `<div class="inv-btns"><button class="inv-b gold" id="tnAgain">🔄 Giải mới (bốc thăm lại)</button><button class="inv-b" id="tnChange">Đổi tướng</button><button class="inv-b" id="tnX">Xong</button></div>`);
     $('tnAgain').addEventListener('click', () => { tournNew(tn.my); tnRender(); tournPlay(); }); $('tnChange').addEventListener('click', () => { tn = null; tnRender(); }); $('tnX').addEventListener('click', tnClose);
-  } else box.insertAdjacentHTML('beforeend', `<div class="inv-btns"><button class="inv-b" id="tnStop">${tn.status === 'cancel' ? 'Đóng' : 'Dừng giải đấu'}</button></div><div class="tn-hint">Điểm = (sát thương + 15 × số quái hạ) × hệ số sống sót + tim còn lại. Điểm trong bảng là trung bình các lượt thử.</div>`), $('tnStop').addEventListener('click', tnClose);
+  } else box.insertAdjacentHTML('beforeend', `<div class="inv-btns"><button class="inv-b" id="tnStop">${tn.status === 'cancel' ? 'Đóng' : 'Dừng giải đấu'}</button></div><div class="tn-hint">Số ♥ trên mỗi hàng là số tim còn lại của tướng đó khi trận kết thúc.</div>`), $('tnStop').addEventListener('click', tnClose);
 }
-$('tnBtn').addEventListener('click', tnOpen); $('tnSkip').addEventListener('click', () => { if (tournRun) tournRun.skip = true; });
+$('tnBtn').addEventListener('click', tnOpen); $('tnSkip').addEventListener('click', () => { if (duelRun && world && world.duel && world.duel.human && !world.duel.over) world.duel.forfeit = true; });
 
 document.getElementById('shopBtn').addEventListener('click', () => { hideAll(); renderShop(); document.getElementById('shopPanel').hidden = false; });
 document.getElementById('shopClose').addEventListener('click', toMenu);
@@ -8280,7 +8363,7 @@ function press(k) {
   keys[k] = true;
 }
 addEventListener('keydown', e => {
-  if (tournRun) { if (e.code === 'Escape' && tournRun.live) tournRun.skip = true; return; }
+  if (duelRun && (!duelRun.live || e.code === 'Escape' || e.code === 'KeyP')) return;
   if (e.code === 'Escape' || e.code === 'KeyP') { if (state === 'play' || state === 'pause') { e.preventDefault(); togglePause(); } return; }
   if (state === 'play' && dialog) {
     if (['Enter', 'Space', 'KeyJ', 'NumpadEnter'].includes(e.code)) { e.preventDefault(); if (!e.repeat) advanceDialog(); }
@@ -8295,7 +8378,7 @@ addEventListener('blur', () => { for (const k in keys) keys[k] = false; if (stat
 document.querySelectorAll('.touch .tb').forEach(b => {
   const k = b.dataset.k;
   const on = e => {
-    if (CTRL.editing || tournRun) return;
+    if (CTRL.editing) return;
     e.preventDefault();
     if (state !== 'play') return;
     if (dialog) { advanceDialog(); return; }
@@ -8316,7 +8399,7 @@ function dpadSync() {
   dpL.classList.toggle('on', l); dpR.classList.toggle('on', rt);
 }
 dpad.addEventListener('pointerdown', e => {
-  if (CTRL.editing || tournRun) return;
+  if (CTRL.editing) return;
   e.preventDefault();
   if (state !== 'play') return;
   if (dialog) { advanceDialog(); return; }
