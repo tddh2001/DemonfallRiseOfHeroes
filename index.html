@@ -1523,6 +1523,7 @@ function hurt(src) {
   }
   if (cls === 'warrior' && src && formOf('warrior')) { const wr = warriorFormBlock(src); if (wr) return wr; }
   if (cls === 'mage' && src && formOf('mage') === 2) { const mr = mageFormBlock(src); if (mr) return mr; }
+  if (cls === 'brawler' && src && p.absorb) { p.absorb.n++; p.inv = 14; popups.push({ text: '+1 ma lực', x: center(p).x, y: p.y - 12, t: 36, color: '#e8d8ff' }); burst(center(p).x, center(p).y, '#b080ff', 12, 7); if (src.isHaz && src.once) src.life = 0; return 'blocked'; }
   if (cls === 'gunner' && src && formOf('gunner') === 2 && Math.random() < (rank() >= 5 ? .25 : .2)) { p.inv = 26; popups.push({ text: 'NÉ!', x: center(p).x, y: p.y - 10, t: 40, color: '#ff8a6a' }); trail.push({ x: p.x - p.face * 14, y: p.y, face: p.face, life: 12, col: '#ff4a3a' }); if (src.isHaz && src.once) src.life = 0; return 'blocked'; }
   if (cls === 'warrior' && !formOf('warrior') && src && Math.random() < (rank() >= 5 ? 0.4 : 0.25)) {
     p.inv = 40; popups.push({ text: 'CHẶN!', x: center(p).x, y: p.y - 10, t: 40, color: '#ffb347' });
@@ -1632,6 +1633,7 @@ function reflectHit(src) {
 
 function damage(e, dmg, color) {
   if (!e.alive || e.transforming || e.under) return;
+  if (e.tfrozen && !e.duel && player && player.tstop) { e.stored = (e.stored || 0) + dmg; e.mk = (e.mk || 0) + 1; spark(e.x + e.w / 2, e.y + e.h / 2, '#e8d8ff'); return; }
   dmg = Math.round(dmg * lvDmgMul(player ? player.level : 1) * 10) / 10;
   if (player && player.cls === 'beast' && formOf('beast') === 1) dmg = Math.round(dmg * (1 + .1 * (player.links | 0) + (player.unbound > 0 ? .3 : 0)) * 10) / 10;
   if (e.duel) { duelHit(e, dmg, color); return; }
@@ -1720,6 +1722,7 @@ function basicAttackBase() {
   if (cls === 'giong') { p.atkKind = 'thrust'; p.qiGot = false; }
   const pc = center(p);
   if (cls === 'beast' && p.frenzy > 0) p.atkCd = Math.ceil(p.atkCd * 0.5);
+  if (cls === 'brawler' && p.tstop) p.atkCd = Math.ceil(p.atkCd * 0.5);
   if (COMBOH.includes(cls)) { comboStart(p); return; }
   if (cls === 'brawler') {
     p.atk = 12; p.atkId = newId(); p.atkEmp = false;
@@ -1733,7 +1736,7 @@ function basicAttackBase() {
       shots.push({ type: 'fistwave', x: pc.x + p.face * 18 - (bm ? 28 : 20), y: p.y - (bm ? 9 : 2), w: bm ? 56 : 40, h: bm ? 56 : 40, vx: p.face * 10, face: p.face, life: 45, dmg: bm ? 4.5 : 3, pierce: true, hits: new Set(), color: K });
       burst(pc.x + p.face * 24, p.y + 16, K, 14, 7); if (bm) rings.push({ x: pc.x + p.face * 30, y: pc.y, r: 6, max: 60, t: 14, color: K });
     }
-    if (bm) { p.mana = (p.mana | 0) + 1; if (p.mana >= 10) { p.mana = 0; const mx = pc.x + p.face * 46; explode(mx, pc.y, 96, 3, '#b080ff'); for (let k = 0; k < 3; k++) rings.push({ x: mx, y: pc.y, r: 8 + k * 8, max: 100 + k * 30, t: 16 + k * 4, color: k % 2 ? '#e8d8ff' : '#b080ff' }); popups.push({ text: 'MA PHÁP TRẬN!', x: mx, y: p.y - 14, t: 40, color: '#e8d8ff' }); shake = Math.max(shake, 8); } }
+    if (bm) { p.mana = (p.mana | 0) + 1; if (p.mana >= 10) { p.mana = 0; const mx = pc.x + p.face * 46; explode(mx, pc.y, 96, 2, '#b080ff'); for (let k = 0; k < 3; k++) rings.push({ x: mx, y: pc.y, r: 8 + k * 8, max: 100 + k * 30, t: 16 + k * 4, color: k % 2 ? '#e8d8ff' : '#b080ff' }); popups.push({ text: 'MA PHÁP TRẬN!', x: mx, y: p.y - 14, t: 40, color: '#e8d8ff' }); shake = Math.max(shake, 8); } }
     return;
   }
   if (cls === 'beast') { p.atk = 10; p.atkId = newId(); p.atkEmp = false; p.atkMul = formOf('beast') === 1 ? 1.8 : 1; return; }
@@ -2741,7 +2744,7 @@ const CINE_LEN = 64;
 const cineZoom = t => t < 14 ? 1 + .9 * (1 - Math.pow(1 - t / 14, 3)) : t < 48 ? 1.9 + (t - 14) / 34 * .12 : t < 60 ? 2.02 - 1.02 * (1 - Math.pow(1 - (t - 48) / 12, 2)) : 1;
 function useSkill(i) {
   const p = player;
-  if (p.level < SKILL_LV[i] || p.cds[i] > 0 || p.leap || p.mUlt || p.wUlt || p.void || ultCine || p.aleap || p.sfist || p.mv || p.hell || p.rain || p.gat || p.blink || (p.sc && p.sc.lock)) return;
+  if (p.level < SKILL_LV[i] || p.cds[i] > 0 || p.leap || p.mUlt || p.wUlt || p.void || ultCine || p.aleap || p.sfist || p.mv || p.hell || p.rain || p.gat || p.blink || p.fistrain || (p.sc && p.sc.lock)) return;
   if (cls === 'hound' && i === 3 && !p.regressed) { SKILL_FN.hound[3](); return; }
   if (cls === 'ancient' && i === 3 && p.awake > 0) return;
   if (i === 3 && (RARITY[cls] === 'leg' || RARITY[cls] === 'ss') && !(world && world.duel)) {
@@ -5151,7 +5154,7 @@ return {hero,boss,enemy,enemyInfo,hasHero:c=>!!HEROES[c],hasBoss:id=>!!BOSSES[id
 
 // ======================= PIXEL ART: tướng & boss nhìn nghiêng =======================
 const PIXEL_ART = true, HERO_SC = 1.25;
-const BUILD = 54;
+const BUILD = 55;
 addEventListener('load', () => { const t = document.getElementById('buildTag'); if (t) t.textContent = `Bản ${BUILD} · ${PIXEL_ART ? 'Pixel art' : 'Vector'}`; });
 function heroPixPose(p) {
   const A = Date.now();
@@ -5855,6 +5858,7 @@ function drawPlayerFx(p) {
     ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.moveTo(0, -13); ctx.lineTo(3, 0); ctx.lineTo(0, 8); ctx.fill(); ctx.restore();
   }
   if (cls === 'mage' && formOf('mage')) drawMageFx(p);
+  if (cls === 'brawler' && formOf('brawler') === 1) drawBrFx(p);
   if (p.phase > 0) {
     ctx.fillStyle = 'rgba(232,236,247,.25)'; rr(p.x - 4, p.y - 12, 34, 4, 2);
     ctx.fillStyle = '#b69cff'; rr(p.x - 4, p.y - 12, 34 * p.phase / (p.phaseMax || 240), 4, 2);
@@ -5992,6 +5996,14 @@ function drawFxList() {
         for (let j = 0; j < 6; j++) { rr += 14 + ((i * 7 + j * 13 + tm) % 9); const jt = (Math.sin(i * 12.9 + j * 4.1 + tm * 1.7)) * .09; ctx.lineTo(Math.cos(base + jt) * rr, Math.sin(base + jt) * rr); }
         ctx.strokeStyle = 'rgba(255,60,70,.55)'; ctx.lineWidth = 3.4; ctx.stroke(); ctx.strokeStyle = '#050003'; ctx.lineWidth = 1.4; ctx.stroke(); }
       ctx.restore();
+    } else if (f.type === 'mcirc') {                                 // vòng rune khi thi triển phép
+      const pr = 1 - k; runeRing(f.x, f.y, 26 + pr * 10, 26 + pr * 10, pr * 8, PURL, 10, k); runeRing(f.x, f.y, 16, 16, -pr * 10, PUR, 6, k);
+    } else if (f.type === 'gfist') {                                 // nắm đấm khổng lồ từ pháp trận trên trời
+      const pr = 1 - k, hitT = pr >= .8, sz = f.s || 1, fy = hitT ? f.gy - 74 * sz : -130 * sz + (f.gy - 74 * sz + 130 * sz) * Math.pow(pr / .8, 2), al = hitT ? Math.max(0, k * 5) : 1;
+      ctx.save(); ctx.globalAlpha = Math.min(1, al); const g3 = ctx.createLinearGradient(f.x - 26 * sz, 0, f.x + 26 * sz, 0); g3.addColorStop(0, 'rgba(90,58,168,0)'); g3.addColorStop(.5, 'rgba(176,128,255,.55)'); g3.addColorStop(1, 'rgba(90,58,168,0)'); ctx.fillStyle = g3; ctx.fillRect(f.x - 26 * sz, 0, 52 * sz, Math.max(0, fy + 10));
+      ctx.fillStyle = PURD; ctx.strokeStyle = PURL; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(f.x - 44 * sz, fy, 88 * sz, 74 * sz, 14 * sz); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = PUR; for (let i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(f.x - 44 * sz + i * 22 * sz, fy + 8 * sz); ctx.lineTo(f.x - 44 * sz + i * 22 * sz, fy + 34 * sz); ctx.stroke(); }
+      ctx.fillStyle = 'rgba(232,216,255,.55)'; ctx.fillRect(f.x - 36 * sz, fy + 6 * sz, 20 * sz, 8 * sz); ctx.restore(); glow(f.x, fy + 40 * sz, 60 * sz, '176,128,255', .4 * Math.min(1, al));
     } else if (f.type === 'jaws') {                                  // hàm sói khổng lồ nuốt cả màn hình
       const pr = 1 - k, x0 = camX, ww = W, n = 9, dep = (GROUND_Y - 24) * .5 * (pr < .5 ? 1 - Math.pow(1 - pr / .5, 2) : 1 - (pr - .5) / .5 * .15);
       ctx.save(); ctx.fillStyle = 'rgba(8,4,24,' + (.55 * Math.min(1, k * 2.5)).toFixed(2) + ')'; ctx.fillRect(x0, 0, ww, GROUND_Y);
@@ -7805,7 +7817,6 @@ function brawlerRewind() {
   const pc = center(p); popups.push({ text: 'HỒI QUY THỜI KHÔNG!', x: pc.x, y: p.y - 28, t: 80, color: '#e8d8ff' }); for (let k = 0; k < 3; k++) rings.push({ x: pc.x, y: pc.y, r: 8 + k * 10, max: 200 + k * 60, t: 24 + k * 4, color: k % 2 ? '#e8d8ff' : '#b080ff' });
   burst(pc.x, pc.y, '#b080ff', 40, 12); flashT = 12; flashCol = '200,170,255'; shake = Math.max(shake, 10); return true;
 }
-function brawlTick(p) { if (gTick % 6 === 0) { (p.hist = p.hist || []).push({ x: p.x, y: p.y, h: p.hearts }); if (p.hist.length > 30) p.hist.shift(); } if (p.fistEmp > 0 && gTick % 5 === 0) particles.push({ x: p.x + Math.random() * p.w, y: p.y + Math.random() * p.h, vx: 0, vy: -1.4, life: 18, color: '#b080ff' }); }
 function beastTick(p) { if (p.unbound > 0) { p.unbound--; const pc = center(p); if (gTick % 3 === 0) particles.push({ x: pc.x + (Math.random() - .5) * p.w * 1.4, y: p.y + p.h, vx: 0, vy: -2.4, life: 24, color: Math.random() < .5 ? '#9fe8ff' : '#ffffff' }); } else if (gTick % 20 === 0 && (p.links | 0) > 0) { const pc = center(p); particles.push({ x: pc.x + (Math.random() - .5) * p.w, y: pc.y - 6, vx: 0, vy: -1, life: 20, color: '#c8d0e0' }); } }
 function beastLinkKill() {
   const p = player; p.killHeal = 0; p.links = (p.links | 0) + 1; healHeart(1); const pc = center(p);
@@ -7813,12 +7824,77 @@ function beastLinkKill() {
   else popups.push({ text: `ĐỨT XÍCH ${p.links}/4`, x: pc.x, y: p.y - 24, t: 50, color: '#c8d0e0' });
 }
 FORMS.brawler[0] = snapForm('brawler'); FORMS.beast[0] = snapForm('beast');
+// ======================= MA PHÁP QUYỀN VƯƠNG · BỘ KỸ NĂNG RIÊNG =======================
+const TB = { zone: .7, zoneBurst: 1.7, tsMul: 1.3, absorb: 2.2, fist: 4.6, finale: 8 };
+const PUR = '#b080ff', PURL = '#e8d8ff', PURD = '#5a3aa8';
+function runeRing(x, y, rx, ry, rot, col, n, a) {
+  ctx.save(); ctx.globalAlpha = Math.max(0, Math.min(1, a)); ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.stroke();
+  ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y, rx * .82, ry * .82, 0, 0, 7); ctx.stroke(); ctx.fillStyle = col;
+  for (let i = 0; i < n; i++) { const a2 = rot + i * 6.2832 / n, px2 = x + Math.cos(a2) * rx * .91, py2 = y + Math.sin(a2) * ry * .91; ctx.fillRect(px2 - 2, py2 - 2, 4, 4); if (i % 2) { ctx.beginPath(); ctx.moveTo(x + Math.cos(a2) * rx * .6, y + Math.sin(a2) * ry * .6); ctx.lineTo(px2, py2); ctx.stroke(); } }
+  ctx.restore();
+}
+function drawBrFx(p) {
+  const pc = center(p), T0 = Date.now() / 400;
+  if (p.zone) { const z = p.zone, a = Math.max(.15, Math.min(1, z.t / 30, (z.max - z.t) / 12 + .2));
+    glow(z.x, GROUND_Y - 6, z.r * .9, '176,128,255', .22 * a);
+    runeRing(z.x, GROUND_Y - 4, z.r, z.r * .26, T0, PUR, 12, a); runeRing(z.x, GROUND_Y - 4, z.r * .6, z.r * .16, -T0 * 1.4, PURL, 8, a * .8);
+    for (let i = 0; i < 6; i++) { const bx = z.x + (i - 2.5) * z.r * .3, bh = 60 + Math.sin(T0 * 3 + i) * 22, g2 = ctx.createLinearGradient(0, GROUND_Y - bh, 0, GROUND_Y); g2.addColorStop(0, 'rgba(176,128,255,0)'); g2.addColorStop(1, 'rgba(176,128,255,' + (.35 * a).toFixed(2) + ')'); ctx.fillStyle = g2; ctx.fillRect(bx - 4, GROUND_Y - bh, 8, bh); } }
+  if (p.tstop) { const S = p.tstop, k = Math.max(0, Math.min(1, S.t / 12, (S.dur - S.t) / 14));
+    ctx.save(); ctx.fillStyle = 'rgba(50,20,100,' + (.28 * k).toFixed(2) + ')'; ctx.fillRect(camX, 0, W, H); ctx.restore();
+    const cx = pc.x, cy = p.y - 32; runeRing(cx, cy, 24, 24, T0 * 2, PURL, 12, k);
+    ctx.save(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.globalAlpha = k; const ha = S.t / S.dur * 6.2832 * 3 - 1.57; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(ha) * 18, cy + Math.sin(ha) * 18); ctx.stroke(); ctx.restore();
+    for (const e of enemies) if (e.alive && e.tfrozen) { const c = center(e); glow(c.x, c.y, 26, '176,128,255', .25 * k); runeRing(c.x, c.y, 18, 18, -T0, PUR, 6, .7 * k);
+      if (e.mk) { ctx.save(); ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = PURL; ctx.fillText('×' + e.mk, c.x, e.y - 8); ctx.restore(); } } }
+  if (p.absorb) { const A = p.absorb, a = Math.min(1, A.t / 20); glow(pc.x, pc.y, 52, '176,128,255', .35 * a);
+    ctx.save(); ctx.globalAlpha = .55 * a; ctx.strokeStyle = PUR; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(pc.x, pc.y, 34 + Math.sin(T0 * 6) * 2, 0, 7); ctx.stroke(); ctx.restore(); runeRing(pc.x, pc.y, 38, 38, T0 * 2, PURL, 10, a);
+    ctx.fillStyle = PURL; for (let i = 0; i < Math.min(A.n, 10); i++) { const ang = T0 * 3 + i * .63; ctx.fillRect(pc.x + Math.cos(ang) * 24 - 3, pc.y + Math.sin(ang) * 24 - 3, 6, 6); } }
+  if (p.fistrain) { const R = p.fistrain, a = Math.min(1, R.t / 16), cx = camX + W / 2; runeRing(cx, 62, 270, 56, T0, PUR, 18, a); runeRing(cx, 62, 180, 38, -T0 * 1.3, PURL, 12, a); glow(cx, 62, 240, '176,128,255', .28 * a); }
+  if ((p.mana | 0) >= 7) glow(pc.x, pc.y, 20 + p.mana, '176,128,255', .3);
+}
+function brawlTick(p) {
+  const pc = center(p);
+  if (gTick % 6 === 0) { (p.hist = p.hist || []).push({ x: p.x, y: p.y, h: p.hearts }); if (p.hist.length > 30) p.hist.shift(); }
+  // --- Ma Pháp Trận Quyền
+  if (p.zone) { const z = p.zone; z.t--; z.k = (z.k | 0) + 1;
+    if (z.k % 12 === 0) for (const e of enemies) if (e.alive && !e.under && onScreen(e)) { const c = center(e);
+      if (Math.abs(c.x - z.x) < z.r + e.w / 2 && c.y > GROUND_Y - 170) { if (!e.boss) e.x += (z.x - c.x) * .14; if (z.k % 24 === 0) { damage(e, TB.zone, PUR); strk(c.x, GROUND_Y, c.x, c.y - 60, 14, PUR, '#ffffff', 10); spark(c.x, c.y, PURL); } } }
+    if (z.k % 70 === 0) { explode(z.x, GROUND_Y - 30, z.r, TB.zoneBurst, PUR); rings.push({ x: z.x, y: GROUND_Y - 10, r: 10, max: z.r * 1.2, t: 20, color: PURL }); crack(z.x, GROUND_Y, 1.2); }
+    if (z.t <= 0) { burst(z.x, GROUND_Y - 10, PUR, 24, 9); p.zone = null; } }
+  // --- Thời Không Đình Chỉ
+  if (p.tstop) { const S = p.tstop; S.t++; if (S.t % 8 === 0) for (const e of enemies) if (e.alive && e.tfrozen) { const c = center(e); particles.push({ x: c.x + (Math.random() - .5) * e.w, y: c.y + (Math.random() - .5) * e.h, vx: 0, vy: -1, life: 18, color: PURL }); }
+    if (S.t >= S.dur) {
+      for (const e of enemies) if (e.alive && e.tfrozen) { e.tfrozen = false; const st = e.stored || 0, mk = e.mk || 0; e.stored = 0; e.mk = 0;
+        if (st > 0) { damage(e, st * TB.tsMul, PUR); const c = center(e); for (let k = 0; k < 2; k++) rings.push({ x: c.x, y: c.y, r: 6, max: 60 + k * 30, t: 14 + k * 4, color: k ? PURL : PUR }); spark(c.x, c.y, '#ffffff'); popups.push({ text: '×' + mk, x: c.x, y: e.y - 18, t: 40, color: PURL, big: mk > 8 }); } }
+      flashT = 12; flashCol = '210,180,255'; shake = Math.max(shake, 14); hitStop = Math.max(hitStop, 6); p.tstop = null; } }
+  // --- Ma Pháp Phản Chấn
+  if (p.absorb) { const A = p.absorb; A.t--; if (gTick % 4 === 0) particles.push({ x: pc.x + (Math.random() - .5) * 90, y: pc.y + (Math.random() - .5) * 70, vx: (pc.x - pc.x) * .1, vy: 0, life: 14, color: PURL });
+    if (A.t <= 0) { const n = Math.min(28, 5 + A.n * 3);
+      for (let i = 0; i < n; i++) { const t = randomFoe(); shots.push({ type: 'shard', col: PUR, x: pc.x - 5, y: pc.y - 5, w: 10, h: 10, vx: Math.cos(i * 2.4) * 6, vy: Math.sin(i * 2.4) * 6 - 2, target: t || undefined, life: 110, dmg: TB.absorb, pierce: false, hits: new Set() }); }
+      for (let k = 0; k < 3; k++) rings.push({ x: pc.x, y: pc.y, r: 10 + k * 8, max: 160 + k * 60, t: 18 + k * 4, color: k % 2 ? PURL : PUR }); burst(pc.x, pc.y, PUR, 36, 12); flashT = 8; flashCol = '210,180,255'; shake = Math.max(shake, 10);
+      popups.push({ text: 'PHẢN CHẤN ×' + A.n + '!', x: pc.x, y: p.y - 30, t: 60, color: PURL }); p.absorb = null; } }
+  // --- Thiên Địa Lục Thủ Quyền
+  if (p.fistrain) { const R = p.fistrain; R.t++; p.plant = Math.max(p.plant | 0, 2); p.vx = 0; p.inv = Math.max(p.inv, 2);
+    if (R.t === 1) { dimT = 70; dimCol = '40,10,80'; flashT = 8; flashCol = '210,180,255'; popups.push({ text: 'THIÊN ĐỊA LỤC THỦ QUYỀN!', x: pc.x, y: p.y - 40, t: 90, color: PURL }); }
+    if (R.t >= 22 && R.n < R.tot && (R.t - 22) % 12 === 0) { const t = randomFoe(), x = t ? center(t).x + (Math.random() - .5) * 40 : camX + 80 + Math.random() * (W - 160); fxList.push({ type: 'gfist', x, gy: GROUND_Y - 4, t: 24, max: 24, s: 1 }); R.q.push({ at: R.t + 19, x }); R.n++; }
+    for (const it of R.q) if (it.at === R.t) { explode(it.x, GROUND_Y - 36, 120, TB.fist, PUR); for (const e of enemies) if (e.alive && !e.under && onScreen(e) && Math.abs(center(e).x - it.x) < 130) stunE(e, 50, 20);
+      crack(it.x, GROUND_Y, 1.6); rings.push({ x: it.x, y: GROUND_Y - 6, r: 10, max: 150, t: 18, color: PURL }); shake = Math.max(shake, 12); hitStop = Math.max(hitStop, 3); }
+    const fin = 22 + 12 * R.tot + 24;
+    if (R.t === fin - 19) fxList.push({ type: 'gfist', x: camX + W / 2, gy: GROUND_Y - 4, t: 24, max: 24, s: 3.2 });
+    if (R.t === fin) { for (const e of enemies) if (e.alive && !e.under && onScreen(e)) { damage(e, TB.finale, PUR); stunE(e, 90, 40); const c = center(e); burst(c.x, c.y, PURL, 14, 10); }
+      flashT = 18; flashCol = '230,210,255'; shake = Math.max(shake, 26); hitStop = Math.max(hitStop, 10); for (let k = 0; k < 4; k++) rings.push({ x: camX + W / 2, y: GROUND_Y - 10, r: 12 + k * 14, max: 380 + k * 150, t: 24 + k * 5, color: k % 2 ? PURL : PUR }); crack(camX + W / 2, GROUND_Y, 2.4); }
+    if (R.t >= fin + 18) { p.fistrain = null; p.plant = 0; p.inv = Math.max(p.inv, 30); } }
+  if (p.fistEmp > 0 && gTick % 5 === 0) particles.push({ x: p.x + Math.random() * p.w, y: p.y + Math.random() * p.h, vx: 0, vy: -1.4, life: 18, color: '#b080ff' });
+}
 const BFN_S = [
-  () => { const p = player; p.fistEmp = tier(0) >= 3 ? 3 : 2; burst(center(p).x, center(p).y, '#b080ff', 22, 8); rings.push({ x: center(p).x, y: center(p).y, r: 8, max: 70, t: 16, color: '#b080ff' }); p.toast = { text: `${p.fistEmp} cú đấm kế tiếp mang ma lực!`, color: '#b080ff', t: 60 }; },
-  () => { const p = player; p.barrage = tier(1) >= 3 ? 130 : 96; },
-  () => { const p = player; p.iron = tier(2) >= 3 ? 480 : 360; p.ironEnd = true; burst(center(p).x, center(p).y, '#b080ff', 26, 9); rings.push({ x: center(p).x, y: center(p).y, r: 8, max: 70, t: 16, color: '#b080ff' }); },
-  () => { const p = player; if (p.skyfall || ult) return false; p.skyfall = { stage: 0, t: 0, mg: true }; p.vx = 0; },
+  () => { const p = player, pc = center(p), t3 = tier(0) >= 3, tg = getTarget(), cx = tg ? center(tg).x : pc.x + p.face * 190; p.zone = { x: cx, r: t3 ? 200 : 160, t: t3 ? 300 : 240, max: t3 ? 300 : 240, k: 0 };
+    fxList.push({ type: 'mcirc', x: pc.x + p.face * 26, y: pc.y, t: 18, max: 18 }); pose(p, 1, 10); rings.push({ x: cx, y: GROUND_Y - 6, r: 10, max: 200, t: 20, color: PURL }); burst(cx, GROUND_Y - 10, PUR, 20, 9); },
+  () => { const p = player; if (p.tstop) return false; const dur = tier(1) >= 3 ? 210 : 165; p.tstop = { t: 0, dur }; p.buff = Math.max(p.buff | 0, dur);
+    for (const e of enemies) if (e.alive && !e.under && onScreen(e)) { e.tfrozen = true; e.stored = 0; e.mk = 0; if (e.boss) e.slowT = Math.max(e.slowT || 0, dur); else e.stun = Math.max(e.stun || 0, dur); }
+    fxList.push({ type: 'mcirc', x: center(p).x, y: center(p).y, t: 18, max: 18 }); dimT = 40; dimCol = '40,10,80'; flashT = 10; flashCol = '210,180,255'; popups.push({ text: 'THỜI KHÔNG ĐÌNH CHỈ!', x: center(p).x, y: p.y - 34, t: 70, color: PURL }); },
+  () => { const p = player; if (p.absorb) return false; p.absorb = { t: tier(2) >= 3 ? 300 : 240, n: 0 }; fxList.push({ type: 'mcirc', x: center(p).x, y: center(p).y, t: 18, max: 18 }); burst(center(p).x, center(p).y, PUR, 24, 9); },
+  () => { const p = player; if (p.fistrain || ult) return false; p.fistrain = { t: 0, n: 0, tot: tier(3) >= 3 ? 8 : 6, q: [] }; p.vx = 0; p.plant = 180; pose(p, 5, 60); },
 ];
+
 const BTFN_S = [
   () => { const p = player, pc = center(p), f = p.face, t3 = tier(0) >= 3; sc(p, [[0, 1], [6, 2], [12, 3]].slice(0, t3 ? 3 : 3).map(([d, k]) => [d, () => { const q = center(p); shots.push({ type: 'wave', color: '#9fe8ff', x: q.x + f * 34 - 28, y: p.y - 22 + (k - 2) * 12, w: 56, h: 92, vx: f * (8 + k), face: f, life: 58, dmg: t3 ? 3.4 : 2.8, pierce: true, hits: new Set(), heal: k === 1 }); cres(q.x + f * 26, q.y - 4, 84, k === 2 ? -.5 : -2.4, k === 2 ? 2.3 : .5, 22, '#9fe8ff', '#ffffff', 16, f); shake = Math.max(shake, 6); }]), false); },
   () => { const p = player, pc = center(p); p.frenzy = Math.max(p.frenzy | 0, tier(1) >= 3 ? 480 : 360);
@@ -7828,10 +7904,10 @@ const BTFN_S = [
   () => { const p = player, pc = center(p), dm = tier(3) >= 3 ? 13 : 10; p.plant = 70; p.inv = Math.max(p.inv, 90); p.vx = 0; fxList.push({ type: 'jaws', t: 70, max: 70 }); popups.push({ text: 'NUỐT CHỬNG MẶT TRỜI!', x: pc.x, y: p.y - 40, t: 80, color: '#9fe8ff' });
     sc(p, [[34, () => { for (const e of enemies) if (e.alive && !e.under && onScreen(e)) { const c = center(e); damage(e, dm, '#9fe8ff'); if (!e.boss) e.stun = Math.max(e.stun || 0, 60); burst(c.x, c.y, '#ffffff', 16, 10); spark(c.x, c.y, '#ffffff'); } flashT = 14; flashCol = '200,240,255'; shake = Math.max(shake, 22); hitStop = Math.max(hitStop, 10); healHeart(3); }]], false); },
 ];
-FORMS.brawler[1] = { rar: 'leg', name: 'Ma Pháp Quyền Vương', hero: 'Mãnh', color: '#b080ff', role: 'Pháp sư trong thân quyền vương', basic: { name: 'Đấm ma lực', cd: 16 }, title: 'Đại pháp sư mang thân quyền vương', stats: [5, 4, 4, 5], roles: ['Đấu sĩ', 'Pháp sư'], fn: BFN_S, dur: [null, p => p.barrage, p => p.iron, null],
-  skills: [SK('Ma Quyền Phóng', 240, '✊', 'Cường hóa 2 cú đấm kế tiếp, mỗi cú phóng nắm đấm mana xuyên thấu'), SK('Ma Pháp Liệt Quyền', 420, '≫', 'Đấm liên hoàn 1,6 giây, mỗi cú bắn thêm nắm đấm mana và mở pháp trận'), SK('Ma Thể Quyền Vương', 900, '⬢', 'Giáp mana 6 giây miễn sát thương; khi hết giờ nổ sóng mana đẩy lùi và gây choáng'), SK('Quyền Vương Hợp Thể', 3000, '☄', 'Bay lên, nắm đấm mana khổng lồ giáng xuống: 12 sát thương và làm choáng toàn màn hình')],
+FORMS.brawler[1] = { rar: 'leg', name: 'Ma Pháp Quyền Vương', hero: 'Mãnh', color: '#b080ff', role: 'Pháp sư trong thân quyền vương', basic: { name: 'Đấm ma lực', cd: 16 }, title: 'Đại pháp sư mang thân quyền vương', stats: [5, 4, 4, 5], roles: ['Đấu sĩ', 'Pháp sư'], fn: BFN_S, dur: [p => p.zone ? p.zone.t : 0, p => p.tstop ? p.tstop.dur - p.tstop.t : 0, p => p.absorb ? p.absorb.t : 0, null],
+  skills: [SK('Ma Pháp Trận Quyền', 300, '✺', 'Vẽ pháp trận lên mặt đất 4 giây: quái trong trận bị hút vào tâm, chịu sát thương liên tục và bị quyền ảnh nổ lên định kỳ'), SK('Thời Không Đình Chỉ', 900, '⌛', 'Đóng băng thời gian của quái trên màn hình 2,7 giây, bạn chạy và đấm nhanh hơn; mọi đòn đánh được tích lại và đồng loạt nổ ×1,5 khi thời gian chảy lại'), SK('Ma Pháp Phản Chấn', 780, '◉', '4 giây hấp thụ mọi đòn đánh vào bạn thành ma lực; hết giờ phóng trả thành nhiều nắm đấm ma pháp tự dẫn, mỗi đòn hấp thụ thêm 3 nắm'), SK('Thiên Địa Lục Thủ Quyền', 3000, '☄', 'Mở pháp trận khổng lồ trên trời, 6 nắm đấm khổng lồ lần lượt giáng xuống quái rồi kết thúc bằng cú giáng toàn màn hình gây choáng')],
   pass: { name: 'Hồn Pháp Sư', desc: 'Mỗi cú đấm nạp 1 Ma Lực; đủ 10 thì cú đấm kế tiếp bung pháp trận gây nổ. Giữ Liên Kích. Hồi Quy Thời Không: 1 lần mỗi màn, khi tim về 0 thì tua ngược về vị trí và số tim lúc 3 giây trước' }, pass5: 'Hồn Pháp Sư: Liên Kích mỗi 2 đòn; hồi quy giữ lại 4 tim',
-  t3: ['Cường hóa 3 cú đấm', 'Liên hoàn kéo dài 2,2 giây', 'Giáp mana kéo dài 8 giây', 'Nắm đấm mana mạnh hơn'], polish: [fl2('beam'), fl2('aura'), fl2('circle'), fl2('sky')] };
+  t3: ['Pháp trận lớn hơn, kéo dài 5 giây', 'Đình chỉ thời gian kéo dài 3,5 giây', 'Phản chấn kéo dài 5 giây', '8 nắm đấm khổng lồ'], polish: [fl2('circle'), fl2('aura'), fl2('beam'), fl2('sky')] };
 FORMS.beast[1] = { rar: 'leg', name: 'Thần Lang Hoàng Hôn', hero: 'Lang', color: '#9fe8ff', role: 'Khổng thần dạng sói', basic: { name: 'Vuốt thần', cd: 14 }, title: 'Gông xích đã đứt', stats: [5, 4, 4, 5], roles: ['Đấu sĩ', 'Sát thủ'], fn: BTFN_S, dur: [null, p => p.frenzy, null, null],
   skills: [SK('Vuốt Thần Xé Trời', 300, '⋙', '3 vệt vuốt khổng lồ xuyên màn hình; trúng thì hồi tim'), SK('Gầm Của Thần Lang', 720, '♨', 'Tiếng gầm làm choáng quái 2 giây, đẩy lùi mạnh; bạn tăng tốc 6 giây'), SK('Bước Chân Sao Băng', 240, '➶', 'Lướt xuyên quái, cào mọi kẻ địch trên đường'), SK('Nuốt Chửng Mặt Trời', 2400, '☠', 'Hàm sói khổng lồ nuốt mọi quái trên màn hình, hồi 3 tim')],
   pass: { name: 'Xích Phong Ấn Đứt', desc: 'Mỗi 8 quái hạ thì đứt 1 mắt xích: hồi 1 tim và +10% sát thương. Đứt đủ 4 mắt xích thì Giải Phóng 10 giây: +30% sát thương và tốc độ, rồi xích mọc lại. Thân hình khổng lồ' }, pass5: 'Xích Phong Ấn Đứt: chỉ cần 5 quái mỗi mắt xích',
